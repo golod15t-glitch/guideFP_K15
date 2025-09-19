@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход на сайт статей</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background: linear-gradient(to bottom, #f0f4f8, #e1e9f0);
+            color: #333;
+            margin: 0;
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        input {
+            width: 80%;
+            max-width: 300px;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #bdc3c7;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        button {
+            padding: 15px 30px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .error {
+            color: #e74c3c;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Вход на сайт со статьями 📝</h1>
+    <p>Введите уникальный код статьи для доступа:</p>
+    <input id="codeInput" type="text" placeholder="Например: code1" maxlength="20">
+    <br>
+    <button onclick="redirectToArticle()">Перейти</button>
+    <p id="error" class="error" style="display: none;">Неверный код! Проверьте и попробуйте снова.</p>
+
+    <script>
+        // Объект с кодами и ссылками на статьи (относительные для одного сайта)
+        const codeToUrl = {
+            "code1": "/articles/article1.html",  // Пример (указывайте путь к вашему файлу)
+            "code2": "/articles/article2.html",
+            "qwerty": "/articles/my-favorite-article.html"
+            // Добавляйте свои пары здесь
+        };
+
+        function redirectToArticle() {
+            const code = document.getElementById("codeInput").value.trim().toLowerCase();
+            const targetUrl = codeToUrl[code];
+            if (targetUrl) {
+                window.location.href = targetUrl;
+                document.getElementById("error").style.display = "none";
+            } else {
+                document.getElementById("error").style.display = "block";
+            }
+        }
+
+        // Нажатие Enter для удобства
+        document.getElementById("codeInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                redirectToArticle();
+            }
+        });
+    </script>
+</body>
+</html>

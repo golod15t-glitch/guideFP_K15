@@ -1,19 +1,21 @@
 const express = require('express');
-const axios = require('axios');
+const axios = require('axios');  // Это вызовет ошибку, если axios не установлен
 const app = express();
 const PORT = process.env.PORT || 10000;
 
 // GitHub API конфиг
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // Установите в Render
-const REPO_OWNER = 'guideFP_K15'; // Проверьте точное имя репозитория
-const REPO_NAME = 'guideFP_K15'; // То же самое, если это пользовательский репозиторий
+const REPO_OWNER = 'guideFP_K15';
+const REPO_NAME = 'guideFP_K15';
 
 app.use(express.json());
 
-// Эндпоинт для получения статьи (GET-запрос, который падает в логах)
+// Эндпоинт для получения статьи
 app.get('/articles/:filename', async (req, res) => {
     const { filename } = req.params;
-    const path = `articles/${filename}.html`; // Например, 'articles/article1.html'
+    const path = `articles/${filename}.html`;
+
+    console.log(`[LOG] Получение файла: ${path} из репозитория ${REPO_OWNER}/${REPO_NAME}`);
 
     try {
         const response = await axios.get(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
@@ -26,21 +28,22 @@ app.get('/articles/:filename', async (req, res) => {
         const content = Buffer.from(response.data.content, 'base64').toString('utf-8');
         res.send(content);
     } catch (error) {
-        console.error('Ошибка при получении файла из GitHub:', error.response ? error.response.data : error.message);
-        res.status(404).json({ error: 'Файл не найден в репозитории' });
+        console.error('[ERROR] Ошибка при получении файла:', error.response ? error.response.status : error.message);
+        res.status(404).json({ error: 'Файл не найден. Проверьте путь и токен.' });
     }
 });
 
-// Эндпоинт для сохранения статьи (POST, как в HTML)
+// Эндпоинт для сохранения статьи
 app.post('/save-article', async (req, res) => {
     const { title, content, path } = req.body;
 
+    console.log(`[LOG] Сохранение файла: ${path} с заголовком: ${title}`);
+
     try {
-        // Сначала получите SHA файла (для обновления)
+        // Получите SHA (если файл существует)
         const getResponse = await axios.get(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
             headers: {
-                'Authorization': `token ${GITHUB_TOKEN}`,
-                'Accept': 'application/vnd.github.v3.raw'
+                'Authorization': `token ${GITHUB_TOKEN}`
             }
         });
 
@@ -59,11 +62,11 @@ app.post('/save-article', async (req, res) => {
 
         res.json({ message: 'Статья сохранена успешно!' });
     } catch (error) {
-        console.error('Ошибка при сохранении:', error.response ? error.response.data : error.message);
-        res.status(500).json({ error: 'Ошибка при сохранении статьи' });
+        console.error('[ERROR] Ошибка при сохранении:', error.response ? error.response.status : error.message);
+        res.status(500).json({ error: 'Ошибка при сохранении. Проверьте токен и репозиторий.' });
     }
 });
 
 app.listen(PORT, () => {
-    console.log(`Сервер запущен на http://localhost:${PORT}`);
+    console.log(`[LOG] Сервер запущен на http://localhost:${PORT}`);
 });

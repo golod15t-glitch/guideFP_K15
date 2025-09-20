@@ -277,7 +277,8 @@
             const title = articleTitle.innerText;
             const content = articleContent.innerHTML;
 
-            fetch('/save-article', {
+            // Замените URL на ваш фактический адрес сервера
+            fetch('https://my-app.onrender.com/save-article', { // Убедитесь, что URL правильный
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

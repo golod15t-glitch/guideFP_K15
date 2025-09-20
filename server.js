@@ -1,59 +1,69 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const { Octokit } = require('@octokit/rest');
-const cors = require('cors');
-require('dotenv').config();
-
+const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 10000;
 
-// Инициализация Octokit с токеном из переменных окружения
-const octokit = new Octokit({
-  auth: process.env.GITHUB_TOKEN // Токен должен быть в .env
+// GitHub API конфиг
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // Установите в Render
+const REPO_OWNER = 'guideFP_K15'; // Проверьте точное имя репозитория
+const REPO_NAME = 'guideFP_K15'; // То же самое, если это пользовательский репозиторий
+
+app.use(express.json());
+
+// Эндпоинт для получения статьи (GET-запрос, который падает в логах)
+app.get('/articles/:filename', async (req, res) => {
+    const { filename } = req.params;
+    const path = `articles/${filename}.html`; // Например, 'articles/article1.html'
+
+    try {
+        const response = await axios.get(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
+            headers: {
+                'Authorization': `token ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3.raw'
+            }
+        });
+
+        const content = Buffer.from(response.data.content, 'base64').toString('utf-8');
+        res.send(content);
+    } catch (error) {
+        console.error('Ошибка при получении файла из GitHub:', error.response ? error.response.data : error.message);
+        res.status(404).json({ error: 'Файл не найден в репозитории' });
+    }
 });
 
-// Настройка CORS
-app.use(cors());
-app.use(bodyParser.json());
-
+// Эндпоинт для сохранения статьи (POST, как в HTML)
 app.post('/save-article', async (req, res) => {
-  const { title, content, path } = req.body; // path - путь к файлу, например, 'articles/article1.html'
+    const { title, content, path } = req.body;
 
-  if (!title || !content || !path) {
-    return res.status(400).json({ error: 'Отсутствуют обязательные поля: title, content или path.' });
-  }
+    try {
+        // Сначала получите SHA файла (для обновления)
+        const getResponse = await axios.get(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
+            headers: {
+                'Authorization': `token ${GITHUB_TOKEN}`,
+                'Accept': 'application/vnd.github.v3.raw'
+            }
+        });
 
-  const repo = process.env.GITHUB_REPO || 'guideFP_K15'; // Репозиторий из переменных окружения
-  const owner = process.env.GITHUB_OWNER || 'golod15t-glitch'; // Владелец репозитория (ваш username)
+        const sha = getResponse.data.sha;
 
-  try {
-    // Получение текущего содержимого файла
-    const { data: { content: currentContent, sha } } = await octokit.repos.getContent({
-      owner,
-      repo,
-      path
-    });
+        // Обновите файл
+        const updateResponse = await axios.put(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
+            message: `Обновление статьи: ${title}`,
+            content: Buffer.from(content).toString('base64'),
+            sha: sha
+        }, {
+            headers: {
+                'Authorization': `token ${GITHUB_TOKEN}`
+            }
+        });
 
-    // Создание нового содержимого в base64
-    const newContent = Buffer.from(content).toString('base64');
-
-    // Обновление файла
-    await octokit.repos.createOrUpdateFileContents({
-      owner,
-      repo,
-      path,
-      message: `Обновление статьи: ${title}`,
-      content: newContent,
-      sha: sha
-    });
-
-    res.status(200).json({ message: 'Статья успешно сохранена в репозитории!' });
-  } catch (error) {
-    console.error('Ошибка при сохранении статьи:', error.message);
-    res.status(500).json({ error: 'Ошибка при сохранении статьи. Проверьте токен и права доступа.' });
-  }
+        res.json({ message: 'Статья сохранена успешно!' });
+    } catch (error) {
+        console.error('Ошибка при сохранении:', error.response ? error.response.data : error.message);
+        res.status(500).json({ error: 'Ошибка при сохранении статьи' });
+    }
 });
 
 app.listen(PORT, () => {
-  console.log(`Сервер запущен на http://localhost:${PORT}`);
+    console.log(`Сервер запущен на http://localhost:${PORT}`);
 });

@@ -176,12 +176,12 @@
                     <p>Здесь ваш контент...</p>
                 </div>
                 
-                <!-- Edit Button -->
-                <div class="mt-8 pt-4 border-t border-gray-200 flex justify-end">
+                <!-- Edit Button (удалён дубликат) -->
+                <!-- <div class="mt-8 pt-4 border-t border-gray-200 flex justify-end">
                     <button id="editArticleBtn" onclick="showAdminModal()" class="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
                         <i class="fas fa-pencil-alt mr-2"></i> Редактировать статью
                     </button>
-                </div>
+                </div> -->
             </div>
         </div>
         
@@ -204,6 +204,9 @@
         const articleContent = document.getElementById('articleContent');
         const articleTitle = document.getElementById('articleTitle');
         const lastModified = document.getElementById('lastModified');
+        
+        // URL сервера (замените на ваш актуальный, например, с Render)
+        const SERVER_URL = 'https://guidefp-k15.onrender.com'; // Или ваш URL
         
         // Show admin modal
         function showAdminModal() {
@@ -272,32 +275,32 @@
             document.getElementById('editArticleBtn').style.display = 'inline-flex';
         }
 
-        // Save article content
-        function saveArticle() {
+        // Save article content (с доработками: динамичный путь, SERVER_URL, подтверждение и обработка ошибок)
+        async function saveArticle() {
             const title = articleTitle.innerText;
             const content = articleContent.innerHTML;
+            const path = window.location.pathname; // Динамичный путь, например, '/articles/article1.html'
 
-            // Замените URL на ваш фактический адрес сервера
-            fetch('https://guidefp-k15.onrender.com/save-article', { // Убедитесь, что URL правильный
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ title, content })
-            })
-            .then(response => {
+            try {
+                const response = await fetch(`${SERVER_URL}/save-article`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title, content, path })
+                });
+
+                const result = await response.json();
                 if (response.ok) {
-                    alert("Изменения сохранены и загружены на сервер!");
+                    alert(result.message || 'Изменения сохранены и загружены на сервер!');
+                    disableEditing();
                 } else {
-                    alert("Ошибка при сохранении изменений.");
+                    alert(result.error || 'Ошибка при сохранении.');
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Ошибка:', error);
-                alert("Ошибка при сохранении изменений.");
-            });
-
-            disableEditing();
+                alert('Ошибка при сохранении. Проверьте подключение к серверу.');
+            }
         }
 
         // Format text commands
@@ -388,4 +391,3 @@
     </script>
 </body>
 </html>
-

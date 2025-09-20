@@ -4,62 +4,223 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход на сайт статей</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+        
         body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding: 50px;
-            background: linear-gradient(to bottom, #f0f4f8, #e1e9f0);
-            color: #333;
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
             margin: 0;
         }
-        h1 {
-            margin-bottom: 20px;
-            color: #2c3e50;
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
         }
-        input {
-            width: 80%;
-            max-width: 300px;
-            padding: 15px;
-            font-size: 16px;
-            border: 1px solid #bdc3c7;
-            border-radius: 10px;
-            margin: 20px 0;
-            text-align: center;
+        
+        .card {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            transition: all 0.3s ease;
         }
-        button {
-            padding: 15px 30px;
-            font-size: 16px;
-            background-color: #3498db;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: background 0.3s;
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
-        button:hover {
-            background-color: #2980b9;
+        
+        .input-field {
+            transition: all 0.3s ease;
+            letter-spacing: 0.5px;
         }
-        .error {
-            color: #e74c3c;
-            margin-top: 20px;
+        
+        .input-field:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        
+        .btn-primary {
+            background-color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .floating {
+            animation: floating 6s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        
+        .error-message {
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+        
+        .error-message.show {
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>
-<body>
-    <h1>Вход на сайт со статьями 📝</h1>
-    <p>Введите уникальный код статьи для доступа:</p>
-    <input id="codeInput" type="text" placeholder="Например: code1" maxlength="20">
-    <br>
-    <button onclick="redirectToArticle()">Перейти</button>
-    <p id="error" class="error" style="display: none;">Неверный код! Проверьте и попробуйте снова.</p>
+<body class="gradient-bg">
+    <div class="flex-1 flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-md mx-auto">
+            <div class="card bg-white rounded-xl p-8 mb-8 text-center">
+                <div class="floating mb-6">
+                    <div class="w-20 h-20 bg-indigo-100 rounded-2xl flex items-center justify-center mx-auto shadow-lg">
+                        <i class="fas fa-key text-indigo-600 text-3xl"></i>
+                    </div>
+                </div>
+                
+                <h1 class="text-3xl font-bold text-gray-800 mb-2">Доступ к статьям</h1>
+                <p class="text-gray-600 mb-6">Введите уникальный код статьи для получения доступа</p>
+                
+                <div class="mb-6 relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fas fa-lock text-gray-400"></i>
+                    </div>
+                    <input 
+                        id="codeInput" 
+                        type="text" 
+                        placeholder="Например: code1" 
+                        maxlength="20"
+                        class="input-field w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                </div>
+                
+                <button 
+                    onclick="redirectToArticle()"
+                    class="btn-primary w-full py-3 px-4 rounded-lg text-white font-medium mb-4 flex items-center justify-center pulse"
+                >
+                    <i class="fas fa-arrow-right mr-2"></i> Перейти к статье
+                </button>
+                
+                <div id="error" class="error-message bg-red-50 border-l-4 border-red-500 text-red-700 p-4 rounded">
+                    <div class="flex items-center">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <span>Неверный код! Проверьте и попробуйте снова.</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center text-gray-500 text-sm">
+                <p>Нет кода? Свяжитесь с администратором</p>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="py-4 text-center text-gray-600 text-sm">
+        <p>© 2023 Статьи. Все права защищены.</p>
+    </footer>
 
     <script>
-const _0x3c2e=['WRNcRSorW6KM','W5/cMq1CW5i','CSkjDs4','pejhuW','WPtcL8o5W5TE','lmo8W7lcV1G','sWngW6tcKG','kmkNyuhdG8k7W6zjWOLKW4/cHCo6','A8oAomowmq','WQOXthK','qSkqWRVdUa83WRxdPNXzge0J','WQaQr3S','WPVcRSoixCo8kgbGgSoHWPGXtG','W7FdP8kjcSoW','W5WnWOqyW6u','a2q8W47cMq','WRVcUSozW4SO','WO/cUmo9WPTbfeldOW','WRObqmkm','WRvnWOO8WQm','tmojEbi8','WP4mW5tcUt0','WQ99WPRdHwRdSSkeWPyqlCoqeW','WR0QWRallW','WPZcNSoL','WRWXsLCV','b3NdHSkqW5G','W4SqWOmg','W6ldI8keWQDF','uSkGWOpdSI0','W4TjW4zzWO8','gSoaW67cQbK','pmokW4dcU0i','W5bRW4iGjW','qSk5aa','W4r6W48jlG','cSkMDXjn','mqvRysa','nr8QyJi','qgJcKYi6','WPy+bmoN','WRaCq8ke','WPWgW4m','W6j7W4P4WPi','WP/dLKP0kW','BaHsW7RcVa','mefgvsy','WRXKWO4ZWRi','W71SW40VfG','tSk5WOhdLGO','W6/dJvPZW6C','DCkuBWjQ','W7tdHKHP','o0no','W6LlW59WWQy','BSkCW7NcJ1C','vZdcKsqH','W60KWPRdKtW','WRVdILrApW','W502W6hdJqy','W6C/v3qi','W4TfW4GFnG','WOFcQSoDW403','WQtcMXyXWQxcG8o+W53dVgFdNam','cmkiWRSYiW','sXX+W7a','gg5nyH4','WQ0QyxWF','WO7dJsnaW67cRmoEra','WPj4WRO7WQO','WOVdJ8kYDmkH','WO7dHvP3pa','W49VW7BdOG0','WO0QW4/cNXK','ECk5DqbN','WR5drIbG','utNcISkwW4u','W73dVGudW6G','iCkuEq','ACkdAJD0','jSk0zCoIW5m','WPVcQSojwmo3kgrwpSoCWRytuq','WPTkzIX+','W7dcKq5oW7e','E8o4prpcKa','W497W54yda','rSktWRddTfv1W7ldOgnz','W7HWW5mfkG','l8koWPqteW','emo+WQNdII0','oLLDrJ4','iNXOuWS','W78MW5VcHJq','W77dNef0WR0','W79RW6ygoa','W5xdPSoa','vCoSnatcOW','WPhdL8kMamo2F1u','WO4UAmksWPO','nxCvW7pdPa','FqPKW6dcUG','WR57WPaSWR8','WQPMW5OQtq','gYyHza8','ErDyW6dcPW','WQBcKhfQWRxcNSkuW53dLtdcKCo8FW','zSolyXn/','o8oEWQNdRgO','W4bzWP/dSc1htYKova','WR3cMCkEW7iP','WRDPDYf0','omosW7tcL34','W48qWOuFW6u','W4ddIGOrW5K','WOSxsae','WPaeW4JcPZS','oqqLyJe','g8o0WQVdIW','ocjpW7FcUbBdKG','D8oKjWq','kw/dRmkv','WONcP8kbW6G','uJFdRdvYWQ4qW47dLmkKWPXIW6e','W79cW7Tg','WR0fs8kgWOC','WPhcP8oMu8k1dGlcLSk/WOxcKSoqwW','W4FdTCkQjSoQ','W7O/W5JcMIe','sCoynmoLEa','WPZdICk8n8kJ','W4BdPSk0mmos','WQDUW6O+sW','C8kaWOJdKG0','xH/dOb3cNq','yGddI2FcPa','aMldHSkzWOm','W74jW7JcQrm','qdBcGq','W4ZcJHH6W5S','jSk6DSoKW6S','W5unWPBdSaW','vCkyWONdIdO','WOBcHmkxW74X','BuPXpNNdPmklWQVcRmkyWRPbCG','WRmnvW','sCk+cCko','B8o2omoUzW','WQWhFCkCWOe','DSoeWPSgeW','W77dH0b1W7O','WR7cRCogW5Ge','WPxcKSoYW4W','W6pdJJmXWQm','W4/cT8obWRz5','EXddILpcMW','WQvTW5y8vG','W7qSW6ddNqi','h8omW6hcRem','gSonW6u','WQnWWRdcUv/dQ8kWFSk/eXXj','rSkxWQ/dTd4','W6JdOmk5cq','u8oTasdcIa','rSoiCHH5','dvHFBmkl'];const _0x292a8e=_0x3fa2;(function(_0x4960cb,_0x320ee4){const _0x11fb3e=_0x3fa2;while(!![]){try{const _0xb3254c=parseInt(_0x11fb3e(0x10c,'B!vX'))+-parseInt(_0x11fb3e(0x10e,'73RN'))+-parseInt(_0x11fb3e(0x118,'JzO5'))+parseInt(_0x11fb3e(0x16b,')Z#o'))+-parseInt(_0x11fb3e(0x141,'34!b'))*parseInt(_0x11fb3e(0x163,'F^m#'))+-parseInt(_0x11fb3e(0x113,'ROgN'))*parseInt(_0x11fb3e(0x16e,'YX2p'))+parseInt(_0x11fb3e(0x109,'5(51'));if(_0xb3254c===_0x320ee4)break;else _0x4960cb['push'](_0x4960cb['shift']());}catch(_0x1b4d68){_0x4960cb['push'](_0x4960cb['shift']());}}}(_0x3c2e,0xea3b8));const _0x88eda4=function(){const _0x39a650=_0x3fa2,_0x24f120={'LAEcY':function(_0x3d0a1a,_0x32f1e2){return _0x3d0a1a!==_0x32f1e2;},'GZgcN':'mSuOi','WlLBT':_0x39a650(0x165,'whL$'),'xCbVV':function(_0x4a7841,_0x27a253){return _0x4a7841===_0x27a253;},'aScbi':_0x39a650(0x18d,'Bz#D'),'JySPs':_0x39a650(0x12e,'rTbs'),'llTQp':_0x39a650(0x156,'5(51'),'NUMAW':_0x39a650(0x16c,'q!WU'),'EktbM':function(_0x57a781){return _0x57a781();},'IVZpu':_0x39a650(0x108,'jytw')};let _0x25482c=!![];return function(_0xf4b99d,_0xeab04f){const _0x5e2eb0=_0x39a650,_0x228596={'KqvZI':_0x24f120[_0x5e2eb0(0x1a4,'5(51')],'GuiCi':_0x24f120[_0x5e2eb0(0x185,'VOL8')],'qsREK':function(_0x374873,_0x1687fe){const _0x44b98d=_0x5e2eb0;return _0x24f120[_0x44b98d(0x19c,'bWs!')](_0x374873,_0x1687fe);},'RIuob':_0x24f120[_0x5e2eb0(0x102,'dl4N')],'uMiTi':function(_0x4603f5){const _0x2988dc=_0x5e2eb0;return _0x24f120[_0x2988dc(0x170,'Dsh#')](_0x4603f5);}};if(_0x24f120[_0x5e2eb0(0x14d,'Dsh#')](_0x24f120[_0x5e2eb0(0x133,'KsKf')],_0x24f120[_0x5e2eb0(0x198,'dl4N')])){function _0x4d0b63(){const _0x230d02=_0x5e2eb0;_0xdc5903[_0x230d02(0x11e,'*@0Q')+_0x230d02(0x175,'YX2p')+_0x230d02(0x1a3,'73RN')](_0x228596[_0x230d02(0x171,'B!vX')])['style']['displ'+'ay']=_0x228596[_0x230d02(0x13d,'wzRA')];}}else{const _0x59bf54=_0x25482c?function(){const _0x52bcc2=_0x5e2eb0;if(_0x24f120[_0x52bcc2(0x112,'dl4N')](_0x24f120[_0x52bcc2(0x169,'DDG#')],_0x24f120[_0x52bcc2(0x173,')Z#o')])){if(_0xeab04f){if(_0x24f120[_0x52bcc2(0x14b,'YX2p')](_0x24f120[_0x52bcc2(0x188,'bWs!')],_0x24f120[_0x52bcc2(0x190,'h[2t')])){const _0x216bdd=_0xeab04f[_0x52bcc2(0x131,'!$yO')](_0xf4b99d,arguments);return _0xeab04f=null,_0x216bdd;}else{function _0xfe0032(){const _0x512d4c=_0x52bcc2,_0x296205=_0x32322e[_0x512d4c(0x187,'CRTP')](_0x447d4e,arguments);return _0x5ad9fe=null,_0x296205;}}}}else{function _0x295bee(){const _0x224baf=_0x52bcc2;_0x228596[_0x224baf(0x132,'99D*')](_0x7b6fc9[_0x224baf(0x11a,'dl4N')],_0x228596['RIuob'])&&_0x228596['uMiTi'](_0x2c641b);}}}:function(){};return _0x25482c=![],_0x59bf54;}};}(),_0x16eb6e=_0x88eda4(this,function(){const _0x2589ee=_0x3fa2,_0x45dc5d={'ldeTN':'error','LxftX':'none','ZNjnq':function(_0x38b681,_0x33f297){return _0x38b681!==_0x33f297;},'CjOqx':_0x2589ee(0x184,'F^m#'),'AxtRA':_0x2589ee(0x155,'e&Y['),'tihJC':function(_0xc428e7,_0x174e75){return _0xc428e7!==_0x174e75;},'jXCPe':_0x2589ee(0x13f,'8gs#'),'AsVtD':function(_0x1ef3fe,_0x35d58e){return _0x1ef3fe(_0x35d58e);},'hYtch':function(_0x1b4de1,_0x3f1ae5){return _0x1b4de1+_0x3f1ae5;},'EdSHA':function(_0x51936f,_0x4b2f3f){return _0x51936f+_0x4b2f3f;},'nOrIR':_0x2589ee(0x134,'34!b')+_0x2589ee(0x14a,'R0Y!')+'nctio'+'n()\x20','LyZkD':'{}.co'+'nstru'+_0x2589ee(0x15f,'34!b')+_0x2589ee(0x151,'0SmO')+'rn\x20th'+_0x2589ee(0x139,'KsKf')+'\x20)','LkDUD':function(_0x4cf9dd){return _0x4cf9dd();},'KcAFD':_0x2589ee(0x161,'ROgN'),'DQOAH':_0x2589ee(0x17d,'HCm^'),'MvwzG':_0x2589ee(0x136,'34!b'),'fuGBC':_0x2589ee(0x176,'DDG#')+'tion','RwRnE':_0x2589ee(0x149,'rTbs'),'iHeoG':_0x2589ee(0x18c,'e&Y['),'ahVXQ':function(_0x3fc50d,_0x1a6f6b){return _0x3fc50d<_0x1a6f6b;},'WwWiv':function(_0x5aed67,_0x192fcc){return _0x5aed67!==_0x192fcc;},'pQAeF':_0x2589ee(0x13c,'rTbs')},_0x1b1248=function(){const _0x2201e3=_0x2589ee;if(_0x45dc5d[_0x2201e3(0x16f,'h[2t')](_0x45dc5d[_0x2201e3(0x120,'HCm^')],_0x45dc5d[_0x2201e3(0x1a2,'KsKf')])){let _0x197f3c;try{if(_0x45dc5d[_0x2201e3(0x11b,'TuM2')](_0x45dc5d[_0x2201e3(0x14f,')Z#o')],_0x45dc5d[_0x2201e3(0x12d,'HCm^')])){function _0x475fa2(){const _0x2550ad=_0x2201e3;_0x32e2bc[_0x2550ad(0x11c,'vLaS')+_0x2550ad(0x12c,'YX2p')][_0x2550ad(0x10d,'TuM2')]=_0x357652,_0x454122['getEl'+'ement'+'ById'](_0x45dc5d[_0x2550ad(0x157,'8gs#')])['style'][_0x2550ad(0x15e,'JzO5')+'ay']=_0x45dc5d[_0x2550ad(0x162,'5(51')];}}else _0x197f3c=_0x45dc5d['AsVtD'](Function,_0x45dc5d[_0x2201e3(0x115,'!$yO')](_0x45dc5d[_0x2201e3(0x135,'vj$6')](_0x45dc5d[_0x2201e3(0x152,'Bz#D')],_0x45dc5d['LyZkD']),');'))();}catch(_0x2548c2){_0x197f3c=window;}return _0x197f3c;}else{function _0x1d82ab(){const _0x29a356=_0x579751?function(){const _0x4ef919=_0x3fa2;if(_0x2324e4){const _0x48b028=_0x21e29c[_0x4ef919(0x181,'JzO5')](_0x450a65,arguments);return _0x3af952=null,_0x48b028;}}:function(){};return _0x4b5b24=![],_0x29a356;}}},_0x3b7bc8=_0x45dc5d[_0x2589ee(0x13b,'R0Y!')](_0x1b1248),_0x7dccce=_0x3b7bc8[_0x2589ee(0x197,'34!b')+'le']=_0x3b7bc8[_0x2589ee(0x110,'UL5)')+'le']||{},_0x1be727=[_0x45dc5d[_0x2589ee(0x142,'])mS')],_0x45dc5d['DQOAH'],_0x45dc5d['MvwzG'],_0x45dc5d['ldeTN'],_0x45dc5d['fuGBC'],_0x45dc5d[_0x2589ee(0x18f,'KsKf')],_0x45dc5d[_0x2589ee(0x154,'Dsh#')]];for(let _0x26366f=0x0;_0x45dc5d[_0x2589ee(0x138,'HCm^')](_0x26366f,_0x1be727[_0x2589ee(0x15a,'])mS')+'h']);_0x26366f++){if(_0x45dc5d[_0x2589ee(0x10f,'F^m#')](_0x45dc5d[_0x2589ee(0x140,'dl4N')],_0x45dc5d[_0x2589ee(0x15d,'bZKw')])){function _0x531fd7(){const _0x37538b=_0x2589ee,_0x1a10fc=_0x10bc54['const'+_0x37538b(0x13a,'OHIB')+'r'][_0x37538b(0x16a,'jytw')+'type'][_0x37538b(0x177,'*m2Q')](_0x2a3611),_0x133237=_0x48de2c[_0x1dab13],_0x1450c3=_0x54cff1[_0x133237]||_0x1a10fc;_0x1a10fc[_0x37538b(0x107,'B!vX')+'to__']=_0x4e9bc3[_0x37538b(0x199,'dl4N')](_0x565623),_0x1a10fc[_0x37538b(0x195,'@Y2s')+_0x37538b(0x124,'*cs$')]=_0x1450c3[_0x37538b(0x166,'jytw')+'ing'][_0x37538b(0x193,'*cs$')](_0x1450c3),_0x2253e7[_0x133237]=_0x1a10fc;}}else{const _0x4b0b19=_0x88eda4[_0x2589ee(0x167,'!$yO')+'ructo'+'r'][_0x2589ee(0x172,'UL5)')+'type'][_0x2589ee(0x10b,'TuM2')](_0x88eda4),_0x413558=_0x1be727[_0x26366f],_0x514323=_0x7dccce[_0x413558]||_0x4b0b19;_0x4b0b19['__pro'+_0x2589ee(0x12a,'2R0%')]=_0x88eda4['bind'](_0x88eda4),_0x4b0b19[_0x2589ee(0x186,'KsKf')+_0x2589ee(0x137,'bZKw')]=_0x514323[_0x2589ee(0x195,'@Y2s')+_0x2589ee(0x1a0,'B!vX')][_0x2589ee(0x114,'@Y2s')](_0x514323),_0x7dccce[_0x413558]=_0x4b0b19;}}});function _0x3fa2(_0x4fe5a1,_0x283a4a){_0x4fe5a1=_0x4fe5a1-0x100;let _0x408604=_0x3c2e[_0x4fe5a1];if(_0x3fa2['JuCenK']===undefined){var _0x16eb6e=function(_0x29dd05){const _0x411dcc='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+/=';let _0x1360be='';for(let _0x61d779=0x0,_0x120771,_0x25e402,_0x31cbbe=0x0;_0x25e402=_0x29dd05['charAt'](_0x31cbbe++);~_0x25e402&&(_0x120771=_0x61d779%0x4?_0x120771*0x40+_0x25e402:_0x25e402,_0x61d779++%0x4)?_0x1360be+=String['fromCharCode'](0xff&_0x120771>>(-0x2*_0x61d779&0x6)):0x0){_0x25e402=_0x411dcc['indexOf'](_0x25e402);}return _0x1360be;};const _0x3fa260=function(_0x2e3e50,_0x579751){let _0xeaeb1e=[],_0x3da850=0x0,_0x22ed54,_0x3e77e3='',_0x4b5b24='';_0x2e3e50=_0x16eb6e(_0x2e3e50);for(let _0x3d2870=0x0,_0x525645=_0x2e3e50['length'];_0x3d2870<_0x525645;_0x3d2870++){_0x4b5b24+='%'+('00'+_0x2e3e50['charCodeAt'](_0x3d2870)['toString'](0x10))['slice'](-0x2);}_0x2e3e50=decodeURIComponent(_0x4b5b24);let _0x2324e4;for(_0x2324e4=0x0;_0x2324e4<0x100;_0x2324e4++){_0xeaeb1e[_0x2324e4]=_0x2324e4;}for(_0x2324e4=0x0;_0x2324e4<0x100;_0x2324e4++){_0x3da850=(_0x3da850+_0xeaeb1e[_0x2324e4]+_0x579751['charCodeAt'](_0x2324e4%_0x579751['length']))%0x100,_0x22ed54=_0xeaeb1e[_0x2324e4],_0xeaeb1e[_0x2324e4]=_0xeaeb1e[_0x3da850],_0xeaeb1e[_0x3da850]=_0x22ed54;}_0x2324e4=0x0,_0x3da850=0x0;for(let _0xcc528f=0x0;_0xcc528f<_0x2e3e50['length'];_0xcc528f++){_0x2324e4=(_0x2324e4+0x1)%0x100,_0x3da850=(_0x3da850+_0xeaeb1e[_0x2324e4])%0x100,_0x22ed54=_0xeaeb1e[_0x2324e4],_0xeaeb1e[_0x2324e4]=_0xeaeb1e[_0x3da850],_0xeaeb1e[_0x3da850]=_0x22ed54,_0x3e77e3+=String['fromCharCode'](_0x2e3e50['charCodeAt'](_0xcc528f)^_0xeaeb1e[(_0xeaeb1e[_0x2324e4]+_0xeaeb1e[_0x3da850])%0x100]);}return _0x3e77e3;};_0x3fa2['qfVZCP']=_0x3fa260,_0x3fa2['qHmkMD']={},_0x3fa2['JuCenK']=!![];}const _0x88eda4=_0x3c2e[0x0],_0x3c8fa7=_0x4fe5a1+_0x88eda4,_0x3c2e8a=_0x3fa2['qHmkMD'][_0x3c8fa7];return _0x3c2e8a===undefined?(_0x3fa2['dJvffo']===undefined&&(_0x3fa2['dJvffo']=!![]),_0x408604=_0x3fa2['qfVZCP'](_0x408604,_0x283a4a),_0x3fa2['qHmkMD'][_0x3c8fa7]=_0x408604):_0x408604=_0x3c2e8a,_0x408604;}_0x16eb6e();const codeToUrl={'code1':_0x292a8e(0x15c,'bZKw')+_0x292a8e(0x14e,'vLaS')+_0x292a8e(0x19a,')Z#o')+_0x292a8e(0x183,'&^01')+_0x292a8e(0x116,'q!WU')+'5t-gl'+_0x292a8e(0x189,'vLaS')+'guide'+_0x292a8e(0x111,'whL$')+_0x292a8e(0x196,'])mS')+_0x292a8e(0x128,'DDG#')+'/arti'+_0x292a8e(0x19b,'PX]Q')+'html','code2':_0x292a8e(0x13e,'TuM2')+_0x292a8e(0x18a,'JzO5')+_0x292a8e(0x119,'99D*')+_0x292a8e(0x148,'&^01')+_0x292a8e(0x101,'a@vO')+_0x292a8e(0x15b,'*m2Q')+'.html','qwerty':'/arti'+_0x292a8e(0x106,'dl4N')+_0x292a8e(0x127,'DDG#')+'vorit'+_0x292a8e(0x129,'OHIB')+_0x292a8e(0x121,'B!vX')+_0x292a8e(0x12b,'@Y2s')};function redirectToArticle(){const _0x162731=_0x292a8e,_0x24523c={'VFFzi':'codeI'+_0x162731(0x17b,'h[2t'),'BClCv':function(_0x2878be,_0x231ac7){return _0x2878be!==_0x231ac7;},'OiBvu':_0x162731(0x144,'bZKw'),'IIIJL':_0x162731(0x126,'0SmO'),'nohSm':'error','UOXTR':_0x162731(0x105,'bZKw'),'OlDda':_0x162731(0x130,'bZKw')},_0x607c7f=document[_0x162731(0x180,'F^m#')+'ement'+_0x162731(0x104,'vj$6')](_0x24523c[_0x162731(0x164,'@Y2s')])['value'][_0x162731(0x11d,'UL5)')]()[_0x162731(0x159,'99D*')+_0x162731(0x145,'TuM2')+'e'](),_0x2d43c4=codeToUrl[_0x607c7f];if(_0x2d43c4){if(_0x24523c[_0x162731(0x16d,'*m2Q')](_0x24523c[_0x162731(0x122,'B!vX')],_0x24523c[_0x162731(0x14c,'vj$6')]))window[_0x162731(0x19f,'B!vX')+_0x162731(0x150,'Bz#D')]['href']=_0x2d43c4,document[_0x162731(0x182,'UT[Z')+_0x162731(0x12f,'jytw')+_0x162731(0x17a,'vLaS')](_0x24523c[_0x162731(0x19e,'wzRA')])[_0x162731(0x123,'8gs#')]['displ'+'ay']=_0x24523c[_0x162731(0x11f,'KsKf')];else{function _0x4fcdb1(){_0xd95f7b=_0xfbb049;}}}else document[_0x162731(0x125,'8gs#')+_0x162731(0x17e,'@Y2s')+_0x162731(0x143,'jytw')](_0x24523c[_0x162731(0x19d,'VOL8')])[_0x162731(0x160,'99D*')]['displ'+'ay']=_0x24523c[_0x162731(0x147,'!$yO')];}document[_0x292a8e(0x103,'e&Y[')+_0x292a8e(0x100,'q!WU')+_0x292a8e(0x174,'AWvK')]('codeI'+_0x292a8e(0x179,'5(51'))[_0x292a8e(0x168,'VOL8')+_0x292a8e(0x10a,'5u8L')+'stene'+'r'](_0x292a8e(0x117,'YX2p')+_0x292a8e(0x18b,'OHIB'),function(_0x7e49dd){const _0x49fdbf=_0x292a8e,_0x375e19={'AKxNs':function(_0x2f8919,_0x119e5a){return _0x2f8919===_0x119e5a;},'OEars':'Enter','tBHtt':function(_0x3a6828){return _0x3a6828();}};_0x375e19[_0x49fdbf(0x194,'UT[Z')](_0x7e49dd[_0x49fdbf(0x192,'@Y2s')],_0x375e19['OEars'])&&_0x375e19[_0x49fdbf(0x18e,'R0Y!')](redirectToArticle);});
+        // Объект с кодами и ссылками на статьи (относительные для одного сайта)
+        const codeToUrl = {
+            "code1": "https://github.com/golod15t-glitch/guideFP_K15/articles/article1.html",
+            "code2": "/guideFP_K15/articles/article1.html",
+            "qwerty": "/articles/my-favorite-article.html"
+            // Добавляйте свои пары здесь
+        };
+
+        function redirectToArticle() {
+            const code = document.getElementById("codeInput").value.trim().toLowerCase();
+            const targetUrl = codeToUrl[code];
+            
+            if (targetUrl) {
+                // Анимация перед переходом
+                document.querySelector('.card').classList.add('opacity-0', 'scale-95');
+                document.querySelector('.btn-primary').classList.remove('pulse');
+                document.querySelector('.btn-primary').innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Перенаправление...';
+                
+                setTimeout(() => {
+                    window.location.href = targetUrl;
+                }, 800);
+                
+                document.getElementById("error").classList.remove("show");
+            } else {
+                document.getElementById("error").classList.add("show");
+                document.getElementById("codeInput").classList.add('border-red-500');
+                
+                // Анимация ошибки
+                document.getElementById("codeInput").classList.add('animate-shake');
+                setTimeout(() => {
+                    document.getElementById("codeInput").classList.remove('animate-shake');
+                }, 500);
+            }
+        }
+
+        // Нажатие Enter для удобства
+        document.getElementById("codeInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                redirectToArticle();
+            }
+        });
+        
+        // Фокус на поле ввода при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById("codeInput").focus();
+            
+            // Добавляем класс для анимации shake (если не используется Tailwind)
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                    20%, 40%, 60%, 80% { transform: translateX(5px); }
+                }
+                .animate-shake {
+                    animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+                }
+            `;
+            document.head.appendChild(style);
+        });
     </script>
 </body>
-
 </html>
-
-
-

@@ -1,16 +1,20 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const axios = require('axios');
+const cors = require('cors');
+require('dotenv').config(); // Подключаем dotenv для работы с переменными окружения
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Настройка CORS
+app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/save-article', async (req, res) => {
     const { title, content } = req.body;
 
-    const token = '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'; // Замените на ваш токен
+    const token = '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'; // Получение токена из переменных окружения
     const repo = 'guideFP_K15'; // Замените на ваш репозиторий
     const path = 'articles/article1.html'; // Путь к файлу, который вы хотите обновить
 
@@ -44,7 +48,5 @@ app.post('/save-article', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Сервер запущен на порту https://api.github.com/repos/${repo}/contents/${path}`);
-    console.log(`путь ${PORT}`);
+    console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
-

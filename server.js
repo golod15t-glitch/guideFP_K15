@@ -44,5 +44,7 @@ app.post('/save-article', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Сервер запущен на порту ${PORT}`);
+    console.log(`Сервер запущен на порту https://api.github.com/repos/${repo}/contents/${path}`);
+    console.log(`путь ${PORT}`);
 });
+

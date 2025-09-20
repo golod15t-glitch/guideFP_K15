@@ -5,7 +5,7 @@ const cors = require('cors');
 require('dotenv').config(); // Подключаем dotenv для работы с переменными окружения
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 
 // Настройка CORS
 app.use(cors());
@@ -50,3 +50,4 @@ app.post('/save-article', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
+

@@ -245,11 +245,31 @@
             articleContent.classList.add('border', 'border-gray-300', 'p-4', 'rounded-lg');
             articleTitle.contentEditable = true;
             articleTitle.classList.add('border', 'border-gray-300', 'px-2', 'rounded');
+
+            // Show save button
+            document.getElementById('saveArticleBtn').classList.remove('hidden');
+            document.getElementById('editArticleBtn').classList.add('hidden');
             
             // Update last modified time
             updateLastModified();
         }
-        
+
+        // Save article content
+        function saveArticle() {
+            const title = articleTitle.innerText;
+            const content = articleContent.innerHTML;
+
+            // Save to localStorage (or here you can implement AJAX request to save in your database)
+            localStorage.setItem('savedArticleTitle', title);
+            localStorage.setItem('savedArticleContent', content);
+
+            alert("Изменения сохранены!");
+            // Optionally disable editing after saving
+            disableEditing();
+        }
+
+
+
         // Disable editing mode
         function disableEditing() {
             editorToolbar.classList.remove('active');
@@ -257,6 +277,10 @@
             articleContent.classList.remove('border', 'border-gray-300', 'p-4', 'rounded-lg');
             articleTitle.contentEditable = false;
             articleTitle.classList.remove('border', 'border-gray-300', 'px-2', 'rounded');
+
+            // Hide save button
+            document.getElementById('saveArticleBtn').classList.add('hidden');
+            document.getElementById('editArticleBtn').classList.remove('hidden');
         }
         
         // Format text commands
@@ -348,3 +372,4 @@
     </script>
 </body>
 </html>
+

@@ -277,12 +277,25 @@
             const title = articleTitle.innerText;
             const content = articleContent.innerHTML;
 
-            // Save to localStorage (or here you can implement AJAX request to save in your database)
-            localStorage.setItem('savedArticleTitle', title);
-            localStorage.setItem('savedArticleContent', content);
+            fetch('/save-article', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ title, content })
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert("Изменения сохранены и загружены на сервер!");
+                } else {
+                    alert("Ошибка при сохранении изменений.");
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert("Ошибка при сохранении изменений.");
+            });
 
-            alert("Изменения сохранены!");
-            // Optionally disable editing after saving
             disableEditing();
         }
 
@@ -354,7 +367,6 @@
             // Save content when focus is lost
             articleContent.addEventListener('blur', function() {
                 if (isAdmin) {
-                    // Here you would typically save the content to a database
                     updateLastModified();
                 }
             });

@@ -2,12 +2,349 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Статья 1</title>
-    <style>body { padding: 20px; }</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Статья</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+        
+        .article-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+        }
+        
+        .editor-toolbar {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .editor-toolbar.active {
+            opacity: 1;
+            height: auto;
+            padding: 1rem 0;
+        }
+        
+        .tool-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .tool-btn:hover {
+            background-color: #e0e7ff;
+        }
+        
+        .tool-btn.active {
+            background-color: #c7d2fe;
+        }
+        
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .content-editable {
+            min-height: 300px;
+            outline: none;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
-<body>
-    <h1>Моя первая статья</h1>
-    <p>Здесь ваш контент...</p>
-    <a href="/">Вернуться на главную</a>
+<body class="min-h-screen bg-gray-50">
+    <!-- Admin Modal -->
+    <div id="adminModal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div class="bg-white rounded-xl p-6 w-full max-w-md shadow-xl transform transition-all fade-in">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">Доступ к редактированию</h3>
+                <button onclick="closeAdminModal()" class="text-gray-400 hover:text-gray-500">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <p class="text-gray-600 mb-4">Этот функционал доступен только для администраторов. Введите код доступа:</p>
+            <input id="adminCodeInput" type="password" placeholder="Админский код" class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-4 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+            <div id="adminError" class="text-red-500 text-sm mb-4 hidden">
+                <i class="fas fa-exclamation-circle mr-1"></i> Неверный код! Попробуйте снова.
+            </div>
+            <button onclick="checkAdminCode()" class="w-full bg-indigo-600 text-white py-2 px-4 rounded-lg hover:bg-indigo-700 transition flex items-center justify-center">
+                <i class="fas fa-unlock-alt mr-2"></i> Подтвердить
+            </button>
+        </div>
+    </div>
+
+    <!-- Editor Toolbar (hidden by default) -->
+    <div id="editorToolbar" class="editor-toolbar bg-white border-b border-gray-200 sticky top-0 z-10">
+        <div class="container mx-auto px-4 flex flex-wrap items-center gap-2">
+            <button onclick="formatText('bold')" class="tool-btn p-2 rounded" title="Жирный">
+                <i class="fas fa-bold"></i>
+            </button>
+            <button onclick="formatText('italic')" class="tool-btn p-2 rounded" title="Курсив">
+                <i class="fas fa-italic"></i>
+            </button>
+            <button onclick="formatText('underline')" class="tool-btn p-2 rounded" title="Подчёркивание">
+                <i class="fas fa-underline"></i>
+            </button>
+            <div class="h-6 border-l border-gray-300 mx-1"></div>
+            <button onclick="formatText('justifyLeft')" class="tool-btn p-2 rounded" title="По левому краю">
+                <i class="fas fa-align-left"></i>
+            </button>
+            <button onclick="formatText('justifyCenter')" class="tool-btn p-2 rounded" title="По центру">
+                <i class="fas fa-align-center"></i>
+            </button>
+            <button onclick="formatText('justifyRight')" class="tool-btn p-2 rounded" title="По правому краю">
+                <i class="fas fa-align-right"></i>
+            </button>
+            <div class="h-6 border-l border-gray-300 mx-1"></div>
+            <button onclick="formatText('insertUnorderedList')" class="tool-btn p-2 rounded" title="Маркированный список">
+                <i class="fas fa-list-ul"></i>
+            </button>
+            <button onclick="formatText('insertOrderedList')" class="tool-btn p-2 rounded" title="Нумерованный список">
+                <i class="fas fa-list-ol"></i>
+            </button>
+            <div class="h-6 border-l border-gray-300 mx-1"></div>
+            <button onclick="increaseFontSize()" class="tool-btn p-2 rounded" title="Увеличить шрифт">
+                <i class="fas fa-text-height"></i>
+            </button>
+            <button onclick="decreaseFontSize()" class="tool-btn p-2 rounded" title="Уменьшить шрифт">
+                <i class="fas fa-text-width"></i>
+            </button>
+            <button onclick="addImage()" class="tool-btn p-2 rounded" title="Добавить изображение">
+                <i class="fas fa-image"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Article Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-sm overflow-hidden">
+            <!-- Article Header -->
+            <div class="border-b border-gray-200 px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <h1 id="articleTitle" class="text-3xl font-bold text-gray-900">Моя первая статья</h1>
+                    <button id="editTitleBtn" onclick="showAdminModal()" class="text-gray-400 hover:text-gray-600 p-2 rounded-full hover:bg-gray-100">
+                        <i class="fas fa-pencil-alt"></i>
+                    </button>
+                </div>
+                <div class="mt-2 flex items-center text-sm text-gray-500">
+                    <span>Последнее изменение: <span id="lastModified">только что</span></span>
+                </div>
+            </div>
+            
+            <!-- Article Body -->
+            <div class="p-6">
+                <div id="articleContent" class="content-editable article-content prose prose-indigo max-w-none">
+                    <p>Здесь ваш контент...</p>
+                </div>
+                
+                <!-- Edit Button -->
+                <div class="mt-8 pt-4 border-t border-gray-200 flex justify-end">
+                    <button onclick="showAdminModal()" class="flex items-center px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition">
+                        <i class="fas fa-pencil-alt mr-2"></i> Редактировать статью
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Back Button -->
+        <div class="mt-8 text-center">
+            <a href="/" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                <i class="fas fa-arrow-left mr-2"></i> Вернуться на главную
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Admin state
+        let isAdmin = false;
+        const ADMIN_CODE = "123";
+        
+        // DOM elements
+        const adminModal = document.getElementById('adminModal');
+        const editorToolbar = document.getElementById('editorToolbar');
+        const articleContent = document.getElementById('articleContent');
+        const articleTitle = document.getElementById('articleTitle');
+        const lastModified = document.getElementById('lastModified');
+        
+        // Show admin modal
+        function showAdminModal() {
+            if (isAdmin) {
+                enableEditing();
+                return;
+            }
+            adminModal.classList.add('active');
+            document.getElementById('adminCodeInput').focus();
+        }
+        
+        // Close admin modal
+        function closeAdminModal() {
+            adminModal.classList.remove('active');
+            document.getElementById('adminError').classList.add('hidden');
+        }
+        
+        // Check admin code
+        function checkAdminCode() {
+            const inputCode = document.getElementById('adminCodeInput').value;
+            const errorElement = document.getElementById('adminError');
+            
+            if (inputCode === ADMIN_CODE) {
+                isAdmin = true;
+                adminModal.classList.remove('active');
+                enableEditing();
+                errorElement.classList.add('hidden');
+                
+                // Save admin state in session storage
+                sessionStorage.setItem('isAdmin', 'true');
+            } else {
+                errorElement.classList.remove('hidden');
+                document.getElementById('adminCodeInput').classList.add('border-red-500');
+                setTimeout(() => {
+                    document.getElementById('adminCodeInput').classList.remove('border-red-500');
+                }, 1000);
+            }
+        }
+        
+        // Enable editing mode
+        function enableEditing() {
+            editorToolbar.classList.add('active');
+            articleContent.contentEditable = true;
+            articleContent.classList.add('border', 'border-gray-300', 'p-4', 'rounded-lg');
+            articleTitle.contentEditable = true;
+            articleTitle.classList.add('border', 'border-gray-300', 'px-2', 'rounded');
+            
+            // Update last modified time
+            updateLastModified();
+        }
+        
+        // Disable editing mode
+        function disableEditing() {
+            editorToolbar.classList.remove('active');
+            articleContent.contentEditable = false;
+            articleContent.classList.remove('border', 'border-gray-300', 'p-4', 'rounded-lg');
+            articleTitle.contentEditable = false;
+            articleTitle.classList.remove('border', 'border-gray-300', 'px-2', 'rounded');
+        }
+        
+        // Format text commands
+        function formatText(command, value = null) {
+            document.execCommand(command, false, value);
+            articleContent.focus();
+        }
+        
+        // Font size controls
+        function increaseFontSize() {
+            const currentSize = parseInt(window.getComputedStyle(document.getSelection().getRangeAt(0).startContainer.parentNode).fontSize) || 16;
+            document.execCommand('fontSize', false, 7); // This creates a <font size="x"> tag
+            const fontElements = document.getElementsByTagName('font');
+            for (let i = 0; i < fontElements.length; i++) {
+                if (fontElements[i].size === '7') {
+                    fontElements[i].removeAttribute('size');
+                    fontElements[i].style.fontSize = (currentSize + 2) + 'px';
+                }
+            }
+        }
+        
+        function decreaseFontSize() {
+            const currentSize = parseInt(window.getComputedStyle(document.getSelection().getRangeAt(0).startContainer.parentNode).fontSize) || 16;
+            if (currentSize > 10) {
+                document.execCommand('fontSize', false, 1); // This creates a <font size="x"> tag
+                const fontElements = document.getElementsByTagName('font');
+                for (let i = 0; i < fontElements.length; i++) {
+                    if (fontElements[i].size === '1') {
+                        fontElements[i].removeAttribute('size');
+                        fontElements[i].style.fontSize = (currentSize - 2) + 'px';
+                    }
+                }
+            }
+        }
+        
+        // Add image
+        function addImage() {
+            const url = prompt('Введите URL изображения:', 'https://');
+            if (url) {
+                document.execCommand('insertImage', false, url);
+            }
+        }
+        
+        // Update last modified time
+        function updateLastModified() {
+            const now = new Date();
+            lastModified.textContent = now.toLocaleString('ru-RU');
+        }
+        
+        // Check if already admin from session
+        document.addEventListener('DOMContentLoaded', function() {
+            if (sessionStorage.getItem('isAdmin') === 'true') {
+                isAdmin = true;
+                enableEditing();
+            }
+            
+            // Make title editable on double click (for admin)
+            articleTitle.addEventListener('dblclick', function() {
+                if (isAdmin) {
+                    this.contentEditable = true;
+                    this.classList.add('border', 'border-gray-300', 'px-2', 'rounded');
+                    this.focus();
+                } else {
+                    showAdminModal();
+                }
+            });
+            
+            // Save content when focus is lost
+            articleContent.addEventListener('blur', function() {
+                if (isAdmin) {
+                    // Here you would typically save the content to a database
+                    updateLastModified();
+                }
+            });
+            
+            articleTitle.addEventListener('blur', function() {
+                if (isAdmin) {
+                    updateLastModified();
+                }
+            });
+            
+            // Allow Enter key in admin code input
+            document.getElementById('adminCodeInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAdminCode();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

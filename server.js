@@ -1,53 +1,59 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const axios = require('axios');
+const { Octokit } = require('@octokit/rest');
 const cors = require('cors');
-require('dotenv').config(); // Подключаем dotenv для работы с переменными окружения
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 10000;
+
+// Инициализация Octokit с токеном из переменных окружения
+const octokit = new Octokit({
+  auth: process.env.GITHUB_TOKEN // Токен должен быть в .env
+});
 
 // Настройка CORS
 app.use(cors());
 app.use(bodyParser.json());
 
 app.post('/save-article', async (req, res) => {
-    const { title, content } = req.body;
+  const { title, content, path } = req.body; // path - путь к файлу, например, 'articles/article1.html'
 
-    const token = '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'; // Получение токена из переменных окружения
-    const repo = 'guideFP_K15'; // Замените на ваш репозиторий
-    const path = 'articles/article1.html'; // Путь к файлу, который вы хотите обновить
+  if (!title || !content || !path) {
+    return res.status(400).json({ error: 'Отсутствуют обязательные поля: title, content или path.' });
+  }
 
-    try {
-        // Получение текущего содержимого файла
-        const { data: { content: currentContent, sha } } = await axios.get(`https://api.github.com/repos/${repo}/contents/${path}`, {
-            headers: {
-                Authorization: `token ${token}`
-            }
-        });
+  const repo = process.env.GITHUB_REPO || 'guideFP_K15'; // Репозиторий из переменных окружения
+  const owner = process.env.GITHUB_OWNER || 'golod15t-glitch'; // Владелец репозитория (ваш username)
 
-        // Создание нового содержимого
-        const newContent = Buffer.from(content).toString('base64');
+  try {
+    // Получение текущего содержимого файла
+    const { data: { content: currentContent, sha } } = await octokit.repos.getContent({
+      owner,
+      repo,
+      path
+    });
 
-        // Обновление файла
-        await axios.put(`https://api.github.com/repos/${repo}/contents/${path}`, {
-            message: `Обновление статьи: ${title}`,
-            content: newContent,
-            sha: sha
-        }, {
-            headers: {
-                Authorization: `token ${token}`
-            }
-        });
+    // Создание нового содержимого в base64
+    const newContent = Buffer.from(content).toString('base64');
 
-        res.status(200).send('Статья успешно сохранена в репозитории!');
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Ошибка при сохранении статьи.');
-    }
+    // Обновление файла
+    await octokit.repos.createOrUpdateFileContents({
+      owner,
+      repo,
+      path,
+      message: `Обновление статьи: ${title}`,
+      content: newContent,
+      sha: sha
+    });
+
+    res.status(200).json({ message: 'Статья успешно сохранена в репозитории!' });
+  } catch (error) {
+    console.error('Ошибка при сохранении статьи:', error.message);
+    res.status(500).json({ error: 'Ошибка при сохранении статьи. Проверьте токен и права доступа.' });
+  }
 });
 
 app.listen(PORT, () => {
-    console.log(`Сервер запущен на http://localhost:${PORT}`);
+  console.log(`Сервер запущен на http://localhost:${PORT}`);
 });
-

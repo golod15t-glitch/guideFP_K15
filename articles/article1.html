@@ -111,7 +111,6 @@
       </button>
     </div>
   </div>
-
   <!-- Панель инструментов редактора -->
   <div id="editorToolbar" class="editor-toolbar">
     <button class="tool-btn" title="Жирный" onclick="formatText('bold')"><i class="fas fa-bold"></i></button>
@@ -121,7 +120,6 @@
     <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
     <button class="tool-btn" title="Вставить изображение" onclick="addImage()"><i class="fas fa-image"></i></button>
   </div>
-
   <!-- Заголовок статьи -->
   <div style="max-width: 800px; margin: 2rem auto 1rem; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center;">
     <h1 id="articleTitle" contenteditable="false" style="margin:0; font-size: 2.5rem; font-weight: 700;">
@@ -136,7 +134,6 @@
       </button>
     </div>
   </div>
-
   <!-- Контент статьи -->
   <div
     id="articleContent"
@@ -146,18 +143,18 @@
   >
     <p>Загрузка...</p>
   </div>
-
   <script>
     // === Настройки GitHub ===
-    const GITHUB_TOKEN = "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".trim(); // Вставьте сюда ваш PAT с правами записи, обязательно trim()
-    const REPO_OWNER = "golod15t-glitch"; // Владелец репозитория
-    const REPO_NAME = "guideFP_K15"; // Имя репозитория
-    const FILE_PATH = "articles/article1.json"; // Путь к JSON-файлу в репозитории
+    // ВАЖНО: вставьте ваш GitHub PAT (с правами repo), не забывая не публиковать токен публично!
+    const GITHUB_TOKEN = "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".trim(); 
+    const REPO_OWNER = "golod15t-glitch"; 
+    const REPO_NAME = "guideFP_K15"; 
+    const FILE_PATH = "articles/article1.json"; 
 
     // Админский код доступа (для примера)
     const ADMIN_CODE = "123";
 
-    // Элементы DOM
+    // DOM элементы
     const adminModal = document.getElementById("adminModal");
     const adminCodeInput = document.getElementById("adminCodeInput");
     const adminError = document.getElementById("adminError");
@@ -169,9 +166,9 @@
     const editorToolbar = document.getElementById("editorToolbar");
 
     let isAdmin = false;
-    let currentSha = null; // для хранения sha файла
+    let currentSha = null; // SHA текущего файла на GitHub — нужно для обновления содержимого
 
-    // Показываем модалку админа
+    // Показать модал админского доступа
     function showAdminModal() {
       adminModal.classList.add("active");
       adminCodeInput.value = "";
@@ -179,12 +176,12 @@
       adminCodeInput.focus();
     }
 
-    // Скрываем модалку админа
+    // Скрыть модал админского доступа
     function hideAdminModal() {
       adminModal.classList.remove("active");
     }
 
-    // Проверка кода доступа
+    // Проверка кода доступа администратора
     adminSubmitBtn.addEventListener("click", () => {
       if (adminCodeInput.value === ADMIN_CODE) {
         isAdmin = true;
@@ -196,7 +193,7 @@
       }
     });
 
-    // Включаем режим редактирования
+    // Включение режима редактирования
     function enableEditing() {
       articleContent.contentEditable = "true";
       articleTitle.contentEditable = "true";
@@ -206,7 +203,7 @@
       articleContent.focus();
     }
 
-    // Выключаем режим редактирования
+    // Выключение режима редактирования
     function disableEditing() {
       articleContent.contentEditable = "false";
       articleTitle.contentEditable = "false";
@@ -215,13 +212,13 @@
       saveBtn.style.display = "none";
     }
 
-    // Форматирование текста
+    // Форматирование текста (жирный, курсив и т.д.)
     function formatText(command, value = null) {
       document.execCommand(command, false, value);
       articleContent.focus();
     }
 
-    // Вставка изображения
+    // Вставка изображения по URL
     function addImage() {
       const url = prompt("Введите URL изображения", "https://");
       if (url) {
@@ -229,7 +226,7 @@
       }
     }
 
-    // Обработчик кнопки "Редактировать"
+    // Обработка кнопки "Редактировать"
     editBtn.addEventListener("click", () => {
       if (isAdmin) {
         enableEditing();
@@ -238,16 +235,12 @@
       }
     });
 
-    // Обработчик кнопки "Сохранить"
+    // Обработка кнопки "Сохранить"
     saveBtn.addEventListener("click", saveArticleToGitHub);
 
-    // Функция загрузки статьи из GitHub (JSON)
+    // Загрузка статьи с GitHub
     async function loadArticleFromGitHub() {
       try {
-        // Диагностика токена (можно убрать после проверки)
-        console.log("Токен для загрузки:", JSON.stringify(GITHUB_TOKEN));
-        console.log("Коды символов токена:", [...GITHUB_TOKEN].map(c => c.charCodeAt(0)));
-
         const res = await fetch(
           `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`,
           {
@@ -257,12 +250,10 @@
             },
           }
         );
-        if (!res.ok) throw new Error(`Ошибка загрузки: ${res.status}`);
-
+        if (!res.ok) throw new Error(`Ошибка загрузки: ${res.status} ${res.statusText}`);
         const data = await res.json();
         const jsonStr = atob(data.content.replace(/\n/g, ""));
         const articleData = JSON.parse(jsonStr);
-
         articleTitle.innerText = articleData.title || "Без заголовка";
         articleContent.innerHTML = articleData.content || "";
         currentSha = data.sha;
@@ -273,21 +264,19 @@
       }
     }
 
-    // Функция сохранения статьи в GitHub (JSON)
+    // Сохранение статьи обратно в GitHub
     async function saveArticleToGitHub() {
       saveBtn.disabled = true;
-      saveBtn.textContent = "Сохраняю...";
-
+      saveBtn.innerHTML = "Сохраняю...";
       try {
         const articleData = {
           title: articleTitle.innerText.trim(),
           content: articleContent.innerHTML,
         };
-
         const jsonStr = JSON.stringify(articleData, null, 2);
         const base64Content = btoa(unescape(encodeURIComponent(jsonStr)));
 
-        // Если sha не известен, получить его сначала
+        // Если SHA нет, получить его (необходим для обновления файла)
         if (!currentSha) {
           const getResponse = await fetch(
             `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`,
@@ -298,13 +287,9 @@
               },
             }
           );
-
           if (!getResponse.ok) {
-            throw new Error(
-              `Не удалось получить файл: ${getResponse.status} ${getResponse.statusText}`
-            );
+            throw new Error(`Не удалось получить файл: ${getResponse.status} ${getResponse.statusText}`);
           }
-
           const fileData = await getResponse.json();
           currentSha = fileData.sha;
         }
@@ -330,14 +315,10 @@
 
         if (!putResponse.ok) {
           const errorData = await putResponse.json();
-          throw new Error(
-            `Ошибка при сохранении: ${errorData.message || putResponse.statusText}`
-          );
+          throw new Error(`Ошибка при сохранении: ${errorData.message || putResponse.statusText}`);
         }
-
         const responseData = await putResponse.json();
         currentSha = responseData.content.sha;
-
         alert("Статья успешно сохранена на GitHub!");
         disableEditing();
       } catch (error) {
@@ -349,7 +330,7 @@
       }
     }
 
-    // При загрузке страницы
+    // Автоматическая загрузка при загрузке страницы
     window.addEventListener("DOMContentLoaded", () => {
       if (sessionStorage.getItem("isAdmin") === "true") {
         isAdmin = true;

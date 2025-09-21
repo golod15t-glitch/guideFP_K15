@@ -144,7 +144,7 @@
     <p>Загрузка...</p>
   </div>
   <script>
-    // Адрес вашего backend-сервера (из Render или другого хостинга)
+    // Адрес вашего backend-сервера (пример для Render)
     const BACKEND_URL = 'https://guidefp-k15-v2.onrender.com';
 
     // Админский код доступа (пример)
@@ -222,7 +222,7 @@
       }
     }
 
-    // Обработка кнопок
+    // Обработка кнопок редактирования
     editBtn.addEventListener("click", () => {
       if (isAdmin) {
         enableEditing();
@@ -239,7 +239,6 @@
         const res = await fetch(`${BACKEND_URL}/article`);
         if (!res.ok) throw new Error(`Ошибка загрузки: ${res.status}`);
         const data = await res.json();
-
         articleTitle.innerText = data.content.title;
         articleContent.innerHTML = data.content.content;
         currentSha = data.sha;
@@ -260,21 +259,17 @@
           content: articleContent.innerHTML,
           sha: currentSha,
         };
-
         const res = await fetch(`${BACKEND_URL}/article`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(articleData),
         });
-
         if (!res.ok) {
           const err = await res.json();
           throw new Error(err.error || "Ошибка при сохранении");
         }
-
         const responseData = await res.json();
         currentSha = responseData.sha;
-
         alert("Статья успешно сохранена!");
         disableEditing();
       } catch (error) {
@@ -286,7 +281,7 @@
       }
     }
 
-    // Автозагрузка статьи и проверка сессии админа
+    // Автоматическая загрузка статьи и проверка авторизации
     window.addEventListener("DOMContentLoaded", () => {
       if (sessionStorage.getItem("isAdmin") === "true") {
         isAdmin = true;

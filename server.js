@@ -1,10 +1,11 @@
 const express = require('express');
 const fetch = require('node-fetch');
+const path = require('path');
 
 const app = express();
 app.use(express.json());
 
-// Вставьте сюда свой токен через переменную окружения в Render
+// Замените на свой токен GitHub (лучше хранить в настройках Render или .env)
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const REPO_OWNER = 'golod15t-glitch';
 const REPO_NAME = 'guideFP_K15';
@@ -12,7 +13,7 @@ const FILE_PATH = 'articles/article1.json';
 
 const GITHUB_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
 
-// Роут для получения статьи
+// Маршрут API: Получить статью
 app.get('/article', async (req, res) => {
   try {
     const response = await fetch(GITHUB_API_URL, {
@@ -36,9 +37,10 @@ app.get('/article', async (req, res) => {
   }
 });
 
-// Роут для сохранения статьи
+// Маршрут API: Сохранить статью
 app.put('/article', async (req, res) => {
   const { title, content, sha } = req.body;
+
   if (!title || !content || !sha) {
     return res.status(400).json({ error: 'Missing title, content or sha' });
   }
@@ -75,5 +77,15 @@ app.put('/article', async (req, res) => {
   }
 });
 
+// Отдаём статические файлы фронтенда из папки 'public'
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Для любых других маршрутов отдаём index.html — полезно, если используете роутинг на фронтенде
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

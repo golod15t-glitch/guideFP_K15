@@ -94,7 +94,6 @@
   </style>
 </head>
 <body>
-
   <!-- Админский модал -->
   <div id="adminModal" aria-hidden="true">
     <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
@@ -114,7 +113,6 @@
       </button>
     </div>
   </div>
-
   <!-- Панель инструментов редактора -->
   <div id="editorToolbar" class="editor-toolbar" aria-label="Панель инструментов редактора">
     <button class="tool-btn" title="Жирный" onclick="formatText('bold')" type="button" aria-pressed="false"><i class="fas fa-bold"></i></button>
@@ -124,7 +122,6 @@
     <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')" type="button"><i class="fas fa-list-ol"></i></button>
     <button class="tool-btn" title="Вставить изображение" onclick="addImage()" type="button"><i class="fas fa-image"></i></button>
   </div>
-
   <!-- Заголовок статьи и кнопки -->
   <div style="max-width: 800px; margin: 2rem auto 1rem; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center;">
     <h1 id="articleTitle" contenteditable="false" style="margin:0; font-size: 2.5rem; font-weight: 700;" tabindex="0" aria-label="Заголовок статьи">
@@ -139,17 +136,14 @@
       </button>
     </div>
   </div>
-
   <!-- Контент статьи -->
   <main>
     <article id="articleContent" class="content-editable" contenteditable="false" style="max-width: 800px; margin: 0 auto 3rem; background: white;" tabindex="0" aria-label="Контент статьи">
       <p>Загрузка...</p>
     </article>
   </main>
-
 <script>
   const ADMIN_CODE = "123";
-
   // Элементы DOM
   const adminModal = document.getElementById("adminModal");
   const adminCodeInput = document.getElementById("adminCodeInput");
@@ -160,7 +154,6 @@
   const articleContent = document.getElementById("articleContent");
   const articleTitle = document.getElementById("articleTitle");
   const editorToolbar = document.getElementById("editorToolbar");
-
   let isAdmin = false;
 
   function showAdminModal() {
@@ -227,10 +220,9 @@
 
   function saveAndDownload() {
     disableEditing();
-
-    // Ждем чтобы браузер применил изменения DOM и режим редактирования выключился
     setTimeout(() => {
-      const docHtml = document.documentElement.outerHTML;
+      // Вставляем DOCTYPE чтобы корректно открывался в браузере
+      const docHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
 
       const blob = new Blob([docHtml], { type: "text/html" });
       const url = URL.createObjectURL(blob);
@@ -242,7 +234,6 @@
         .replace(/[^\w\-]/g, "") || "article";
 
       a.download = filename + ".html";
-
       document.body.appendChild(a);
       a.click();
       a.remove();
@@ -254,11 +245,24 @@
 
   saveBtn.addEventListener("click", saveAndDownload);
 
-  // Загрузка тестового контента, замените на реальную загрузку
+  // Тестовый полный контент статьи
   function loadArticle() {
-    articleTitle.innerText = "Моя первая статья";
+    articleTitle.innerText = "Гайд по Перерождению в Roblox Steal a Brainrot";
     articleContent.innerHTML = `
-      <p>Здесь ваш контент...</p>
+      <h3>Почему Перерождение — Ваш Ключ к Власти</h3>
+      <p>В Steal a Brainrot перерождение — это не просто сброс прогресса. Это жестокий ритуал возрождения, который либо сделает вас королём игры, либо уничтожит всё, что вы строили. Механика перерождения сбрасывает все деньги и коллекцию брейнротов, но взамен дарит множитель дохода, новые слоты и мощное оружие. Без перерождения вы обречены стоять на месте, наблюдая, как другие игроки наращивают империю.</p>
+      <hr />
+      <h3>Суть Перерождения: Что Вы Получаете и Что Теряете</h3>
+      <ul>
+        <li>Сброс коллекции брейнротов и денег — жестокая цена, но без неё нет роста.</li>
+        <li>Увеличение множителя дохода — от х1 до х13 и выше, что умножает ваш заработок на каждом шаге.</li>
+        <li>Открытие новых слотов для брейнротов — больше места для редких юнитов.</li>
+        <li>Доступ к мощному оружию и улучшениям — от невидимости до квантового клонирования.</li>
+        <li>Увеличение времени защиты базы — даёт вам дополнительные секунды, чтобы отбиться от врагов.</li>
+      </ul>
+      <hr />
+      <h3>Итог: Перерождение — Ваш Единственный Путь к Власти</h3>
+      <p>Перерождайтесь. Рискуйте. Доминируйте. И помните — каждый сброс приближает вас к вершине. Но вершина доступна только тем, кто готов пожертвовать всем.</p>
     `;
   }
 
@@ -270,6 +274,5 @@
     loadArticle();
   });
 </script>
-
 </body>
 </html>

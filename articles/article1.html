@@ -222,68 +222,44 @@
       }
     });
 
-    // Просто пример — замените реальной загрузкой
+    // Пример статического текста
     function loadArticle() {
       articleTitle.innerText = "Моя первая статья";
       articleContent.innerHTML = "<p>Здесь ваш контент...</p>";
     }
 
-    // Функция для скачивания всей страницы с обновлённым текстом статьи
-    function saveFullPage() {
-      saveBtn.disabled = true;
-      saveBtn.innerHTML = "Подготавливаю файл...";
+    function saveAndDownload() {
+      // Применяем изменения на странице (поскольку это editable, изменения уже применены)
+      disableEditing();
 
-      try {
-        // Получаем весь html страницы
-        const docHtml = document.documentElement.outerHTML;
+      // Получаем текущий полный HTML документа
+      const docHtml = document.documentElement.outerHTML;
 
-        // Создаём временный div для парсинга
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(docHtml, 'text/html');
+      // Создаем Blob и ссылаемся на него для скачивания
+      const blob = new Blob([docHtml], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
 
-        // Заменяем содержимое заголовка
-        const h1 = doc.getElementById('articleTitle');
-        if(h1) h1.textContent = articleTitle.innerText.trim();
+      const filename = articleTitle.innerText.trim()
+        .replace(/\s+/g, "_")
+        .replace(/[^\w\-]/g, "") || "article";
 
-        // Заменяем содержимое статьи
-        const content = doc.getElementById('articleContent');
-        if(content) content.innerHTML = articleContent.innerHTML;
+      a.download = filename + ".html";
 
-        // Превращаем обратно в строку
-        const updatedHtml = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+      // Запускаем скачивание
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
 
-        // Создаем Blob и ссылку на скачивание
-        const blob = new Blob([updatedHtml], { type: "text/html" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-
-        const filename = articleTitle.innerText.trim()
-          .replace(/\s+/g, '_')
-          .replace(/[^\w\-]/g, '') || 'article';
-
-        a.download = filename + ".html";
-
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-
-        alert("Файл страницы успешно сохранён!");
-        disableEditing();
-      } catch(err) {
-        alert("Ошибка при сохранении файла: " + err.message);
-        console.error(err);
-      } finally {
-        saveBtn.disabled = false;
-        saveBtn.innerHTML = `<i class="fas fa-save"></i> Сохранить`;
-      }
+      alert("Файл страницы успешно сохранён!");
     }
 
-    saveBtn.addEventListener('click', saveFullPage);
+    saveBtn.addEventListener("click", saveAndDownload);
 
     window.addEventListener("DOMContentLoaded", () => {
-      if(sessionStorage.getItem("isAdmin") === "true") {
+      if (sessionStorage.getItem("isAdmin") === "true") {
         isAdmin = true;
         enableEditing();
       }

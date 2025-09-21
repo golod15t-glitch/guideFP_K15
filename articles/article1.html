@@ -1,11 +1,331 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Моя первая статья</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Статья</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+  />
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+    }
+    .content-editable {
+      min-height: 300px;
+      outline: none;
+      padding: 1rem;
+      border-radius: 0.5rem;
+      border: 1px solid transparent;
+      transition: border-color 0.3s;
+    }
+    .content-editable[contenteditable="true"] {
+      border-color: #4f46e5;
+      background-color: #ffffff;
+    }
+    .editor-toolbar {
+      background: #fff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 0.5rem;
+      display: none;
+      gap: 0.5rem;
+    }
+    .editor-toolbar.active {
+      display: flex;
+    }
+    .tool-btn {
+      cursor: pointer;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      border: 1px solid transparent;
+      transition: background-color 0.2s, border-color 0.2s;
+      background: #e0e7ff;
+      color: #4338ca;
+      font-size: 1rem;
+    }
+    .tool-btn:hover {
+      background-color: #c7d2fe;
+      border-color: #4338ca;
+    }
+    #adminModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      visibility: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #adminModal.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    #adminModal .modal-content {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 0.75rem;
+      max-width: 400px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    #adminError {
+      color: red;
+      margin-top: 0.5rem;
+      display: none;
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  </style>
 </head>
 <body>
-<h3 dir="auto" id="Итог:-Перерождение-—-Ваш-Единственный-Путь-к-Власти" style="margin: 18px 21px 9px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSansSerif, &quot;Lucida Grande&quot;, Arial, sans-serif; font-weight: 700; font-size: 28px; white-space-collapse: preserve;">Итог: Перерождение — Ваш Единственный Путь к Власти</h3><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; overflow-wrap: break-word; white-space-collapse: preserve;">В Steal a Brainrot перерождение — не просто механика, а&nbsp;жестокий ритуал власти и выживания. Либо вы принимаете эту игру по её правилам, либо останетесь в тени, наблюдая, как другие строят империю на ваших костях.</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; overflow-wrap: break-word; white-space-collapse: preserve;">Перерождайтесь. Рискуйте. Доминируйте.</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; overflow-wrap: break-word; white-space-collapse: preserve;">И помните — каждый сброс приближает вас к вершине. Но вершина доступна только тем, кто готов пожертвовать всем.</p><hr style="width: 366px; margin: 30px auto; border: none; font-size: 2px; text-align: right; overflow: visible; white-space-collapse: preserve;"><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; overflow-wrap: break-word; white-space-collapse: preserve;"><em>Ваша жадность — ваш двигатель. Используйте её, чтобы стать легендой Steal a Brainrot.</em></p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; overflow-wrap: break-word; white-space-collapse: preserve;"><br style="color: rgba(0, 0, 0, 0.8); font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; font-size: 18px;"></p>
+  <!-- Админский модал -->
+  <div id="adminModal">
+    <div class="modal-content">
+      <h2>Доступ к редактированию</h2>
+      <p>Введите код доступа администратора:</p>
+      <input
+        id="adminCodeInput"
+        type="password"
+        placeholder="Код доступа"
+        style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; font-size: 1rem;"
+      />
+      <div id="adminError">Неверный код!</div>
+      <button id="adminSubmitBtn" style="margin-top: 1rem; width: 100%; padding: 0.5rem; font-size: 1rem;">
+        Подтвердить
+      </button>
+    </div>
+  </div>
+
+  <!-- Панель инструментов редактора -->
+  <div id="editorToolbar" class="editor-toolbar">
+    <button class="tool-btn" title="Жирный" onclick="formatText('bold')"><i class="fas fa-bold"></i></button>
+    <button class="tool-btn" title="Курсив" onclick="formatText('italic')"><i class="fas fa-italic"></i></button>
+    <button class="tool-btn" title="Подчёркивание" onclick="formatText('underline')"><i class="fas fa-underline"></i></button>
+    <button class="tool-btn" title="Список" onclick="formatText('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
+    <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
+    <button class="tool-btn" title="Вставить изображение" onclick="addImage()"><i class="fas fa-image"></i></button>
+  </div>
+
+  <!-- Заголовок статьи -->
+  <div style="max-width: 800px; margin: 2rem auto 1rem; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center;">
+    <h1 id="articleTitle" contenteditable="false" style="margin:0; font-size: 2.5rem; font-weight: 700;">
+      Моя первая статья
+    </h1>
+    <div>
+      <button id="editBtn" style="font-size:1.25rem; padding: 0.5rem 1rem; cursor:pointer;">
+        <i class="fas fa-pencil-alt"></i> Редактировать
+      </button>
+      <button id="saveBtn" style="font-size:1.25rem; padding: 0.5rem 1rem; cursor:pointer; display:none;">
+        <i class="fas fa-save"></i> Сохранить
+      </button>
+    </div>
+  </div>
+
+  <!-- Контент статьи -->
+  <div
+    id="articleContent"
+    class="content-editable"
+    contenteditable="false"
+    style="max-width: 800px; margin: 0 auto 3rem; background: white;"
+  >
+    <p>Здесь ваш контент...</p>
+  </div>
+
+  <script>
+    // === Настройки GitHub ===
+    const GITHUB_TOKEN = "ghp_ВАШ_ТОКЕН_ЗДЕСЬ"; // Вставьте сюда ваш PAT с правами записи
+    const REPO_OWNER = "golod15t-glitch"; // Владелец репозитория
+    const REPO_NAME = "guideFP_K15"; // Имя репозитория
+    const FILE_PATH = "articles/article1.html"; // Путь к файлу в репозитории
+
+    // Админский код доступа (для примера)
+    const ADMIN_CODE = "123";
+
+    // Элементы DOM
+    const adminModal = document.getElementById("adminModal");
+    const adminCodeInput = document.getElementById("adminCodeInput");
+    const adminError = document.getElementById("adminError");
+    const adminSubmitBtn = document.getElementById("adminSubmitBtn");
+    const editBtn = document.getElementById("editBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const articleContent = document.getElementById("articleContent");
+    const articleTitle = document.getElementById("articleTitle");
+    const editorToolbar = document.getElementById("editorToolbar");
+
+    let isAdmin = false;
+
+    // Показываем модалку админа
+    function showAdminModal() {
+      adminModal.classList.add("active");
+      adminCodeInput.value = "";
+      adminError.style.display = "none";
+      adminCodeInput.focus();
+    }
+
+    // Скрываем модалку админа
+    function hideAdminModal() {
+      adminModal.classList.remove("active");
+    }
+
+    // Проверка кода доступа
+    adminSubmitBtn.addEventListener("click", () => {
+      if (adminCodeInput.value === ADMIN_CODE) {
+        isAdmin = true;
+        sessionStorage.setItem("isAdmin", "true");
+        hideAdminModal();
+        enableEditing();
+      } else {
+        adminError.style.display = "block";
+      }
+    });
+
+    // Включаем режим редактирования
+    function enableEditing() {
+      articleContent.contentEditable = "true";
+      articleTitle.contentEditable = "true";
+      editorToolbar.classList.add("active");
+      editBtn.style.display = "none";
+      saveBtn.style.display = "inline-block";
+      articleContent.focus();
+    }
+
+    // Выключаем режим редактирования
+    function disableEditing() {
+      articleContent.contentEditable = "false";
+      articleTitle.contentEditable = "false";
+      editorToolbar.classList.remove("active");
+      editBtn.style.display = "inline-block";
+      saveBtn.style.display = "none";
+    }
+
+    // Форматирование текста
+    function formatText(command, value = null) {
+      document.execCommand(command, false, value);
+      articleContent.focus();
+    }
+
+    // Вставка изображения
+    function addImage() {
+      const url = prompt("Введите URL изображения", "https://");
+      if (url) {
+        formatText("insertImage", url);
+      }
+    }
+
+    // Обработчик кнопки "Редактировать"
+    editBtn.addEventListener("click", () => {
+      if (isAdmin) {
+        enableEditing();
+      } else {
+        showAdminModal();
+      }
+    });
+
+    // Обработчик кнопки "Сохранить"
+    saveBtn.addEventListener("click", saveArticleToGitHub);
+
+    // Функция сохранения статьи в GitHub
+    async function saveArticleToGitHub() {
+      saveBtn.disabled = true;
+      saveBtn.textContent = "Сохраняю...";
+
+      try {
+        // Получаем текущий файл, чтобы узнать sha
+        const getResponse = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`,
+          {
+            headers: {
+              Authorization: `token ${GITHUB_TOKEN}`,
+              Accept: "application/vnd.github.v3+json",
+            },
+          }
+        );
+
+        if (!getResponse.ok) {
+          throw new Error(
+            `Не удалось получить файл: ${getResponse.status} ${getResponse.statusText}`
+          );
+        }
+
+        const fileData = await getResponse.json();
+
+        // Формируем содержимое для загрузки (base64)
+        const contentToSave = `<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>${articleTitle.innerText.trim()}</title>
+</head>
+<body>
+${articleContent.innerHTML}
+</body>
+</html>`;
+
+        const base64Content = btoa(unescape(encodeURIComponent(contentToSave)));
+
+        // Формируем тело запроса PUT
+        const putBody = {
+          message: `Обновление статьи: ${articleTitle.innerText.trim()}`,
+          content: base64Content,
+          sha: fileData.sha,
+        };
+
+        // Отправляем запрос на обновление файла
+        const putResponse = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `token ${GITHUB_TOKEN}`,
+              Accept: "application/vnd.github.v3+json",
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(putBody),
+          }
+        );
+
+        if (!putResponse.ok) {
+          const errorData = await putResponse.json();
+          throw new Error(
+            `Ошибка при сохранении: ${errorData.message || putResponse.statusText}`
+          );
+        }
+
+        alert("Статья успешно сохранена на GitHub!");
+        disableEditing();
+      } catch (error) {
+        alert(`Ошибка: ${error.message}`);
+        console.error(error);
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = `<i class="fas fa-save"></i> Сохранить`;
+      }
+    }
+
+    // При загрузке страницы проверяем, есть ли сохранённый статус админа
+    window.addEventListener("DOMContentLoaded", () => {
+      if (sessionStorage.getItem("isAdmin") === "true") {
+        isAdmin = true;
+        enableEditing();
+      }
+    });
+  </script>
 </body>
 </html>

@@ -11,6 +11,7 @@
   />
   <style>
     @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+
     body {
       font-family: "Inter", sans-serif;
       background-color: #f8fafc;
@@ -111,7 +112,7 @@
       </button>
     </div>
   </div>
-  
+
   <!-- Панель инструментов редактора -->
   <div id="editorToolbar" class="editor-toolbar">
     <button class="tool-btn" title="Жирный" onclick="formatText('bold')"><i class="fas fa-bold"></i></button>
@@ -121,7 +122,7 @@
     <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
     <button class="tool-btn" title="Вставить изображение" onclick="addImage()"><i class="fas fa-image"></i></button>
   </div>
-  
+
   <!-- Заголовок статьи -->
   <div style="max-width: 800px; margin: 2rem auto 1rem; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center;">
     <h1 id="articleTitle" contenteditable="false" style="margin:0; font-size: 2.5rem; font-weight: 700;">
@@ -136,7 +137,7 @@
       </button>
     </div>
   </div>
-  
+
   <!-- Контент статьи -->
   <div
     id="articleContent"
@@ -146,7 +147,7 @@
   >
     <p>Загрузка...</p>
   </div>
-  
+
   <script>
     const ADMIN_CODE = "123";
 
@@ -221,93 +222,68 @@
       }
     });
 
+    // Просто пример — замените реальной загрузкой
     function loadArticle() {
-      // Пример статического текста - замените реальной загрузкой если нужно
       articleTitle.innerText = "Моя первая статья";
       articleContent.innerHTML = "<p>Здесь ваш контент...</p>";
     }
 
-    function saveArticleToFile() {
+    // Функция для скачивания всей страницы с обновлённым текстом статьи
+    function saveFullPage() {
       saveBtn.disabled = true;
       saveBtn.innerHTML = "Подготавливаю файл...";
 
       try {
-        // Полный HTML страницы для сохранения, включая стили и скрипты,
-        // но с замененным заголовком и содержимым статьи
-        const fullHtml = `
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>${articleTitle.innerText.trim()}</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-/>
-<style>
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-body {
-  font-family: "Inter", sans-serif;
-  background-color: #f8fafc;
-  color: #1e293b;
-  line-height: 1.6;
-  margin: 0;
-  padding: 2rem;
-}
-.content-editable {
-  min-height: 300px;
-  outline: none;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  border: 1px solid transparent;
-  transition: border-color 0.3s;
-}
-.content-editable[contenteditable="true"] {
-  border-color: #4f46e5;
-  background-color: #ffffff;
-}
-</style>
-</head>
-<body>
-  <h1>${articleTitle.innerText.trim()}</h1>
-  <div class="content-editable">${articleContent.innerHTML}</div>
-</body>
-</html>
-        `.trim();
+        // Получаем весь html страницы
+        const docHtml = document.documentElement.outerHTML;
 
-        const blob = new Blob([fullHtml], { type: "text/html" });
+        // Создаём временный div для парсинга
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(docHtml, 'text/html');
+
+        // Заменяем содержимое заголовка
+        const h1 = doc.getElementById('articleTitle');
+        if(h1) h1.textContent = articleTitle.innerText.trim();
+
+        // Заменяем содержимое статьи
+        const content = doc.getElementById('articleContent');
+        if(content) content.innerHTML = articleContent.innerHTML;
+
+        // Превращаем обратно в строку
+        const updatedHtml = '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
+
+        // Создаем Blob и ссылку на скачивание
+        const blob = new Blob([updatedHtml], { type: "text/html" });
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
 
         const filename = articleTitle.innerText.trim()
-          .replace(/\s+/g, "_")
-          .replace(/[^\w\-]/g, "") || "article";
+          .replace(/\s+/g, '_')
+          .replace(/[^\w\-]/g, '') || 'article';
 
         a.download = filename + ".html";
 
         document.body.appendChild(a);
         a.click();
-        document.body.removeChild(a);
+        a.remove();
         URL.revokeObjectURL(url);
 
-        alert("Файл успешно сохранён!");
+        alert("Файл страницы успешно сохранён!");
         disableEditing();
-      } catch (error) {
-        alert("Ошибка при сохранении файла: " + error.message);
-        console.error(error);
+      } catch(err) {
+        alert("Ошибка при сохранении файла: " + err.message);
+        console.error(err);
       } finally {
         saveBtn.disabled = false;
         saveBtn.innerHTML = `<i class="fas fa-save"></i> Сохранить`;
       }
     }
 
-    saveBtn.addEventListener("click", saveArticleToFile);
+    saveBtn.addEventListener('click', saveFullPage);
 
     window.addEventListener("DOMContentLoaded", () => {
-      if (sessionStorage.getItem("isAdmin") === "true") {
+      if(sessionStorage.getItem("isAdmin") === "true") {
         isAdmin = true;
         enableEditing();
       }

@@ -144,13 +144,11 @@
     <p>Загрузка...</p>
   </div>
   <script>
-    // Адрес вашего backend-сервера (пример для Render)
+    // Адрес backend (если нужен для загрузки, можете убрать или заменить)
     const BACKEND_URL = 'https://guidefp-k15-v2.onrender.com';
 
-    // Админский код доступа (пример)
     const ADMIN_CODE = "123";
 
-    // DOM элементы
     const adminModal = document.getElementById("adminModal");
     const adminCodeInput = document.getElementById("adminCodeInput");
     const adminError = document.getElementById("adminError");
@@ -164,7 +162,6 @@
     let isAdmin = false;
     let currentSha = null;
 
-    // Показываем модал админа
     function showAdminModal() {
       adminModal.classList.add("active");
       adminCodeInput.value = "";
@@ -172,12 +169,10 @@
       adminCodeInput.focus();
     }
 
-    // Скрываем модал админа
     function hideAdminModal() {
       adminModal.classList.remove("active");
     }
 
-    // Проверка кода доступа
     adminSubmitBtn.addEventListener("click", () => {
       if (adminCodeInput.value === ADMIN_CODE) {
         isAdmin = true;
@@ -189,7 +184,6 @@
       }
     });
 
-    // Включить режим редактирования
     function enableEditing() {
       articleContent.contentEditable = "true";
       articleTitle.contentEditable = "true";
@@ -199,7 +193,6 @@
       articleContent.focus();
     }
 
-    // Выключить режим редактирования
     function disableEditing() {
       articleContent.contentEditable = "false";
       articleTitle.contentEditable = "false";
@@ -208,13 +201,11 @@
       saveBtn.style.display = "none";
     }
 
-    // Форматирование текста
     function formatText(command, value = null) {
       document.execCommand(command, false, value);
       articleContent.focus();
     }
 
-    // Вставка изображения
     function addImage() {
       const url = prompt("Введите URL изображения", "https://");
       if (url) {
@@ -222,7 +213,6 @@
       }
     }
 
-    // Обработка кнопок редактирования
     editBtn.addEventListener("click", () => {
       if (isAdmin) {
         enableEditing();
@@ -231,17 +221,20 @@
       }
     });
 
-    saveBtn.addEventListener("click", saveArticleToGitHub);
-
-    // Загрузка статьи с backend-сервера
+    // Здесь пока функция загрузки для примера (можете убрать)
     async function loadArticle() {
       try {
-        const res = await fetch(`${BACKEND_URL}/article`);
-        if (!res.ok) throw new Error(`Ошибка загрузки: ${res.status}`);
-        const data = await res.json();
-        articleTitle.innerText = data.content.title;
-        articleContent.innerHTML = data.content.content;
-        currentSha = data.sha;
+        // Пример загрузки - если у вас сервер
+        // const res = await fetch(`${BACKEND_URL}/article`);
+        // if (!res.ok) throw new Error(`Ошибка загрузки: ${res.status}`);
+        // const data = await res.json();
+        // articleTitle.innerText = data.content.title;
+        // articleContent.innerHTML = data.content.content;
+        // currentSha = data.sha;
+
+        // Или простой пример статического текста
+        articleTitle.innerText = "Моя первая статья";
+        articleContent.innerHTML = "<p>Здесь ваш контент...</p>";
       } catch (e) {
         console.error(e);
         articleTitle.innerText = "Ошибка загрузки статьи";
@@ -249,31 +242,49 @@
       }
     }
 
-    // Сохранение статьи через backend
-    async function saveArticleToGitHub() {
+    // Новая функция для сохранения статьи как локальный HTML файл
+    function saveArticleToFile() {
       saveBtn.disabled = true;
-      saveBtn.innerHTML = "Сохраняю...";
+      saveBtn.innerHTML = "Подготовка файла...";
+
       try {
-        const articleData = {
-          title: articleTitle.innerText.trim(),
-          content: articleContent.innerHTML,
-          sha: currentSha,
-        };
-        const res = await fetch(`${BACKEND_URL}/article`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(articleData),
-        });
-        if (!res.ok) {
-          const err = await res.json();
-          throw new Error(err.error || "Ошибка при сохранении");
-        }
-        const responseData = await res.json();
-        currentSha = responseData.sha;
-        alert("Статья успешно сохранена!");
+        const htmlContent = `
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<title>${articleTitle.innerText.trim()}</title>
+<style>
+body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #1e293b; padding: 2rem; }
+</style>
+</head>
+<body>
+<h1>${articleTitle.innerText.trim()}</h1>
+<div>${articleContent.innerHTML}</div>
+</body>
+</html>`.trim();
+
+        const blob = new Blob([htmlContent], { type: 'text/html' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+
+        const filename = articleTitle.innerText.trim()
+          .replace(/\s+/g, '_')
+          .replace(/[^\w\-]/g, '') || 'article';
+
+        a.download = filename + '.html';
+
+        document.body.appendChild(a);
+        a.click();
+
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        alert('Файл успешно сохранён!');
         disableEditing();
       } catch (error) {
-        alert(`Ошибка: ${error.message}`);
+        alert('Ошибка при сохранении файла: ' + error.message);
         console.error(error);
       } finally {
         saveBtn.disabled = false;
@@ -281,7 +292,8 @@
       }
     }
 
-    // Автоматическая загрузка статьи и проверка авторизации
+    saveBtn.addEventListener('click', saveArticleToFile);
+
     window.addEventListener("DOMContentLoaded", () => {
       if (sessionStorage.getItem("isAdmin") === "true") {
         isAdmin = true;

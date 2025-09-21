@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -27,11 +26,27 @@
       border-radius: 0.5rem;
       border: 1px solid transparent;
       transition: border-color 0.3s;
+      position: relative;
+      background-color: white;
     }
     .content-editable[contenteditable="true"] {
       border-color: #4f46e5;
       background-color: #ffffff;
     }
+
+    /* Стиль для плейсхолдера */
+    .content-editable.empty::before {
+      content: attr(data-placeholder);
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      right: 1rem;
+      color: #94a3b8; /* серый цвет */
+      pointer-events: none;
+      user-select: none;
+      white-space: pre-wrap;
+    }
+
     .editor-toolbar {
       background: #fff;
       border-bottom: 1px solid #e5e7eb;
@@ -125,9 +140,7 @@
   </div>
   <!-- Заголовок статьи и кнопки -->
   <div style="max-width: 800px; margin: 2rem auto 1rem; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center;">
-    <h1 id="articleTitle" contenteditable="false" style="margin:0; font-size: 2.5rem; font-weight: 700;" tabindex="0" aria-label="Заголовок статьи">
-      Загрузка...
-    </h1>
+    <h1 id="articleTitle" contenteditable="false" style="margin:0; font-size: 2.5rem; font-weight: 700;" tabindex="0" aria-label="Заголовок статьи" data-placeholder="Введите заголовок..."></h1>
     <div>
       <button id="editBtn" type="button" style="font-size: 1.25rem; padding: 0.5rem 1rem; cursor: pointer;">
         <i class="fas fa-pencil-alt"></i> Редактировать
@@ -139,9 +152,7 @@
   </div>
   <!-- Контент статьи -->
   <main>
-    <article id="articleContent" class="content-editable" contenteditable="false" style="max-width: 800px; margin: 0 auto 3rem; background: white;" tabindex="0" aria-label="Контент статьи">
-      <p>Загрузка...</p>
-    </article>
+    <article id="articleContent" class="content-editable empty" contenteditable="false" style="max-width: 800px; margin: 0 auto 3rem; background: white;" tabindex="0" aria-label="Контент статьи" data-placeholder="Введите текст статьи..."></article>
   </main>
 <script>
   const ADMIN_CODE = "123";
@@ -188,7 +199,8 @@
     editorToolbar.classList.add("active");
     editBtn.style.display = "none";
     saveBtn.style.display = "inline-block";
-    articleContent.focus();
+    updatePlaceholderClass();
+    articleTitle.focus();
   }
 
   function disableEditing() {
@@ -197,6 +209,7 @@
     editorToolbar.classList.remove("active");
     editBtn.style.display = "inline-block";
     saveBtn.style.display = "none";
+    updatePlaceholderClass();
   }
 
   function formatText(command, value = null) {
@@ -219,12 +232,11 @@
     }
   });
 
+  // Функция сохранения страницы
   function saveAndDownload() {
     disableEditing();
     setTimeout(() => {
-      // Вставляем DOCTYPE чтобы корректно открывался в браузере
       const docHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-
       const blob = new Blob([docHtml], { type: "text/html" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -246,33 +258,32 @@
 
   saveBtn.addEventListener("click", saveAndDownload);
 
-  // Тестовый полный контент статьи
-  function loadArticle() {
-    articleTitle.innerText = "Гайд по Перерождению в Roblox Steal a Brainrot";
-    articleContent.innerHTML = `
-      <h3>Почему Перерождение — Ваш Ключ к Власти</h3>
-      <p>В Steal a Brainrot перерождение — это не просто сброс прогресса. Это жестокий ритуал возрождения, который либо сделает вас королём игры, либо уничтожит всё, что вы строили. Механика перерождения сбрасывает все деньги и коллекцию брейнротов, но взамен дарит множитель дохода, новые слоты и мощное оружие. Без перерождения вы обречены стоять на месте, наблюдая, как другие игроки наращивают империю.</p>
-      <hr />
-      <h3>Суть Перерождения: Что Вы Получаете и Что Теряете</h3>
-      <ul>
-        <li>Сброс коллекции брейнротов и денег — жестокая цена, но без неё нет роста.</li>
-        <li>Увеличение множителя дохода — от х1 до х13 и выше, что умножает ваш заработок на каждом шаге.</li>
-        <li>Открытие новых слотов для брейнротов — больше места для редких юнитов.</li>
-        <li>Доступ к мощному оружию и улучшениям — от невидимости до квантового клонирования.</li>
-        <li>Увеличение времени защиты базы — даёт вам дополнительные секунды, чтобы отбиться от врагов.</li>
-      </ul>
-      <hr />
-      <h3>Итог: Перерождение — Ваш Единственный Путь к Власти</h3>
-      <p>Перерождайтесь. Рискуйте. Доминируйте. И помните — каждый сброс приближает вас к вершине. Но вершина доступна только тем, кто готов пожертвовать всем.</p>
-    `;
+  // Обновление класса empty для плейсхолдера на элементе contentEditable
+  function updatePlaceholderClass() {
+    [articleTitle, articleContent].forEach(el => {
+      if (el.innerText.trim().length === 0) {
+        el.classList.add("empty");
+      } else {
+        el.classList.remove("empty");
+      }
+    });
   }
 
+  // Обработчики событий для обновления плейсхолдера при вводе
+  [articleTitle, articleContent].forEach(el => {
+    el.addEventListener("input", updatePlaceholderClass);
+    el.addEventListener("focus", updatePlaceholderClass);
+    el.addEventListener("blur", updatePlaceholderClass);
+  });
+
+  // При загрузке страницы плейсхолдер отображается, контент пустой
   window.addEventListener("DOMContentLoaded", () => {
+    // Не вызываем loadArticle, чтобы не было "загрузочного" текста
     if (sessionStorage.getItem("isAdmin") === "true") {
       isAdmin = true;
       enableEditing();
     }
-    loadArticle();
+    updatePlaceholderClass();
   });
 </script>
 </body>

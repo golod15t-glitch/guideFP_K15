@@ -51,6 +51,8 @@
       padding: 0.5rem;
       display: none;
       gap: 0.5rem;
+      align-items: center;
+      flex-wrap: wrap;
     }
     .editor-toolbar.active {
       display: flex;
@@ -64,8 +66,26 @@
       background: #e0e7ff;
       color: #4338ca;
       font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     .tool-btn:hover {
+      background-color: #c7d2fe;
+      border-color: #4338ca;
+    }
+    select.font-select {
+      font-size: 1rem;
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      border: 1px solid transparent;
+      background: #e0e7ff;
+      color: #4338ca;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+      font-family: inherit;
+    }
+    select.font-select:hover {
       background-color: #c7d2fe;
       border-color: #4338ca;
     }
@@ -132,9 +152,26 @@
     <button class="tool-btn" title="Жирный" onclick="formatText('bold')" type="button" aria-pressed="false"><i class="fas fa-bold"></i></button>
     <button class="tool-btn" title="Курсив" onclick="formatText('italic')" type="button" aria-pressed="false"><i class="fas fa-italic"></i></button>
     <button class="tool-btn" title="Подчёркивание" onclick="formatText('underline')" type="button" aria-pressed="false"><i class="fas fa-underline"></i></button>
-    <button class="tool-btn" title="Список" onclick="formatText('insertUnorderedList')" type="button"><i class="fas fa-list-ul"></i></button>
-    <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')" type="button"><i class="fas fa-list-ol"></i></button>
+    <button class="tool-btn" title="Маркированный список" onclick="formatText('insertUnorderedList')" type="button" aria-pressed="false"><i class="fas fa-list-ul"></i></button>
+    <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')" type="button" aria-pressed="false"><i class="fas fa-list-ol"></i></button>
     <button class="tool-btn" title="Вставить изображение" onclick="addImage()" type="button"><i class="fas fa-image"></i></button>
+
+    <!-- Добавляем управление размером -->
+    <button class="tool-btn" title="Увеличить размер шрифта" type="button" onclick="changeFontSize(1)"><i class="fas fa-plus"></i></button>
+    <button class="tool-btn" title="Уменьшить размер шрифта" type="button" onclick="changeFontSize(-1)"><i class="fas fa-minus"></i></button>
+
+    <!-- Выпадающий список шрифтов -->
+    <select class="font-select" aria-label="Выбор шрифта" onchange="formatText('fontName', this.value)">
+      <option value="" selected>Шрифт</option>
+      <option value="Arial">Arial</option>
+      <option value="'Times New Roman', Times, serif">Times New Roman</option>
+      <option value="'Courier New', Courier, monospace">Courier New</option>
+      <option value="Verdana">Verdana</option>
+      <option value="Georgia">Georgia</option>
+      <option value="Impact">Impact</option>
+      <option value="Tahoma">Tahoma</option>
+      <option value="Comic Sans MS">Comic Sans MS</option>
+    </select>
   </div>
   <!-- Заголовок статьи и кнопки -->
   <div style="max-width: 800px; margin: 2rem auto 1rem; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center;">
@@ -210,119 +247,69 @@
     updatePlaceholderClass();
   }
 
-  // Кастомная функция вставки списка UL или OL
-  function insertCustomList(listType) {
-    const selection = window.getSelection();
-    if (!selection.rangeCount) return;
-
-    const range = selection.getRangeAt(0);
-
-    if (range.collapsed) {
-      // Нет выделения - просто вставляем пустой список с одним элементом li
-      const list = document.createElement(listType);
-      const li = document.createElement('li');
-      li.appendChild(document.createElement('br'));
-      list.appendChild(li);
-      range.deleteContents();
-      range.insertNode(list);
-
-      // Поставить курсор в li
-      selection.removeAllRanges();
-      const newRange = document.createRange();
-      newRange.setStart(li, 0);
-      newRange.collapse(true);
-      selection.addRange(newRange);
-      articleContent.focus();
-      return;
-    }
-
-    // Клонируем выделение в фрагмент
-    const fragment = range.cloneContents();
-
-    // Собираем блоки для списка (параграфы или блоки)
-    const blocks = [];
-
-    // Если в выделении только текстовый узел — разбиваем по переносу строк
-    if (fragment.childNodes.length === 1 && fragment.firstChild.nodeType === Node.TEXT_NODE) {
-      const text = fragment.firstChild.textContent;
-      text.split(/\r?\n/).forEach(line => {
-        if (line.trim()) {
-          const p = document.createElement('p');
-          p.textContent = line.trim();
-          blocks.push(p);
-        }
-      });
-    } else {
-      // Иначе пробегаемся по childNodes фрагмента
-      fragment.childNodes.forEach(node => {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          if (['P','DIV','LI','BR'].includes(node.nodeName)) {
-            if (node.nodeName === 'BR') {
-              blocks.push(document.createElement('p'));
-            } else {
-              blocks.push(node.cloneNode(true));
-            }
-          } else {
-            const p = document.createElement('p');
-            p.innerHTML = node.innerHTML;
-            blocks.push(p);
-          }
-        } else if (node.nodeType === Node.TEXT_NODE) {
-          if (node.textContent.trim()) {
-            const p = document.createElement('p');
-            p.textContent = node.textContent.trim();
-            blocks.push(p);
-          }
-        }
-      });
-    }
-
-    if (blocks.length === 0) {
-      // Если ничего не распарсили — вызываем стандартное исполнение
-      document.execCommand(listType === 'ol' ? 'insertOrderedList' : 'insertUnorderedList');
-      articleContent.focus();
-      return;
-    }
-
-    // Создаём список (ul или ol)
-    const list = document.createElement(listType);
-
-    // Для каждого блока создаём li, вставляем в список
-    blocks.forEach(block => {
-      const li = document.createElement('li');
-      // Копируем содержимое блока внутрь li
-      while (block.firstChild) {
-        li.appendChild(block.firstChild);
-      }
-      list.appendChild(li);
-    });
-
-    // Заменяем выделенный фрагмент на наш список
-    range.deleteContents();
-    range.insertNode(list);
-
-    // Помещаем курсор внутрь первого li списка
-    selection.removeAllRanges();
-    const newRange = document.createRange();
-    if (list.firstChild) {
-      newRange.setStart(list.firstChild, 0);
-      newRange.collapse(true);
-      selection.addRange(newRange);
-    }
-
+  function formatText(command, value = null) {
+    document.execCommand(command, false, value);
     articleContent.focus();
   }
 
-  // Изменённая функция formatText с кастомной обработкой списков
-  function formatText(command, value = null) {
-    if (command === 'insertOrderedList') {
-      insertCustomList('ol');
-    } else if (command === 'insertUnorderedList') {
-      insertCustomList('ul');
-    } else {
-      document.execCommand(command, false, value);
-      articleContent.focus();
+  // Функция изменения размера шрифта в пределах от 8 до 72 пикселей
+  function changeFontSize(delta) {
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return;
+
+    // Для простоты обёртываем выделение span с inline стилем font-size
+    // Если нет выделения, ничего не делаем
+    if (selection.isCollapsed) return;
+
+    const range = selection.getRangeAt(0);
+
+    // Получаем все текстовые узлы в выделении для корректного обхода
+    // Асинхронно оборачиваем в span с измененным размером шрифта
+
+    // Для простоты оборачиваем весь выделенный фрагмент span с font-size
+
+    // Сначала получим уже применённый размер шрифта или дефолт 16px
+    let parent = selection.focusNode.parentElement;
+    let currentSize = window.getComputedStyle(parent).fontSize;
+    let pxSize = parseInt(currentSize) || 16;
+
+    // Новое значение с ограничениями
+    let newSize = pxSize + delta;
+    if (newSize < 8) newSize = 8;
+    if (newSize > 72) newSize = 72;
+
+    // document.execCommand('fontSize') использует устаревшие размеры (1..7)
+    // Вместо этого вставим span с inline-стилем font-size
+
+    // Создаем span с font-size = newSize px
+    const span = document.createElement('span');
+    span.style.fontSize = newSize + 'px';
+
+    try {
+      // Окружим выделенный текст span
+      range.surroundContents(span);
+    } catch (e) {
+      // Если возникла ошибка (например, выделение пересекает несколько элементов),
+      // используем execCommand fontSize + после меняем все <font size="..."> на span с px
+      document.execCommand('fontSize', false, '7');
+      // Меняем font[size="7"] на span с px
+      replaceFontSizeWithSpan(newSize);
     }
+
+    articleContent.focus();
+
+    // Обновляем плейсхолдеры, чтобы не конфликтовали
+    updatePlaceholderClass();
+  }
+
+  function replaceFontSizeWithSpan(pxSize) {
+    const fonts = articleContent.querySelectorAll('font[size="7"]');
+    fonts.forEach(fontEl => {
+      const span = document.createElement('span');
+      span.style.fontSize = pxSize + 'px';
+      span.innerHTML = fontEl.innerHTML;
+      fontEl.parentNode.replaceChild(span, fontEl);
+    });
   }
 
   function addImage() {
@@ -363,7 +350,7 @@
 
   saveBtn.addEventListener("click", saveAndDownload);
 
-  // Обновление класса empty (плейсхолдера)
+  // Обновление класса empty для плейсхолдера
   function updatePlaceholderClass() {
     [articleTitle, articleContent].forEach(el => {
       if (el.innerText.trim().length === 0) {

@@ -144,14 +144,10 @@
     <p>Загрузка...</p>
   </div>
   <script>
-    // === Настройки GitHub ===
-    // ВАЖНО: вставьте ваш GitHub PAT (с правами repo), не забывая не публиковать токен публично!
-    const GITHUB_TOKEN = "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".trim(); 
-    const REPO_OWNER = "golod15t-glitch"; 
-    const REPO_NAME = "guideFP_K15"; 
-    const FILE_PATH = "articles/article1.json"; 
+    // Адрес вашего backend-сервера (из Render или другого хостинга)
+    const BACKEND_URL = 'https://guidefp-k15-v2.onrender.com';
 
-    // Админский код доступа (для примера)
+    // Админский код доступа (пример)
     const ADMIN_CODE = "123";
 
     // DOM элементы
@@ -166,9 +162,9 @@
     const editorToolbar = document.getElementById("editorToolbar");
 
     let isAdmin = false;
-    let currentSha = null; // SHA текущего файла на GitHub — нужно для обновления содержимого
+    let currentSha = null;
 
-    // Показать модал админского доступа
+    // Показываем модал админа
     function showAdminModal() {
       adminModal.classList.add("active");
       adminCodeInput.value = "";
@@ -176,12 +172,12 @@
       adminCodeInput.focus();
     }
 
-    // Скрыть модал админского доступа
+    // Скрываем модал админа
     function hideAdminModal() {
       adminModal.classList.remove("active");
     }
 
-    // Проверка кода доступа администратора
+    // Проверка кода доступа
     adminSubmitBtn.addEventListener("click", () => {
       if (adminCodeInput.value === ADMIN_CODE) {
         isAdmin = true;
@@ -193,7 +189,7 @@
       }
     });
 
-    // Включение режима редактирования
+    // Включить режим редактирования
     function enableEditing() {
       articleContent.contentEditable = "true";
       articleTitle.contentEditable = "true";
@@ -203,7 +199,7 @@
       articleContent.focus();
     }
 
-    // Выключение режима редактирования
+    // Выключить режим редактирования
     function disableEditing() {
       articleContent.contentEditable = "false";
       articleTitle.contentEditable = "false";
@@ -212,13 +208,13 @@
       saveBtn.style.display = "none";
     }
 
-    // Форматирование текста (жирный, курсив и т.д.)
+    // Форматирование текста
     function formatText(command, value = null) {
       document.execCommand(command, false, value);
       articleContent.focus();
     }
 
-    // Вставка изображения по URL
+    // Вставка изображения
     function addImage() {
       const url = prompt("Введите URL изображения", "https://");
       if (url) {
@@ -226,7 +222,7 @@
       }
     }
 
-    // Обработка кнопки "Редактировать"
+    // Обработка кнопок
     editBtn.addEventListener("click", () => {
       if (isAdmin) {
         enableEditing();
@@ -235,27 +231,17 @@
       }
     });
 
-    // Обработка кнопки "Сохранить"
     saveBtn.addEventListener("click", saveArticleToGitHub);
 
-    // Загрузка статьи с GitHub
-    async function loadArticleFromGitHub() {
+    // Загрузка статьи с backend-сервера
+    async function loadArticle() {
       try {
-        const res = await fetch(
-          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`,
-          {
-            headers: {
-              Authorization: `token ${GITHUB_TOKEN}`,
-              Accept: "application/vnd.github.v3+json",
-            },
-          }
-        );
-        if (!res.ok) throw new Error(`Ошибка загрузки: ${res.status} ${res.statusText}`);
+        const res = await fetch(`${BACKEND_URL}/article`);
+        if (!res.ok) throw new Error(`Ошибка загрузки: ${res.status}`);
         const data = await res.json();
-        const jsonStr = atob(data.content.replace(/\n/g, ""));
-        const articleData = JSON.parse(jsonStr);
-        articleTitle.innerText = articleData.title || "Без заголовка";
-        articleContent.innerHTML = articleData.content || "";
+
+        articleTitle.innerText = data.content.title;
+        articleContent.innerHTML = data.content.content;
         currentSha = data.sha;
       } catch (e) {
         console.error(e);
@@ -264,7 +250,7 @@
       }
     }
 
-    // Сохранение статьи обратно в GitHub
+    // Сохранение статьи через backend
     async function saveArticleToGitHub() {
       saveBtn.disabled = true;
       saveBtn.innerHTML = "Сохраняю...";
@@ -272,54 +258,24 @@
         const articleData = {
           title: articleTitle.innerText.trim(),
           content: articleContent.innerHTML,
-        };
-        const jsonStr = JSON.stringify(articleData, null, 2);
-        const base64Content = btoa(unescape(encodeURIComponent(jsonStr)));
-
-        // Если SHA нет, получить его (необходим для обновления файла)
-        if (!currentSha) {
-          const getResponse = await fetch(
-            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`,
-            {
-              headers: {
-                Authorization: `token ${GITHUB_TOKEN}`,
-                Accept: "application/vnd.github.v3+json",
-              },
-            }
-          );
-          if (!getResponse.ok) {
-            throw new Error(`Не удалось получить файл: ${getResponse.status} ${getResponse.statusText}`);
-          }
-          const fileData = await getResponse.json();
-          currentSha = fileData.sha;
-        }
-
-        const putBody = {
-          message: `Обновление статьи: ${articleData.title}`,
-          content: base64Content,
           sha: currentSha,
         };
 
-        const putResponse = await fetch(
-          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`,
-          {
-            method: "PUT",
-            headers: {
-              Authorization: `token ${GITHUB_TOKEN}`,
-              Accept: "application/vnd.github.v3+json",
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(putBody),
-          }
-        );
+        const res = await fetch(`${BACKEND_URL}/article`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(articleData),
+        });
 
-        if (!putResponse.ok) {
-          const errorData = await putResponse.json();
-          throw new Error(`Ошибка при сохранении: ${errorData.message || putResponse.statusText}`);
+        if (!res.ok) {
+          const err = await res.json();
+          throw new Error(err.error || "Ошибка при сохранении");
         }
-        const responseData = await putResponse.json();
-        currentSha = responseData.content.sha;
-        alert("Статья успешно сохранена на GitHub!");
+
+        const responseData = await res.json();
+        currentSha = responseData.sha;
+
+        alert("Статья успешно сохранена!");
         disableEditing();
       } catch (error) {
         alert(`Ошибка: ${error.message}`);
@@ -330,13 +286,13 @@
       }
     }
 
-    // Автоматическая загрузка при загрузке страницы
+    // Автозагрузка статьи и проверка сессии админа
     window.addEventListener("DOMContentLoaded", () => {
       if (sessionStorage.getItem("isAdmin") === "true") {
         isAdmin = true;
         enableEditing();
       }
-      loadArticleFromGitHub();
+      loadArticle();
     });
   </script>
 </body>

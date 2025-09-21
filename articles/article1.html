@@ -74,35 +74,7 @@
       background-color: #c7d2fe;
       border-color: #4338ca;
     }
-    .font-size-display {
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.375rem;
-      border: 1px solid transparent;
-      background: #e0e7ff;
-      color: #4338ca;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: background-color 0.2s, border-color 0.2s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 60px;
-      text-align: center;
-    }
-    .font-size-display:hover {
-      background-color: #c7d2fe;
-      border-color: #4338ca;
-    }
-    .font-size-display input {
-      border: none;
-      background: transparent;
-      color: #4338ca;
-      font-size: 1rem;
-      text-align: center;
-      width: 100%;
-      outline: none;
-    }
-    select.font-select {
+    select.font-size-select, select.font-select {
       font-size: 1rem;
       padding: 0.25rem 0.5rem;
       border-radius: 0.375rem;
@@ -113,7 +85,7 @@
       transition: background-color 0.2s, border-color 0.2s;
       font-family: inherit;
     }
-    select.font-select:hover {
+    select.font-size-select:hover, select.font-select:hover {
       background-color: #c7d2fe;
       border-color: #4338ca;
     }
@@ -184,10 +156,25 @@
     <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')" type="button" aria-pressed="false"><i class="fas fa-list-ol"></i></button>
     <button class="tool-btn" title="Вставить изображение" onclick="addImage()" type="button"><i class="fas fa-image"></i></button>
 
-    <!-- Поле для отображения и ввода размера шрифта -->
-    <div class="font-size-display" id="fontSizeDisplay" onclick="makeFontSizeEditable()">
-      <input type="text" id="fontSizeInput" value="16" readonly style="cursor: pointer;" onblur="applyFontSize()" onkeydown="handleFontSizeKeyDown(event)">
-    </div>
+    <!-- Выпадающий список размеров шрифта -->
+    <select class="font-size-select" id="fontSizeSelect" aria-label="Выбор размера шрифта" onchange="setFontSize(parseInt(this.value))">
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+      <option value="11">11</option>
+      <option value="12">12</option>
+      <option value="14">14</option>
+      <option value="16" selected>16</option>
+      <option value="18">18</option>
+      <option value="20">20</option>
+      <option value="22">22</option>
+      <option value="24">24</option>
+      <option value="26">26</option>
+      <option value="28">28</option>
+      <option value="36">36</option>
+      <option value="48">48</option>
+      <option value="72">72</option>
+    </select>
 
     <!-- Выпадающий список шрифтов -->
     <select class="font-select" aria-label="Выбор шрифта" onchange="formatText('fontName', this.value)">
@@ -230,8 +217,7 @@
   const articleContent = document.getElementById("articleContent");
   const articleTitle = document.getElementById("articleTitle");
   const editorToolbar = document.getElementById("editorToolbar");
-  const fontSizeDisplay = document.getElementById("fontSizeDisplay");
-  const fontSizeInput = document.getElementById("fontSizeInput");
+  const fontSizeSelect = document.getElementById("fontSizeSelect");
   let isAdmin = false;
 
   function showAdminModal() {
@@ -266,7 +252,7 @@
     editBtn.style.display = "none";
     saveBtn.style.display = "inline-block";
     updatePlaceholderClass();
-    updateFontSizeDisplay();
+    updateFontSizeSelect();
     articleTitle.focus();
   }
 
@@ -317,7 +303,7 @@
     }
 
     articleContent.focus();
-    updateFontSizeDisplay();
+    updateFontSizeSelect();
   }
 
   function replaceFontSizeWithSpan(pxSize) {
@@ -330,34 +316,10 @@
     });
   }
 
-  // Обновление отображения размера шрифта
-  function updateFontSizeDisplay() {
+  // Обновление выбора в выпадающем списке размера шрифта
+  function updateFontSizeSelect() {
     const currentSize = getCurrentFontSize();
-    fontSizeInput.value = currentSize;
-  }
-
-  // Сделать поле редактируемым при клике
-  function makeFontSizeEditable() {
-    fontSizeInput.readOnly = false;
-    fontSizeInput.focus();
-    fontSizeInput.select();
-  }
-
-  // Обработка ввода размера шрифта
-  function applyFontSize() {
-    fontSizeInput.readOnly = true;
-    const size = parseInt(fontSizeInput.value);
-    if (size && size >= 8 && size <= 72) {
-      setFontSize(size);
-    } else {
-      updateFontSizeDisplay(); // Восстановить предыдущее значение
-    }
-  }
-
-  function handleFontSizeKeyDown(event) {
-    if (event.key === 'Enter') {
-      applyFontSize();
-    }
+    fontSizeSelect.value = currentSize.toString();
   }
 
   function addImage() {
@@ -416,8 +378,8 @@
   });
 
   // Обновление размера шрифта при изменении выделения
-  articleContent.addEventListener("mouseup", updateFontSizeDisplay);
-  articleContent.addEventListener("keyup", updateFontSizeDisplay);
+  articleContent.addEventListener("mouseup", updateFontSizeSelect);
+  articleContent.addEventListener("keyup", updateFontSizeSelect);
 
   window.addEventListener("DOMContentLoaded", () => {
     if (sessionStorage.getItem("isAdmin") === "true") {
@@ -425,7 +387,7 @@
       enableEditing();
     }
     updatePlaceholderClass();
-    updateFontSizeDisplay();
+    updateFontSizeSelect();
   });
 </script>
 </body>

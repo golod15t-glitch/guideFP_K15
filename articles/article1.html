@@ -94,18 +94,21 @@
   </style>
 </head>
 <body>
+
   <!-- Админский модал -->
-  <div id="adminModal">
-    <div class="modal-content">
-      <h2>Доступ к редактированию</h2>
+  <div id="adminModal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
+      <h2 id="adminModalTitle">Доступ к редактированию</h2>
       <p>Введите код доступа администратора:</p>
       <input
         id="adminCodeInput"
         type="password"
         placeholder="Код доступа"
+        autocomplete="off"
         style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; font-size: 1rem;"
+        aria-describedby="adminError"
       />
-      <div id="adminError">Неверный код!</div>
+      <div id="adminError" role="alert">Неверный код!</div>
       <button id="adminSubmitBtn" style="margin-top: 1rem; width: 100%; padding: 0.5rem; font-size: 1rem;">
         Подтвердить
       </button>
@@ -113,152 +116,160 @@
   </div>
 
   <!-- Панель инструментов редактора -->
-  <div id="editorToolbar" class="editor-toolbar">
-    <button class="tool-btn" title="Жирный" onclick="formatText('bold')"><i class="fas fa-bold"></i></button>
-    <button class="tool-btn" title="Курсив" onclick="formatText('italic')"><i class="fas fa-italic"></i></button>
-    <button class="tool-btn" title="Подчёркивание" onclick="formatText('underline')"><i class="fas fa-underline"></i></button>
-    <button class="tool-btn" title="Список" onclick="formatText('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
-    <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
-    <button class="tool-btn" title="Вставить изображение" onclick="addImage()"><i class="fas fa-image"></i></button>
+  <div id="editorToolbar" class="editor-toolbar" aria-label="Панель инструментов редактора">
+    <button class="tool-btn" title="Жирный" onclick="formatText('bold')" type="button" aria-pressed="false"><i class="fas fa-bold"></i></button>
+    <button class="tool-btn" title="Курсив" onclick="formatText('italic')" type="button" aria-pressed="false"><i class="fas fa-italic"></i></button>
+    <button class="tool-btn" title="Подчёркивание" onclick="formatText('underline')" type="button" aria-pressed="false"><i class="fas fa-underline"></i></button>
+    <button class="tool-btn" title="Список" onclick="formatText('insertUnorderedList')" type="button"><i class="fas fa-list-ul"></i></button>
+    <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')" type="button"><i class="fas fa-list-ol"></i></button>
+    <button class="tool-btn" title="Вставить изображение" onclick="addImage()" type="button"><i class="fas fa-image"></i></button>
   </div>
 
-  <!-- Заголовок статьи -->
+  <!-- Заголовок статьи и кнопки -->
   <div style="max-width: 800px; margin: 2rem auto 1rem; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center;">
-    <h1 id="articleTitle" contenteditable="false" style="margin:0; font-size: 2.5rem; font-weight: 700;">
+    <h1 id="articleTitle" contenteditable="false" style="margin:0; font-size: 2.5rem; font-weight: 700;" tabindex="0" aria-label="Заголовок статьи">
       Загрузка...
     </h1>
     <div>
-      <button id="editBtn" style="font-size:1.25rem; padding: 0.5rem 1rem; cursor:pointer;">
+      <button id="editBtn" type="button" style="font-size: 1.25rem; padding: 0.5rem 1rem; cursor: pointer;">
         <i class="fas fa-pencil-alt"></i> Редактировать
       </button>
-      <button id="saveBtn" style="font-size:1.25rem; padding: 0.5rem 1rem; cursor:pointer; display:none;">
+      <button id="saveBtn" type="button" style="font-size: 1.25rem; padding: 0.5rem 1rem; cursor: pointer; display: none;">
         <i class="fas fa-save"></i> Сохранить
       </button>
     </div>
   </div>
 
   <!-- Контент статьи -->
-  <div
-    id="articleContent"
-    class="content-editable"
-    contenteditable="false"
-    style="max-width: 800px; margin: 0 auto 3rem; background: white;"
-  >
-    <p>Загрузка...</p>
-  </div>
+  <main>
+    <article id="articleContent" class="content-editable" contenteditable="false" style="max-width: 800px; margin: 0 auto 3rem; background: white;" tabindex="0" aria-label="Контент статьи">
+      <p>Загрузка...</p>
+    </article>
+  </main>
 
-  <script>
-    const ADMIN_CODE = "123";
+<script>
+  const ADMIN_CODE = "123";
 
-    const adminModal = document.getElementById("adminModal");
-    const adminCodeInput = document.getElementById("adminCodeInput");
-    const adminError = document.getElementById("adminError");
-    const adminSubmitBtn = document.getElementById("adminSubmitBtn");
-    const editBtn = document.getElementById("editBtn");
-    const saveBtn = document.getElementById("saveBtn");
-    const articleContent = document.getElementById("articleContent");
-    const articleTitle = document.getElementById("articleTitle");
-    const editorToolbar = document.getElementById("editorToolbar");
+  // Элементы DOM
+  const adminModal = document.getElementById("adminModal");
+  const adminCodeInput = document.getElementById("adminCodeInput");
+  const adminError = document.getElementById("adminError");
+  const adminSubmitBtn = document.getElementById("adminSubmitBtn");
+  const editBtn = document.getElementById("editBtn");
+  const saveBtn = document.getElementById("saveBtn");
+  const articleContent = document.getElementById("articleContent");
+  const articleTitle = document.getElementById("articleTitle");
+  const editorToolbar = document.getElementById("editorToolbar");
 
-    let isAdmin = false;
+  let isAdmin = false;
 
-    function showAdminModal() {
-      adminModal.classList.add("active");
-      adminCodeInput.value = "";
-      adminError.style.display = "none";
-      adminCodeInput.focus();
+  function showAdminModal() {
+    adminModal.classList.add("active");
+    adminModal.setAttribute('aria-hidden', 'false');
+    adminCodeInput.value = "";
+    adminError.style.display = "none";
+    adminCodeInput.focus();
+  }
+
+  function hideAdminModal() {
+    adminModal.classList.remove("active");
+    adminModal.setAttribute('aria-hidden', 'true');
+  }
+
+  adminSubmitBtn.addEventListener("click", () => {
+    if (adminCodeInput.value === ADMIN_CODE) {
+      isAdmin = true;
+      sessionStorage.setItem("isAdmin", "true");
+      hideAdminModal();
+      enableEditing();
+    } else {
+      adminError.style.display = "block";
+      adminCodeInput.setAttribute('aria-invalid', 'true');
     }
+  });
 
-    function hideAdminModal() {
-      adminModal.classList.remove("active");
+  function enableEditing() {
+    articleContent.contentEditable = "true";
+    articleTitle.contentEditable = "true";
+    editorToolbar.classList.add("active");
+    editBtn.style.display = "none";
+    saveBtn.style.display = "inline-block";
+    articleContent.focus();
+  }
+
+  function disableEditing() {
+    articleContent.contentEditable = "false";
+    articleTitle.contentEditable = "false";
+    editorToolbar.classList.remove("active");
+    editBtn.style.display = "inline-block";
+    saveBtn.style.display = "none";
+  }
+
+  function formatText(command, value = null) {
+    document.execCommand(command, false, value);
+    articleContent.focus();
+  }
+
+  function addImage() {
+    const url = prompt("Введите URL изображения", "https://");
+    if (url) {
+      formatText("insertImage", url);
     }
+  }
 
-    adminSubmitBtn.addEventListener("click", () => {
-      if (adminCodeInput.value === ADMIN_CODE) {
-        isAdmin = true;
-        sessionStorage.setItem("isAdmin", "true");
-        hideAdminModal();
-        enableEditing();
-      } else {
-        adminError.style.display = "block";
-      }
-    });
-
-    function enableEditing() {
-      articleContent.contentEditable = "true";
-      articleTitle.contentEditable = "true";
-      editorToolbar.classList.add("active");
-      editBtn.style.display = "none";
-      saveBtn.style.display = "inline-block";
-      articleContent.focus();
+  editBtn.addEventListener("click", () => {
+    if (isAdmin) {
+      enableEditing();
+    } else {
+      showAdminModal();
     }
+  });
 
-    function disableEditing() {
-      articleContent.contentEditable = "false";
-      articleTitle.contentEditable = "false";
-      editorToolbar.classList.remove("active");
-      editBtn.style.display = "inline-block";
-      saveBtn.style.display = "none";
+  function saveAndDownload() {
+    disableEditing();
+
+    // Ждем чтобы браузер применил изменения DOM и режим редактирования выключился
+    setTimeout(() => {
+      const docHtml = document.documentElement.outerHTML;
+
+      const blob = new Blob([docHtml], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+
+      const filename = articleTitle.innerText.trim()
+        .replace(/\s+/g, "_")
+        .replace(/[^\w\-]/g, "") || "article";
+
+      a.download = filename + ".html";
+
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+
+      alert("Файл страницы успешно сохранён!");
+    }, 300);
+  }
+
+  saveBtn.addEventListener("click", saveAndDownload);
+
+  // Загрузка тестового контента, замените на реальную загрузку
+  function loadArticle() {
+    articleTitle.innerText = "Моя первая статья";
+    articleContent.innerHTML = `
+      <p>Здесь ваш контент...</p>
+    `;
+  }
+
+  window.addEventListener("DOMContentLoaded", () => {
+    if (sessionStorage.getItem("isAdmin") === "true") {
+      isAdmin = true;
+      enableEditing();
     }
+    loadArticle();
+  });
+</script>
 
-    function formatText(command, value = null) {
-      document.execCommand(command, false, value);
-      articleContent.focus();
-    }
-
-    function addImage() {
-      const url = prompt("Введите URL изображения", "https://");
-      if (url) {
-        formatText("insertImage", url);
-      }
-    }
-
-    editBtn.addEventListener("click", () => {
-      if (isAdmin) {
-        enableEditing();
-      } else {
-        showAdminModal();
-      }
-    });
-
-    function saveAndDownload() {
-      disableEditing();
-
-      setTimeout(() => {
-        const docHtml = document.documentElement.outerHTML;
-
-        const blob = new Blob([docHtml], { type: "text/html" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-
-        const filename = articleTitle.innerText.trim()
-          .replace(/\s+/g, "_")
-          .replace(/[^\w\-]/g, "") || "article";
-
-        a.download = filename + ".html";
-
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-
-        alert("Файл страницы успешно сохранён!");
-      }, 300); // Ждем 300 мс после отключения редактирования
-    }
-
-    saveBtn.addEventListener("click", saveAndDownload);
-
-    window.addEventListener("DOMContentLoaded", () => {
-      if (sessionStorage.getItem("isAdmin") === "true") {
-        isAdmin = true;
-        enableEditing();
-      }
-
-      // Здесь можно добавить загрузку статьи, например статический текст:
-      articleTitle.innerText = "Моя первая статья";
-      articleContent.innerHTML = "<p>Здесь ваш контент...</p>";
-    });
-  </script>
 </body>
 </html>

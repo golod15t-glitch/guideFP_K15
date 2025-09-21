@@ -1,72 +1,88 @@
+// server.js
 const express = require('express');
-const axios = require('axios');  // Это вызовет ошибку, если axios не установлен
+const fetch = require('node-fetch');
 const app = express();
-const PORT = process.env.PORT || 10000;
-
-// GitHub API конфиг
-const GITHUB_TOKEN = process.env.GITHUB_TOKEN; // Установите в Render
-const REPO_OWNER = 'guideFP_K15';
-const REPO_NAME = 'guideFP_K15';
 
 app.use(express.json());
 
-// Эндпоинт для получения статьи
-app.get('/articles/:filename', async (req, res) => {
-    const { filename } = req.params;
-    const path = `articles/${filename}.html`;
+// Ваш токен GitHub, лучше хранить через Render Secrets (переменные окружения)
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const REPO_OWNER = 'golod15t-glitch';
+const REPO_NAME = 'guideFP_K15';
+const FILE_PATH = 'articles/article1.json';
 
-    console.log(`[LOG] Получение файла: ${path} из репозитория ${REPO_OWNER}/${REPO_NAME}`);
+const GITHUB_API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
 
-    try {
-        const response = await axios.get(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
-            headers: {
-                'Authorization': `token ${GITHUB_TOKEN}`,
-                'Accept': 'application/vnd.github.v3.raw'
-            }
-        });
+// Для загрузки статьи
+app.get('/article', async (req, res) => {
+  try {
+    const response = await fetch(GITHUB_API_URL, {
+      headers: {
+        Authorization: `token ${GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github.v3+json',
+      },
+    });
 
-        const content = Buffer.from(response.data.content, 'base64').toString('utf-8');
-        res.send(content);
-    } catch (error) {
-        console.error('[ERROR] Ошибка при получении файла:', error.response ? error.response.status : error.message);
-        res.status(404).json({ error: 'Файл не найден. Проверьте путь и токен.' });
+    if (!response.ok) {
+      return res.status(response.status).json({ error: 'Ошибка GitHub API при загрузке' });
     }
+
+    const data = await response.json();
+    // Декодируем base64
+    const content = Buffer.from(data.content, 'base64').toString('utf-8');
+
+    res.json({
+      sha: data.sha,
+      content: JSON.parse(content),
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+  }
 });
 
-// Эндпоинт для сохранения статьи
-app.post('/save-article', async (req, res) => {
-    const { title, content, path } = req.body;
+// Для сохранения статьи (PUT)
+app.put('/article', async (req, res) => {
+  const { title, content, sha } = req.body;
 
-    console.log(`[LOG] Сохранение файла: ${path} с заголовком: ${title}`);
+  if (!title || !content || !sha) {
+    return res.status(400).json({ error: 'Неверный формат данных' });
+  }
 
-    try {
-        // Получите SHA (если файл существует)
-        const getResponse = await axios.get(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
-            headers: {
-                'Authorization': `token ${GITHUB_TOKEN}`
-            }
-        });
+  const fileContent = JSON.stringify({ title, content }, null, 2);
+  const encodedContent = Buffer.from(fileContent, 'utf-8').toString('base64');
 
-        const sha = getResponse.data.sha;
+  try {
+    const response = await fetch(GITHUB_API_URL, {
+      method: 'PUT',
+      headers: {
+        Authorization: `token ${GITHUB_TOKEN}`,
+        Accept: 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: `Обновление статьи: ${title}`,
+        content: encodedContent,
+        sha,
+      }),
+    });
 
-        // Обновите файл
-        const updateResponse = await axios.put(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${path}`, {
-            message: `Обновление статьи: ${title}`,
-            content: Buffer.from(content).toString('base64'),
-            sha: sha
-        }, {
-            headers: {
-                'Authorization': `token ${GITHUB_TOKEN}`
-            }
-        });
-
-        res.json({ message: 'Статья сохранена успешно!' });
-    } catch (error) {
-        console.error('[ERROR] Ошибка при сохранении:', error.response ? error.response.status : error.message);
-        res.status(500).json({ error: 'Ошибка при сохранении. Проверьте токен и репозиторий.' });
+    if (!response.ok) {
+      const errorData = await response.json();
+      return res.status(response.status).json({ error: errorData.message || 'Ошибка GitHub API' });
     }
+
+    const data = await response.json();
+    res.json({
+      message: 'Статья успешно сохранена',
+      sha: data.content.sha,
+    });
+  } catch (error) {
+    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+  }
 });
 
+// Запуск сервера
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`[LOG] Сервер запущен на http://localhost:${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });

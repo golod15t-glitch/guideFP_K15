@@ -148,8 +148,8 @@
   </div>
 
   <script>
-        // === Настройки GitHub ===
-    const GITHUB_TOKEN = "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"; // Вставьте сюда ваш PAT с правами записи
+    // === Настройки GitHub ===
+    const GITHUB_TOKEN = "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".trim(); // Вставьте сюда ваш PAT с правами записи, обязательно trim()
     const REPO_OWNER = "golod15t-glitch"; // Владелец репозитория
     const REPO_NAME = "guideFP_K15"; // Имя репозитория
     const FILE_PATH = "articles/article1.json"; // Путь к JSON-файлу в репозитории
@@ -244,6 +244,10 @@
     // Функция загрузки статьи из GitHub (JSON)
     async function loadArticleFromGitHub() {
       try {
+        // Диагностика токена (можно убрать после проверки)
+        console.log("Токен для загрузки:", JSON.stringify(GITHUB_TOKEN));
+        console.log("Коды символов токена:", [...GITHUB_TOKEN].map(c => c.charCodeAt(0)));
+
         const res = await fetch(
           `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`,
           {

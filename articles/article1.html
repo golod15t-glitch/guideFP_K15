@@ -74,6 +74,34 @@
       background-color: #c7d2fe;
       border-color: #4338ca;
     }
+    .font-size-display {
+      padding: 0.25rem 0.5rem;
+      border-radius: 0.375rem;
+      border: 1px solid transparent;
+      background: #e0e7ff;
+      color: #4338ca;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s, border-color 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 60px;
+      text-align: center;
+    }
+    .font-size-display:hover {
+      background-color: #c7d2fe;
+      border-color: #4338ca;
+    }
+    .font-size-display input {
+      border: none;
+      background: transparent;
+      color: #4338ca;
+      font-size: 1rem;
+      text-align: center;
+      width: 100%;
+      outline: none;
+    }
     select.font-select {
       font-size: 1rem;
       padding: 0.25rem 0.5rem;
@@ -156,9 +184,10 @@
     <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')" type="button" aria-pressed="false"><i class="fas fa-list-ol"></i></button>
     <button class="tool-btn" title="Вставить изображение" onclick="addImage()" type="button"><i class="fas fa-image"></i></button>
 
-    <!-- Добавляем управление размером -->
-    <button class="tool-btn" title="Увеличить размер шрифта" type="button" onclick="changeFontSize(1)"><i class="fas fa-plus"></i></button>
-    <button class="tool-btn" title="Уменьшить размер шрифта" type="button" onclick="changeFontSize(-1)"><i class="fas fa-minus"></i></button>
+    <!-- Поле для отображения и ввода размера шрифта -->
+    <div class="font-size-display" id="fontSizeDisplay" onclick="makeFontSizeEditable()">
+      <input type="text" id="fontSizeInput" value="16" readonly style="cursor: pointer;" onblur="applyFontSize()" onkeydown="handleFontSizeKeyDown(event)">
+    </div>
 
     <!-- Выпадающий список шрифтов -->
     <select class="font-select" aria-label="Выбор шрифта" onchange="formatText('fontName', this.value)">
@@ -201,6 +230,8 @@
   const articleContent = document.getElementById("articleContent");
   const articleTitle = document.getElementById("articleTitle");
   const editorToolbar = document.getElementById("editorToolbar");
+  const fontSizeDisplay = document.getElementById("fontSizeDisplay");
+  const fontSizeInput = document.getElementById("fontSizeInput");
   let isAdmin = false;
 
   function showAdminModal() {
@@ -235,6 +266,7 @@
     editBtn.style.display = "none";
     saveBtn.style.display = "inline-block";
     updatePlaceholderClass();
+    updateFontSizeDisplay();
     articleTitle.focus();
   }
 
@@ -252,54 +284,40 @@
     articleContent.focus();
   }
 
-  // Функция изменения размера шрифта в пределах от 8 до 72 пикселей
-  function changeFontSize(delta) {
+  // Функция для получения текущего размера шрифта из выделения
+  function getCurrentFontSize() {
     const selection = window.getSelection();
-    if (!selection.rangeCount) return;
+    if (!selection.rangeCount || selection.isCollapsed) {
+      return 16; // Дефолтный размер
+    }
 
-    // Для простоты обёртываем выделение span с inline стилем font-size
-    // Если нет выделения, ничего не делаем
-    if (selection.isCollapsed) return;
+    const parent = selection.focusNode.parentElement;
+    const computedStyle = window.getComputedStyle(parent);
+    const fontSize = computedStyle.fontSize;
+    return parseInt(fontSize) || 16;
+  }
+
+  // Функция для установки размера шрифта на выделение
+  function setFontSize(size) {
+    const selection = window.getSelection();
+    if (!selection.rangeCount || selection.isCollapsed) return;
 
     const range = selection.getRangeAt(0);
 
-    // Получаем все текстовые узлы в выделении для корректного обхода
-    // Асинхронно оборачиваем в span с измененным размером шрифта
-
-    // Для простоты оборачиваем весь выделенный фрагмент span с font-size
-
-    // Сначала получим уже применённый размер шрифта или дефолт 16px
-    let parent = selection.focusNode.parentElement;
-    let currentSize = window.getComputedStyle(parent).fontSize;
-    let pxSize = parseInt(currentSize) || 16;
-
-    // Новое значение с ограничениями
-    let newSize = pxSize + delta;
-    if (newSize < 8) newSize = 8;
-    if (newSize > 72) newSize = 72;
-
-    // document.execCommand('fontSize') использует устаревшие размеры (1..7)
-    // Вместо этого вставим span с inline-стилем font-size
-
-    // Создаем span с font-size = newSize px
+    // Создаем span с нужным размером
     const span = document.createElement('span');
-    span.style.fontSize = newSize + 'px';
+    span.style.fontSize = size + 'px';
 
     try {
-      // Окружим выделенный текст span
       range.surroundContents(span);
     } catch (e) {
-      // Если возникла ошибка (например, выделение пересекает несколько элементов),
-      // используем execCommand fontSize + после меняем все <font size="..."> на span с px
+      // Fallback: используем execCommand и заменяем font[size]
       document.execCommand('fontSize', false, '7');
-      // Меняем font[size="7"] на span с px
-      replaceFontSizeWithSpan(newSize);
+      replaceFontSizeWithSpan(size);
     }
 
     articleContent.focus();
-
-    // Обновляем плейсхолдеры, чтобы не конфликтовали
-    updatePlaceholderClass();
+    updateFontSizeDisplay();
   }
 
   function replaceFontSizeWithSpan(pxSize) {
@@ -310,6 +328,36 @@
       span.innerHTML = fontEl.innerHTML;
       fontEl.parentNode.replaceChild(span, fontEl);
     });
+  }
+
+  // Обновление отображения размера шрифта
+  function updateFontSizeDisplay() {
+    const currentSize = getCurrentFontSize();
+    fontSizeInput.value = currentSize;
+  }
+
+  // Сделать поле редактируемым при клике
+  function makeFontSizeEditable() {
+    fontSizeInput.readOnly = false;
+    fontSizeInput.focus();
+    fontSizeInput.select();
+  }
+
+  // Обработка ввода размера шрифта
+  function applyFontSize() {
+    fontSizeInput.readOnly = true;
+    const size = parseInt(fontSizeInput.value);
+    if (size && size >= 8 && size <= 72) {
+      setFontSize(size);
+    } else {
+      updateFontSizeDisplay(); // Восстановить предыдущее значение
+    }
+  }
+
+  function handleFontSizeKeyDown(event) {
+    if (event.key === 'Enter') {
+      applyFontSize();
+    }
   }
 
   function addImage() {
@@ -367,12 +415,17 @@
     el.addEventListener("blur", updatePlaceholderClass);
   });
 
+  // Обновление размера шрифта при изменении выделения
+  articleContent.addEventListener("mouseup", updateFontSizeDisplay);
+  articleContent.addEventListener("keyup", updateFontSizeDisplay);
+
   window.addEventListener("DOMContentLoaded", () => {
     if (sessionStorage.getItem("isAdmin") === "true") {
       isAdmin = true;
       enableEditing();
     }
     updatePlaceholderClass();
+    updateFontSizeDisplay();
   });
 </script>
 </body>

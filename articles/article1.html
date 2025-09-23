@@ -11,36 +11,54 @@
         
         body {
             font-family: "Inter", sans-serif;
-            background-color: #f8fafc;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
             color: #1e293b;
             line-height: 1.6;
             margin: 0;
             padding: 0;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* Фоновый узор */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(120, 119, 198, 0.05) 0%, transparent 55%),
+                radial-gradient(circle at 75% 75%, rgba(255, 119, 198, 0.05) 0%, transparent 55%);
+            z-index: -1;
         }
         
         .content-editable {
             min-height: 300px;
             outline: none;
-            padding: 1rem;
-            border-radius: 0.5rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
             border: 1px solid transparent;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
             position: relative;
             background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         
         .content-editable[contenteditable="true"] {
             border-color: #4f46e5;
             background-color: #ffffff;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
         }
         
         /* Стиль для плейсхолдера */
         .content-editable.empty::before {
             content: attr(data-placeholder);
             position: absolute;
-            top: 1rem;
-            left: 1rem;
-            right: 1rem;
+            top: 1.5rem;
+            left: 1.5rem;
+            right: 1.5rem;
             color: #94a3b8; /* серый цвет */
             pointer-events: none;
             user-select: none;
@@ -56,21 +74,16 @@
             -webkit-touch-callout: none !important;
         }
         
-        .no-select_ {
-            user-select: none !important;
-            -webkit-user-select: none !important;
-            -moz-user-select: none !important;
-            -ms-user-select: none !important;
-        }
-        
         .editor-toolbar {
             background: #fff;
             border-bottom: 1px solid #e5e7eb;
-            padding: 0.5rem;
+            padding: 0.75rem;
             display: none;
             gap: 0.5rem;
             align-items: center;
             flex-wrap: wrap;
+            border-radius: 0.75rem 0.75rem 0 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         
         .editor-toolbar.active {
@@ -79,7 +92,7 @@
         
         .tool-btn {
             cursor: pointer;
-            padding: 0.25rem 0.5rem;
+            padding: 0.5rem;
             border-radius: 0.375rem;
             border: 1px solid transparent;
             transition: background-color 0.2s, border-color 0.2s;
@@ -89,6 +102,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            min-width: 36px;
+            min-height: 36px;
         }
         
         .tool-btn:hover {
@@ -96,9 +111,9 @@
             border-color: #4338ca;
         }
         
-        select.font-size-select, select.font-select {
-            font-size: 1rem;
-            padding: 0.25rem 0.5rem;
+        select.font-size-select, select.font-select, select.date-select {
+            font-size: 0.9rem;
+            padding: 0.4rem 0.5rem;
             border-radius: 0.375rem;
             border: 1px solid transparent;
             background: #e0e7ff;
@@ -108,7 +123,7 @@
             font-family: inherit;
         }
         
-        select.font-size-select:hover, select.font-select:hover {
+        select.font-size-select:hover, select.font-select:hover, select.date-select:hover {
             background-color: #c7d2fe;
             border-color: #4338ca;
         }
@@ -141,12 +156,14 @@
             max-width: 400px;
             width: 100%;
             box-sizing: border-box;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
         
         #adminError {
-            color: red;
+            color: #dc2626;
             margin-top: 0.5rem;
             display: none;
+            font-size: 0.9rem;
         }
         
         button:disabled {
@@ -194,6 +211,145 @@
             position: relative;
             z-index: 1; /* Текст статьи под водяными знаками */
         }
+        
+        /* Стили для автора и даты */
+        .author-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 1rem auto 2rem;
+            max-width: 800px;
+            padding: 0 1rem;
+        }
+        
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .author-text {
+            font-size: 1.1rem;
+            color: #4b5563;
+            font-style: italic;
+        }
+        
+        .author-link {
+            color: #4f46e5;
+            text-decoration: none;
+            transition: color 0.2s;
+            font-style: normal;
+            font-weight: 500;
+        }
+        
+        .author-link:hover {
+            color: #3730a3;
+            text-decoration: underline;
+        }
+        
+        .article-date {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+        
+        /* Кнопка прокрутки вверх */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #4f46e5;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            z-index: 1000;
+        }
+        
+        .scroll-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .scroll-to-top:hover {
+            background: #3730a3;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        /* Стили для полей ввода автора и даты в режиме редактирования */
+        .author-inputs {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .author-inputs input, .author-inputs select {
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            font-family: inherit;
+        }
+        
+        .author-inputs input:focus, .author-inputs select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+        
+        .date-inputs {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        
+        /* Стили для отображения автора и даты в режиме чтения */
+        .author-display {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .author-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+            
+            .author-inputs {
+                flex-direction: column;
+                align-items: flex-start;
+                width: 100%;
+            }
+            
+            .author-inputs input, .author-inputs select {
+                width: 100%;
+            }
+            
+            .date-inputs {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .scroll-to-top {
+                bottom: 1rem;
+                right: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -204,7 +360,7 @@
             <p>Введите код доступа администратора:</p>
             <input id="adminCodeInput" type="password" placeholder="Код доступа" autocomplete="off" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; font-size: 1rem;" aria-describedby="adminError" />
             <div id="adminError" role="alert">Неверный код!</div>
-            <button id="adminSubmitBtn" style="margin-top: 1rem; width: 100%; padding: 0.5rem; font-size: 1rem;">Подтвердить</button>
+            <button id="adminSubmitBtn" style="margin-top: 1rem; width: 100%; padding: 0.5rem; font-size: 1rem; background: #4f46e5; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">Подтвердить</button>
         </div>
     </div>
     
@@ -255,8 +411,58 @@
     <div style="max-width: 800px; margin: 2rem auto 1rem; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center;">
         <h1 id="articleTitle" contenteditable="false" style="margin:0; font-size: 2.5rem; font-weight: 700;" tabindex="0" aria-label="Заголовок статьи" data-placeholder="Введите заголовок..."></h1>
         <div>
-            <button id="editBtn" type="button" style="font-size: 1.25rem; padding: 0.5rem 1rem; cursor: pointer;"><i class="fas fa-pencil-alt"></i> Редактировать</button>
-            <button id="saveBtn" type="button" style="font-size: 1.25rem; padding: 0.5rem 1rem; cursor: pointer; display: none;"><i class="fas fa-save"></i> Сохранить</button>
+            <button id="editBtn" type="button" style="font-size: 1.25rem; padding: 0.5rem 1rem; cursor: pointer; background: #4f46e5; color: white; border: none; border-radius: 0.375rem; display: flex; align-items: center; gap: 0.5rem;"><i class="fas fa-pencil-alt"></i> Редактировать</button>
+            <button id="saveBtn" type="button" style="font-size: 1.25rem; padding: 0.5rem 1rem; cursor: pointer; background: #10b981; color: white; border: none; border-radius: 0.375rem; display: none; align-items: center; gap: 0.5rem;"><i class="fas fa-save"></i> Сохранить</button>
+        </div>
+    </div>
+    
+    <!-- Секция автора и даты -->
+    <div id="authorSection" class="author-section">
+        <div id="authorDisplay" class="author-display" style="display: none;">
+            <span class="author-text">Автор: <span id="authorNameDisplay"></span> | </span>
+            <span class="article-date" id="articleDateDisplay"></span>
+        </div>
+        
+        <div id="authorInputs" class="author-inputs" style="display: none;">
+            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <label for="authorNameInput" style="font-size: 0.9rem; color: #4b5563;">Имя автора:</label>
+                <input type="text" id="authorNameInput" placeholder="Имя автора" style="min-width: 200px;">
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <label for="authorLinkInput" style="font-size: 0.9rem; color: #4b5563;">Ссылка автора:</label>
+                <input type="text" id="authorLinkInput" placeholder="https://example.com" style="min-width: 200px;">
+            </div>
+            <div class="date-inputs">
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="daySelect" style="font-size: 0.9rem; color: #4b5563;">День:</label>
+                    <select id="daySelect" class="date-select">
+                        <!-- Заполнится JavaScript -->
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="monthSelect" style="font-size: 0.9rem; color: #4b5563;">Месяц:</label>
+                    <select id="monthSelect" class="date-select">
+                        <option value="января">января</option>
+                        <option value="февраля">февраля</option>
+                        <option value="марта">марта</option>
+                        <option value="апреля">апреля</option>
+                        <option value="мая">мая</option>
+                        <option value="июня">июня</option>
+                        <option value="июля">июля</option>
+                        <option value="августа">августа</option>
+                        <option value="сентября">сентября</option>
+                        <option value="октября">октября</option>
+                        <option value="ноября">ноября</option>
+                        <option value="декабря">декабря</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label for="yearSelect" style="font-size: 0.9rem; color: #4b5563;">Год:</label>
+                    <select id="yearSelect" class="date-select">
+                        <!-- Заполнится JavaScript -->
+                    </select>
+                </div>
+            </div>
         </div>
     </div>
     
@@ -278,6 +484,11 @@
         </div>
     </main>
     
+    <!-- Кнопка прокрутки вверх -->
+    <button id="scrollToTop" class="scroll-to-top" aria-label="Прокрутить наверх">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+    
     <script>
         const ADMIN_CODE = "123";
         
@@ -294,8 +505,44 @@
         const fontSizeSelect = document.getElementById("fontSizeSelect");
         const watermarkContainer = document.getElementById("watermarkContainer");
         const watermarkLayer = document.getElementById("watermarkLayer");
+        const scrollToTopBtn = document.getElementById("scrollToTop");
+        const authorDisplay = document.getElementById("authorDisplay");
+        const authorInputs = document.getElementById("authorInputs");
+        const authorNameInput = document.getElementById("authorNameInput");
+        const authorLinkInput = document.getElementById("authorLinkInput");
+        const authorNameDisplay = document.getElementById("authorNameDisplay");
+        const articleDateDisplay = document.getElementById("articleDateDisplay");
+        const daySelect = document.getElementById("daySelect");
+        const monthSelect = document.getElementById("monthSelect");
+        const yearSelect = document.getElementById("yearSelect");
         
         let isAdmin = false;
+        
+        // Заполнение выпадающих списков даты
+        function populateDateSelects() {
+            // Заполнение дней (1-31)
+            for (let i = 1; i <= 31; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                daySelect.appendChild(option);
+            }
+            
+            // Заполнение годов (текущий год и 10 лет назад)
+            const currentYear = new Date().getFullYear();
+            for (let i = currentYear; i >= currentYear - 10; i--) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                yearSelect.appendChild(option);
+            }
+            
+            // Установка текущей даты по умолчанию
+            const today = new Date();
+            daySelect.value = today.getDate();
+            monthSelect.selectedIndex = today.getMonth(); // месяцы с 0 до 11
+            yearSelect.value = today.getFullYear();
+        }
         
         // Создание водяных знаков
         function createWatermarks() {
@@ -343,6 +590,23 @@
             }
         }
         
+        // Показать/скрыть кнопку прокрутки вверх
+        function toggleScrollToTopButton() {
+            if (window.pageYOffset > 300) {
+                scrollToTopBtn.classList.add('visible');
+            } else {
+                scrollToTopBtn.classList.remove('visible');
+            }
+        }
+        
+        // Прокрутка вверх
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
         function showAdminModal() {
             adminModal.classList.add("active");
             adminModal.setAttribute('aria-hidden', 'false');
@@ -373,7 +637,9 @@
             articleTitle.contentEditable = "true";
             editorToolbar.classList.add("active");
             editBtn.style.display = "none";
-            saveBtn.style.display = "inline-block";
+            saveBtn.style.display = "flex";
+            authorDisplay.style.display = "none";
+            authorInputs.style.display = "flex";
             updatePlaceholderClass();
             removeNoSelect();
             updateFontSizeSelect();
@@ -381,16 +647,55 @@
             
             // Удаляем водяные знаки при включении редактирования
             watermarkLayer.style.display = 'none';
+            
+            // Загружаем сохраненные данные автора, если есть
+            const savedAuthor = sessionStorage.getItem("authorName");
+            const savedLink = sessionStorage.getItem("authorLink");
+            const savedDate = sessionStorage.getItem("articleDate");
+            
+            if (savedAuthor) authorNameInput.value = savedAuthor;
+            if (savedLink) authorLinkInput.value = savedLink;
+            if (savedDate) {
+                const dateParts = savedDate.split(' ');
+                daySelect.value = parseInt(dateParts[0]);
+                monthSelect.value = dateParts[1];
+                yearSelect.value = parseInt(dateParts[2]);
+            }
         }
         
         function disableEditing() {
             articleContent.contentEditable = "false";
             articleTitle.contentEditable = "false";
             editorToolbar.classList.remove("active");
-            editBtn.style.display = "inline-block";
+            editBtn.style.display = "flex";
             saveBtn.style.display = "none";
+            authorDisplay.style.display = "flex";
+            authorInputs.style.display = "none";
             updatePlaceholderClass();
             applyNoSelect();
+            
+            // Сохраняем данные автора
+            const authorName = authorNameInput.value.trim();
+            const authorLink = authorLinkInput.value.trim();
+            const articleDate = `${daySelect.value} ${monthSelect.value} ${yearSelect.value}`;
+            
+            sessionStorage.setItem("authorName", authorName);
+            sessionStorage.setItem("authorLink", authorLink);
+            sessionStorage.setItem("articleDate", articleDate);
+            
+            // Обновляем отображение автора
+            if (authorName) {
+                if (authorLink) {
+                    authorNameDisplay.innerHTML = `<a href="${authorLink}" class="author-link" target="_blank">${authorName}</a>`;
+                } else {
+                    authorNameDisplay.textContent = authorName;
+                }
+            } else {
+                authorNameDisplay.textContent = "Неизвестный автор";
+            }
+            
+            // Обновляем отображение даты
+            articleDateDisplay.textContent = articleDate;
             
             // Добавляем водяные знаки при выключении редактирования
             watermarkLayer.style.display = 'block';
@@ -541,19 +846,53 @@
         
         saveBtn.addEventListener("click", saveAndDownload);
         
+        // Кнопка прокрутки вверх
+        scrollToTopBtn.addEventListener("click", scrollToTop);
+        window.addEventListener("scroll", toggleScrollToTopButton);
+        
         // Запуск
         window.addEventListener("DOMContentLoaded", () => {
+            populateDateSelects();
+            
             if(sessionStorage.getItem("isAdmin") === "true") {
                 isAdmin = true;
                 enableEditing();
             } else {
                 applyNoSelect(); // При загрузке режим просмотра должен запрещать копирование
+                
+                // Загружаем сохраненные данные автора для отображения
+                const savedAuthor = sessionStorage.getItem("authorName");
+                const savedLink = sessionStorage.getItem("authorLink");
+                const savedDate = sessionStorage.getItem("articleDate");
+                
+                if (savedAuthor) {
+                    if (savedLink) {
+                        authorNameDisplay.innerHTML = `<a href="${savedLink}" class="author-link" target="_blank">${savedAuthor}</a>`;
+                    } else {
+                        authorNameDisplay.textContent = savedAuthor;
+                    }
+                } else {
+                    authorNameDisplay.textContent = "Неизвестный автор";
+                }
+                
+                if (savedDate) {
+                    articleDateDisplay.textContent = savedDate;
+                } else {
+                    const today = new Date();
+                    const months = ["января", "февраля", "марта", "апреля", "мая", "июня", 
+                                   "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+                    articleDateDisplay.textContent = `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+                }
+                
+                authorDisplay.style.display = "flex";
+                
                 // Создаем водяные знаки при загрузке в режиме чтения
                 setTimeout(createWatermarks, 100);
             }
             
             updatePlaceholderClass();
             updateFontSizeSelect();
+            toggleScrollToTopButton(); // Проверяем начальную позицию прокрутки
         });
         
         // Обработка изменения размера окна

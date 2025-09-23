@@ -103,41 +103,70 @@
     background-color: #c7d2fe;
     border-color: #4338ca;
   }
-  #adminModal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-    visibility: hidden;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+
+  /* Водяной знак внутри статьи и заголовка */
+  .watermark-container {
+    position: relative;
+    overflow: hidden;
   }
-  #adminModal.active {
-    visibility: visible;
-    opacity: 1;
+  .watermark-overlay {
+    pointer-events: none;
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    z-index: 10;
+    background-repeat: repeat;
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(0,0,0,0.05) 0,
+      rgba(0,0,0,0.05) 1px,
+      transparent 1px,
+      transparent 20px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(0,0,0,0.05) 0,
+      rgba(0,0,0,0.05) 1px,
+      transparent 1px,
+      transparent 20px
+    ),
+    repeating-linear-gradient(
+      45deg,
+      transparent 0,
+      transparent 12.5px,
+      rgba(0,0,0,0.05) 12.5px,
+      rgba(0,0,0,0.05) 14.5px,
+      transparent 14.5px,
+      transparent 20px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      transparent 0,
+      transparent 12.5px,
+      rgba(0,0,0,0.05) 12.5px,
+      rgba(0,0,0,0.05) 14.5px,
+      transparent 14.5px,
+      transparent 20px
+    );
   }
-  #adminModal .modal-content {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 0.75rem;
-    max-width: 400px;
-    width: 100%;
-    box-sizing: border-box;
+  /* Текстовый слой с повторяющимся текстом */
+  .watermark-text {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 11;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 120px);
+    grid-auto-rows: 40px;
+    transform: rotate(-45deg);
+    opacity: 0.05;
+    user-select: none;
   }
-  #adminError {
-    color: red;
-    margin-top: 0.5rem;
-    display: none;
-  }
-  button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
+  .watermark-text span {
+    font-size: 16px;
+    color: black;
+    opacity: 0.05;
+    white-space: nowrap;
   }
 </style>
 </head>
@@ -161,51 +190,12 @@
       </button>
     </div>
   </div>
-  <!-- Панель инструментов редактора -->
-  <div id="editorToolbar" class="editor-toolbar" aria-label="Панель инструментов редактора">
-    <button class="tool-btn" title="Жирный" onclick="formatText('bold')" type="button" aria-pressed="false"><i class="fas fa-bold"></i></button>
-    <button class="tool-btn" title="Курсив" onclick="formatText('italic')" type="button" aria-pressed="false"><i class="fas fa-italic"></i></button>
-    <button class="tool-btn" title="Подчёркивание" onclick="formatText('underline')" type="button" aria-pressed="false"><i class="fas fa-underline"></i></button>
-    <button class="tool-btn" title="Маркированный список" onclick="formatText('insertUnorderedList')" type="button" aria-pressed="false"><i class="fas fa-list-ul"></i></button>
-    <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')" type="button" aria-pressed="false"><i class="fas fa-list-ol"></i></button>
-    <button class="tool-btn" title="Вставить изображение" onclick="addImage()" type="button"><i class="fas fa-image"></i></button>
 
-    <!-- Выпадающий список размеров шрифта -->
-    <select class="font-size-select" id="fontSizeSelect" aria-label="Выбор размера шрифта" onchange="setFontSize(parseInt(this.value))">
-      <option value="8">8</option>
-      <option value="9">9</option>
-      <option value="10">10</option>
-      <option value="11">11</option>
-      <option value="12">12</option>
-      <option value="14">14</option>
-      <option value="16" selected>16</option>
-      <option value="18">18</option>
-      <option value="20">20</option>
-      <option value="22">22</option>
-      <option value="24">24</option>
-      <option value="26">26</option>
-      <option value="28">28</option>
-      <option value="36">36</option>
-      <option value="48">48</option>
-      <option value="72">72</option>
-    </select>
-
-    <!-- Выпадающий список шрифтов -->
-    <select class="font-select" aria-label="Выбор шрифта" onchange="formatText('fontName', this.value)">
-      <option value="" selected>Шрифт</option>
-      <option value="Arial">Arial</option>
-      <option value="'Times New Roman', Times, serif">Times New Roman</option>
-      <option value="'Courier New', Courier, monospace">Courier New</option>
-      <option value="Verdana">Verdana</option>
-      <option value="Georgia">Georgia</option>
-      <option value="Impact">Impact</option>
-      <option value="Tahoma">Tahoma</option>
-      <option value="Comic Sans MS">Comic Sans MS</option>
-    </select>
-  </div>
-  <!-- Заголовок статьи и кнопки -->
-  <div style="max-width: 800px; margin: 2rem auto 1rem; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center;">
-    <h1 id="articleTitle" contenteditable="false" style="margin:0; font-size: 2.5rem; font-weight: 700;" tabindex="0" aria-label="Заголовок статьи" data-placeholder="Введите заголовок..."></h1>
+    <div style="max-width: 800px; margin: 2rem auto 1rem; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center;">
+    <h1 id="articleTitle" contenteditable="false" class="watermark-container" style="margin:0; font-size: 2.5rem; font-weight: 700; position: relative;" tabindex="0" aria-label="Заголовок статьи" data-placeholder="Введите заголовок...">
+      <div class="watermark-overlay" style="display:none;"></div>
+      <div class="watermark-text" style="display:none;"></div>
+    </h1>
     <div>
       <button id="editBtn" type="button" style="font-size: 1.25rem; padding: 0.5rem 1rem; cursor: pointer;">
         <i class="fas fa-pencil-alt"></i> Редактировать
@@ -215,13 +205,16 @@
       </button>
     </div>
   </div>
-  <!-- Контент статьи -->
+
   <main>
-    <article id="articleContent" class="content-editable empty no-select" contenteditable="false" style="max-width: 800px; margin: 0 auto 3rem; background: white;" tabindex="0" aria-label="Контент статьи" data-placeholder="Введите текст статьи..."></article>
+    <article id="articleContent" class="content-editable empty no-select watermark-container" contenteditable="false" style="max-width: 800px; margin: 0 auto 3rem; background: white; position: relative;" tabindex="0" aria-label="Контент статьи" data-placeholder="Введите текст статьи...">
+      <div class="watermark-overlay" style="display:none;"></div>
+      <div class="watermark-text" style="display:none;"></div>
+    </article>
   </main>
+
 <script>
   const ADMIN_CODE = "123";
-  // Элементы DOM
   const adminModal = document.getElementById("adminModal");
   const adminCodeInput = document.getElementById("adminCodeInput");
   const adminError = document.getElementById("adminError");
@@ -234,6 +227,42 @@
   const fontSizeSelect = document.getElementById("fontSizeSelect");
   let isAdmin = false;
 
+  // Функция для создания водяного знака текста
+  function createWatermarkText(container) {
+    const watermarkTextDiv = container.querySelector('.watermark-text');
+    watermarkTextDiv.innerHTML = '';
+    // Тут несколько раз вставляем текст "kotonaft15"
+    const repeatCount = Math.ceil(container.clientWidth / 120) * Math.ceil(container.clientHeight / 40);
+
+    for(let i=0; i<repeatCount; i++) {
+      const span = document.createElement('span');
+      span.textContent = 'kotonaft15';
+      watermarkTextDiv.appendChild(span);
+    }
+  }
+
+  // Показ водяного знака
+  function showWatermark() {
+    [articleContent, articleTitle].forEach(el => {
+      const overlay = el.querySelector('.watermark-overlay');
+      const textLayer = el.querySelector('.watermark-text');
+      overlay.style.display = "block";
+      textLayer.style.display = "grid";
+      createWatermarkText(el);
+    });
+  }
+
+  // Скрытие водяного знака
+  function hideWatermark() {
+    [articleContent, articleTitle].forEach(el => {
+      const overlay = el.querySelector('.watermark-overlay');
+      const textLayer = el.querySelector('.watermark-text');
+      overlay.style.display = "none";
+      textLayer.style.display = "none";
+    });
+  }
+
+  // Другие ваши функции (сокращено для примера)
   function showAdminModal() {
     adminModal.classList.add("active");
     adminModal.setAttribute('aria-hidden', 'false');
@@ -241,12 +270,10 @@
     adminError.style.display = "none";
     adminCodeInput.focus();
   }
-
   function hideAdminModal() {
     adminModal.classList.remove("active");
     adminModal.setAttribute('aria-hidden', 'true');
   }
-
   adminSubmitBtn.addEventListener("click", () => {
     if (adminCodeInput.value === ADMIN_CODE) {
       isAdmin = true;
@@ -255,52 +282,50 @@
       enableEditing();
     } else {
       adminError.style.display = "block";
-      adminCodeInput.setAttribute('aria-invalid', 'true');
     }
   });
-
   function enableEditing() {
     articleContent.contentEditable = "true";
     articleTitle.contentEditable = "true";
     editorToolbar.classList.add("active");
     editBtn.style.display = "none";
     saveBtn.style.display = "inline-block";
-    updatePlaceholderClass();
     removeNoSelect();
+    hideWatermark();
+    updatePlaceholderClass();
     updateFontSizeSelect();
     articleTitle.focus();
   }
 
-    function disableEditing() {
+  function disableEditing() {
     articleContent.contentEditable = "false";
     articleTitle.contentEditable = "false";
     editorToolbar.classList.remove("active");
     editBtn.style.display = "inline-block";
     saveBtn.style.display = "none";
-    updatePlaceholderClass();
     applyNoSelect();
+    showWatermark();
+    updatePlaceholderClass();
   }
 
-  // Добавляем класс no-select чтобы запретить выделение и копирование
+  // Добавляем класс no-select для запрета копирования и выделения
   function applyNoSelect() {
     articleContent.classList.add("no-select");
     articleTitle.classList.add("no-select");
   }
 
-  // Убираем класс no-select чтобы разрешить выделение и копирование
+  // Убираем класс no-select чтобы разрешить копирование и выделение
   function removeNoSelect() {
     articleContent.classList.remove("no-select");
     articleTitle.classList.remove("no-select");
   }
 
-  // Форматирование текста через execCommand
   function formatText(command, value = null) {
     document.execCommand(command, false, value);
     articleContent.focus();
     updateFontSizeSelect();
   }
 
-  // Установка размера шрифта для выделенного текста
   function setFontSize(size) {
     const selection = window.getSelection();
     if (!selection.rangeCount || selection.isCollapsed) return;
@@ -329,11 +354,9 @@
     });
   }
 
-  // Обновить выпадающий список размера шрифта в тулбаре
   function updateFontSizeSelect() {
     const size = getCurrentFontSize();
     if (size && fontSizeSelect.value != size.toString()) {
-      // Если в списке нет этого размера, сбросим на пустое значение
       if ([...fontSizeSelect.options].some(o => o.value === size.toString())) {
         fontSizeSelect.value = size.toString();
       } else {
@@ -342,13 +365,12 @@
     }
   }
 
-  // Получение текущего размера шрифта выделения
   function getCurrentFontSize() {
     const selection = window.getSelection();
     if (!selection.rangeCount || selection.isCollapsed) return null;
     let node = selection.focusNode;
     while(node && node !== articleContent) {
-      if(node.nodeType === 1) { // ELEMENT_NODE
+      if(node.nodeType === 1) {
         const size = window.getComputedStyle(node).fontSize;
         if(size) return parseInt(size);
       }
@@ -357,7 +379,6 @@
     return null;
   }
 
-  // Добавление изображения
   function addImage() {
     const url = prompt("Введите URL изображения", "https://");
     if (url) {
@@ -365,7 +386,6 @@
     }
   }
 
-  // Сохранение страницы
   function saveAndDownload() {
     disableEditing();
     setTimeout(() => {
@@ -402,11 +422,9 @@
     el.addEventListener("blur", updatePlaceholderClass);
   });
 
-  // Обновляем тулбар при смене выделения
   articleContent.addEventListener("mouseup", updateFontSizeSelect);
   articleContent.addEventListener("keyup", updateFontSizeSelect);
 
-  // Слушатели
   editBtn.addEventListener("click", () => {
     if (isAdmin) {
       enableEditing();
@@ -414,21 +432,22 @@
       showAdminModal();
     }
   });
+
   saveBtn.addEventListener("click", saveAndDownload);
 
-  // Запуск
   window.addEventListener("DOMContentLoaded", () => {
     if(sessionStorage.getItem("isAdmin") === "true") {
       isAdmin = true;
       enableEditing();
     } else {
-      applyNoSelect(); // При загрузке режим просмотра должен запрещать копирование
+      applyNoSelect();
+      showWatermark();
     }
     updatePlaceholderClass();
     updateFontSizeSelect();
   });
 
-  // Запрет контекстного меню и копирования если нет редактирования
+  // Запрет контекстного меню и копирования если в режиме просмотра (no-select)
   document.body.addEventListener('contextmenu', e => {
     if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
   });
@@ -440,6 +459,13 @@
   });
   document.body.addEventListener('selectstart', e => {
     if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
+  });
+
+  // При изменении размеров окна обновляем водяной знак, чтобы корректно повторялся
+  window.addEventListener('resize', () => {
+    if(!isAdmin) {
+      showWatermark();
+    }
   });
 </script>
 </body>

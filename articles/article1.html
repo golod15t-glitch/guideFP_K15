@@ -1,131 +1,145 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Статья</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-  />
-  <style>
-    @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-    body {
-      font-family: "Inter", sans-serif;
-      background-color: #f8fafc;
-      color: #1e293b;
-      line-height: 1.6;
-      margin: 0;
-      padding: 0;
-    }
-    .content-editable {
-      min-height: 300px;
-      outline: none;
-      padding: 1rem;
-      border-radius: 0.5rem;
-      border: 1px solid transparent;
-      transition: border-color 0.3s;
-      position: relative;
-      background-color: white;
-    }
-    .content-editable[contenteditable="true"] {
-      border-color: #4f46e5;
-      background-color: #ffffff;
-    }
-    /* Стиль для плейсхолдера */
-    .content-editable.empty::before {
-      content: attr(data-placeholder);
-      position: absolute;
-      top: 1rem;
-      left: 1rem;
-      right: 1rem;
-      color: #94a3b8; /* серый цвет */
-      pointer-events: none;
-      user-select: none;
-      white-space: pre-wrap;
-    }
-    .editor-toolbar {
-      background: #fff;
-      border-bottom: 1px solid #e5e7eb;
-      padding: 0.5rem;
-      display: none;
-      gap: 0.5rem;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .editor-toolbar.active {
-      display: flex;
-    }
-    .tool-btn {
-      cursor: pointer;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.375rem;
-      border: 1px solid transparent;
-      transition: background-color 0.2s, border-color 0.2s;
-      background: #e0e7ff;
-      color: #4338ca;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .tool-btn:hover {
-      background-color: #c7d2fe;
-      border-color: #4338ca;
-    }
-    select.font-size-select, select.font-select {
-      font-size: 1rem;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.375rem;
-      border: 1px solid transparent;
-      background: #e0e7ff;
-      color: #4338ca;
-      cursor: pointer;
-      transition: background-color 0.2s, border-color 0.2s;
-      font-family: inherit;
-    }
-    select.font-size-select:hover, select.font-select:hover {
-      background-color: #c7d2fe;
-      border-color: #4338ca;
-    }
-    #adminModal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      visibility: hidden;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    #adminModal.active {
-      visibility: visible;
-      opacity: 1;
-    }
-    #adminModal .modal-content {
-      background: white;
-      padding: 1.5rem;
-      border-radius: 0.75rem;
-      max-width: 400px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-    #adminError {
-      color: red;
-      margin-top: 0.5rem;
-      display: none;
-    }
-    button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Статья</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+/>
+<style>
+  @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+  body {
+    font-family: "Inter", sans-serif;
+    background-color: #f8fafc;
+    color: #1e293b;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+  }
+  .content-editable {
+    min-height: 300px;
+    outline: none;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    transition: border-color 0.3s;
+    position: relative;
+    background-color: white;
+  }
+  .content-editable[contenteditable="true"] {
+    border-color: #4f46e5;
+    background-color: #ffffff;
+  }
+  /* Стиль для плейсхолдера */
+  .content-editable.empty::before {
+    content: attr(data-placeholder);
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
+    color: #94a3b8; /* серый цвет */
+    pointer-events: none;
+    user-select: none;
+    white-space: pre-wrap;
+  }
+  /* Запрет выделения и копирования когда нужно */
+  .no-select {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    -webkit-touch-callout: none !important;
+  }
+  .no-select * {
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+  }
+  .editor-toolbar {
+    background: #fff;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 0.5rem;
+    display: none;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .editor-toolbar.active {
+    display: flex;
+  }
+  .tool-btn {
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid transparent;
+    transition: background-color 0.2s, border-color 0.2s;
+    background: #e0e7ff;
+    color: #4338ca;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .tool-btn:hover {
+    background-color: #c7d2fe;
+    border-color: #4338ca;
+  }
+  select.font-size-select, select.font-select {
+    font-size: 1rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    border: 1px solid transparent;
+    background: #e0e7ff;
+    color: #4338ca;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+    font-family: inherit;
+  }
+  select.font-size-select:hover, select.font-select:hover {
+    background-color: #c7d2fe;
+    border-color: #4338ca;
+  }
+  #adminModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  #adminModal.active {
+    visibility: visible;
+    opacity: 1;
+  }
+  #adminModal .modal-content {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    max-width: 400px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  #adminError {
+    color: red;
+    margin-top: 0.5rem;
+    display: none;
+  }
+  button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+</style>
 </head>
 <body>
   <!-- Админский модал -->
@@ -203,7 +217,7 @@
   </div>
   <!-- Контент статьи -->
   <main>
-    <article id="articleContent" class="content-editable empty" contenteditable="false" style="max-width: 800px; margin: 0 auto 3rem; background: white;" tabindex="0" aria-label="Контент статьи" data-placeholder="Введите текст статьи..."></article>
+    <article id="articleContent" class="content-editable empty no-select" contenteditable="false" style="max-width: 800px; margin: 0 auto 3rem; background: white;" tabindex="0" aria-label="Контент статьи" data-placeholder="Введите текст статьи..."></article>
   </main>
 <script>
   const ADMIN_CODE = "123";
@@ -252,56 +266,55 @@
     editBtn.style.display = "none";
     saveBtn.style.display = "inline-block";
     updatePlaceholderClass();
+    removeNoSelect();
     updateFontSizeSelect();
     articleTitle.focus();
   }
 
-  function disableEditing() {
+    function disableEditing() {
     articleContent.contentEditable = "false";
     articleTitle.contentEditable = "false";
     editorToolbar.classList.remove("active");
     editBtn.style.display = "inline-block";
     saveBtn.style.display = "none";
     updatePlaceholderClass();
+    applyNoSelect();
   }
 
+  // Добавляем класс no-select чтобы запретить выделение и копирование
+  function applyNoSelect() {
+    articleContent.classList.add("no-select");
+    articleTitle.classList.add("no-select");
+  }
+
+  // Убираем класс no-select чтобы разрешить выделение и копирование
+  function removeNoSelect() {
+    articleContent.classList.remove("no-select");
+    articleTitle.classList.remove("no-select");
+  }
+
+  // Форматирование текста через execCommand
   function formatText(command, value = null) {
     document.execCommand(command, false, value);
     articleContent.focus();
+    updateFontSizeSelect();
   }
 
-  // Функция для получения текущего размера шрифта из выделения
-  function getCurrentFontSize() {
-    const selection = window.getSelection();
-    if (!selection.rangeCount || selection.isCollapsed) {
-      return 16; // Дефолтный размер
-    }
-
-    const parent = selection.focusNode.parentElement;
-    const computedStyle = window.getComputedStyle(parent);
-    const fontSize = computedStyle.fontSize;
-    return parseInt(fontSize) || 16;
-  }
-
-  // Функция для установки размера шрифта на выделение
+  // Установка размера шрифта для выделенного текста
   function setFontSize(size) {
     const selection = window.getSelection();
     if (!selection.rangeCount || selection.isCollapsed) return;
-
     const range = selection.getRangeAt(0);
-
-    // Создаем span с нужным размером
     const span = document.createElement('span');
     span.style.fontSize = size + 'px';
 
     try {
       range.surroundContents(span);
     } catch (e) {
-      // Fallback: используем execCommand и заменяем font[size]
+      // fallback
       document.execCommand('fontSize', false, '7');
       replaceFontSizeWithSpan(size);
     }
-
     articleContent.focus();
     updateFontSizeSelect();
   }
@@ -316,12 +329,35 @@
     });
   }
 
-  // Обновление выбора в выпадающем списке размера шрифта
+  // Обновить выпадающий список размера шрифта в тулбаре
   function updateFontSizeSelect() {
-    const currentSize = getCurrentFontSize();
-    fontSizeSelect.value = currentSize.toString();
+    const size = getCurrentFontSize();
+    if (size && fontSizeSelect.value != size.toString()) {
+      // Если в списке нет этого размера, сбросим на пустое значение
+      if ([...fontSizeSelect.options].some(o => o.value === size.toString())) {
+        fontSizeSelect.value = size.toString();
+      } else {
+        fontSizeSelect.value = "";
+      }
+    }
   }
 
+  // Получение текущего размера шрифта выделения
+  function getCurrentFontSize() {
+    const selection = window.getSelection();
+    if (!selection.rangeCount || selection.isCollapsed) return null;
+    let node = selection.focusNode;
+    while(node && node !== articleContent) {
+      if(node.nodeType === 1) { // ELEMENT_NODE
+        const size = window.getComputedStyle(node).fontSize;
+        if(size) return parseInt(size);
+      }
+      node = node.parentNode;
+    }
+    return null;
+  }
+
+  // Добавление изображения
   function addImage() {
     const url = prompt("Введите URL изображения", "https://");
     if (url) {
@@ -329,15 +365,7 @@
     }
   }
 
-  editBtn.addEventListener("click", () => {
-    if (isAdmin) {
-      enableEditing();
-    } else {
-      showAdminModal();
-    }
-  });
-
-  // Функция сохранения страницы
+  // Сохранение страницы
   function saveAndDownload() {
     disableEditing();
     setTimeout(() => {
@@ -358,9 +386,7 @@
     }, 300);
   }
 
-  saveBtn.addEventListener("click", saveAndDownload);
-
-  // Обновление класса empty для плейсхолдера
+  // Плейсхолдеры
   function updatePlaceholderClass() {
     [articleTitle, articleContent].forEach(el => {
       if (el.innerText.trim().length === 0) {
@@ -370,24 +396,50 @@
       }
     });
   }
-
   [articleTitle, articleContent].forEach(el => {
     el.addEventListener("input", updatePlaceholderClass);
     el.addEventListener("focus", updatePlaceholderClass);
     el.addEventListener("blur", updatePlaceholderClass);
   });
 
-  // Обновление размера шрифта при изменении выделения
+  // Обновляем тулбар при смене выделения
   articleContent.addEventListener("mouseup", updateFontSizeSelect);
   articleContent.addEventListener("keyup", updateFontSizeSelect);
 
+  // Слушатели
+  editBtn.addEventListener("click", () => {
+    if (isAdmin) {
+      enableEditing();
+    } else {
+      showAdminModal();
+    }
+  });
+  saveBtn.addEventListener("click", saveAndDownload);
+
+  // Запуск
   window.addEventListener("DOMContentLoaded", () => {
-    if (sessionStorage.getItem("isAdmin") === "true") {
+    if(sessionStorage.getItem("isAdmin") === "true") {
       isAdmin = true;
       enableEditing();
+    } else {
+      applyNoSelect(); // При загрузке режим просмотра должен запрещать копирование
     }
     updatePlaceholderClass();
     updateFontSizeSelect();
+  });
+
+  // Запрет контекстного меню и копирования если нет редактирования
+  document.body.addEventListener('contextmenu', e => {
+    if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
+  });
+  document.body.addEventListener('copy', e => {
+    if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
+  });
+  document.body.addEventListener('cut', e => {
+    if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
+  });
+  document.body.addEventListener('selectstart', e => {
+    if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
   });
 </script>
 </body>

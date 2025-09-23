@@ -473,7 +473,7 @@
             <div class="article-wrapper">
                 <article
                     id="articleContent"
-                    class="content-editable empty no-select"
+                    class="content-editable empty"
                     contenteditable="false"
                     style="background: white;"
                     tabindex="0"
@@ -704,8 +704,11 @@
         
         // Добавляем класс no-select чтобы запретить выделение и копирование
         function applyNoSelect() {
-            articleContent.classList.add("no-select");
-            articleTitle.classList.add("no-select");
+            // Применяем класс только если мы в режиме чтения (не редактирования)
+            if (articleContent.contentEditable === "false") {
+                articleContent.classList.add("no-select");
+                articleTitle.classList.add("no-select");
+            }
         }
         
         // Убираем класс no-select чтобы разрешить выделение и копирование
@@ -836,12 +839,22 @@
             authorSection.innerHTML = '';
             authorSection.appendChild(tempAuthorDisplay);
             
+            // Убираем класс no-select из скачиваемого документа
+            articleContent.classList.remove("no-select");
+            articleTitle.classList.remove("no-select");
+            
             setTimeout(() => {
                 // Создаем клон документа с актуальными данными
                 const docClone = document.cloneNode(true);
                 
                 // Восстанавливаем оригинальную секцию автора
                 authorSection.innerHTML = originalAuthorSection;
+                
+                // Восстанавливаем класс no-select для текущего документа
+                if (articleContent.contentEditable === "false") {
+                    articleContent.classList.add("no-select");
+                    articleTitle.classList.add("no-select");
+                }
                 
                 // Создаем HTML из клона
                 const docHtml = "<!DOCTYPE html>\n" + docClone.documentElement.outerHTML;
@@ -904,11 +917,17 @@
         window.addEventListener("DOMContentLoaded", () => {
             populateDateSelects();
             
-            if(sessionStorage.getItem("isAdmin") === "true") {
+            // Проверяем, находимся ли мы в скачанном файле (нет кнопок редактирования)
+            const isDownloadedFile = !editBtn || !saveBtn;
+            
+            if (!isDownloadedFile && sessionStorage.getItem("isAdmin") === "true") {
                 isAdmin = true;
                 enableEditing();
             } else {
-                applyNoSelect(); // При загрузке режим просмотра должен запрещать копирование
+                // В режиме чтения применяем запрет выделения
+                if (articleContent.contentEditable === "false") {
+                    applyNoSelect();
+                }
                 
                 // Загружаем сохраненные данные автора для отображения
                 const savedAuthor = sessionStorage.getItem("authorName");
@@ -954,19 +973,19 @@
         
         // Запрет контекстного меню и копирования если нет редактирования
         document.body.addEventListener('contextmenu', e => {
-            if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
+            if(articleContent.contentEditable === "false") e.preventDefault();
         });
         
         document.body.addEventListener('copy', e => {
-            if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
+            if(articleContent.contentEditable === "false") e.preventDefault();
         });
         
         document.body.addEventListener('cut', e => {
-            if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
+            if(articleContent.contentEditable === "false") e.preventDefault();
         });
         
         document.body.addEventListener('selectstart', e => {
-            if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
+            if(articleContent.contentEditable === "false") e.preventDefault();
         });
     </script>
 </body>

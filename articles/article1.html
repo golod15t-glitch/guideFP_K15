@@ -160,16 +160,26 @@
             overflow: hidden;
         }
         
+        .watermark-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2; /* Теперь водяные знаки будут поверх текста */
+        }
+        
         .watermark {
             position: absolute;
-            opacity: 0.05;
+            opacity: 0.1;
             font-size: 24px;
             color: #333;
             transform: rotate(-45deg);
             pointer-events: none;
             user-select: none;
-            z-index: 1;
             white-space: nowrap;
+            font-weight: bold;
         }
         
         .watermark:nth-child(odd) {
@@ -178,6 +188,11 @@
         
         .watermark:nth-child(even) {
             color: #777;
+        }
+        
+        .article-wrapper {
+            position: relative;
+            z-index: 1; /* Текст статьи под водяными знаками */
         }
     </style>
 </head>
@@ -248,15 +263,18 @@
     <!-- Контент статьи -->
     <main>
         <div id="watermarkContainer" class="watermark-container" style="max-width: 800px; margin: 0 auto 3rem;">
-            <article
-                id="articleContent"
-                class="content-editable empty no-select"
-                contenteditable="false"
-                style="background: white; position: relative; z-index: 2;"
-                tabindex="0"
-                aria-label="Контент статьи"
-                data-placeholder="Введите текст статьи..."
-            ></article>
+            <div id="watermarkLayer" class="watermark-layer"></div>
+            <div class="article-wrapper">
+                <article
+                    id="articleContent"
+                    class="content-editable empty no-select"
+                    contenteditable="false"
+                    style="background: white;"
+                    tabindex="0"
+                    aria-label="Контент статьи"
+                    data-placeholder="Введите текст статьи..."
+                ></article>
+            </div>
         </div>
     </main>
     
@@ -275,14 +293,14 @@
         const editorToolbar = document.getElementById("editorToolbar");
         const fontSizeSelect = document.getElementById("fontSizeSelect");
         const watermarkContainer = document.getElementById("watermarkContainer");
+        const watermarkLayer = document.getElementById("watermarkLayer");
         
         let isAdmin = false;
         
         // Создание водяных знаков
         function createWatermarks() {
-            // Очищаем контейнер от старых водяных знаков
-            const existingWatermarks = document.querySelectorAll('.watermark');
-            existingWatermarks.forEach(wm => wm.remove());
+            // Очищаем слой от старых водяных знаков
+            watermarkLayer.innerHTML = '';
             
             // Если режим редактирования активен, не добавляем водяные знаки
             if (articleContent.contentEditable === "true") return;
@@ -320,7 +338,7 @@
                     
                     watermark.style.top = `${offsetY}px`;
                     
-                    watermarkContainer.appendChild(watermark);
+                    watermarkLayer.appendChild(watermark);
                 }
             }
         }
@@ -362,7 +380,7 @@
             articleTitle.focus();
             
             // Удаляем водяные знаки при включении редактирования
-            createWatermarks();
+            watermarkLayer.style.display = 'none';
         }
         
         function disableEditing() {
@@ -375,6 +393,7 @@
             applyNoSelect();
             
             // Добавляем водяные знаки при выключении редактирования
+            watermarkLayer.style.display = 'block';
             createWatermarks();
         }
         

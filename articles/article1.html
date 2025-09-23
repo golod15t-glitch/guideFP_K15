@@ -33,19 +33,19 @@
     border-color: #4f46e5;
     background-color: #ffffff;
   }
-  /* Стиль для плейсхолдера */
+  /* Плейсхолдеры */
   .content-editable.empty::before {
     content: attr(data-placeholder);
     position: absolute;
     top: 1rem;
     left: 1rem;
     right: 1rem;
-    color: #94a3b8; /* серый цвет */
+    color: #94a3b8;
     pointer-events: none;
     user-select: none;
     white-space: pre-wrap;
   }
-  /* Запрет выделения и копирования когда нужно */
+  /* Запрет выделения и копирования */
   .no-select {
     user-select: none !important;
     -webkit-user-select: none !important;
@@ -104,75 +104,58 @@
     border-color: #4338ca;
   }
 
-  /* Водяной знак внутри статьи и заголовка */
+  /* Водяной знак - повторяющиеся надписи под углом 45° */
   .watermark-container {
     position: relative;
-    overflow: hidden;
   }
+
   .watermark-overlay {
     pointer-events: none;
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
     z-index: 10;
     background-repeat: repeat;
-    background-image: repeating-linear-gradient(
-      45deg,
-      rgba(0,0,0,0.05) 0,
-      rgba(0,0,0,0.05) 1px,
-      transparent 1px,
-      transparent 20px
-    ),
-    repeating-linear-gradient(
-      -45deg,
-      rgba(0,0,0,0.05) 0,
-      rgba(0,0,0,0.05) 1px,
-      transparent 1px,
-      transparent 20px
-    ),
-    repeating-linear-gradient(
-      45deg,
-      transparent 0,
-      transparent 12.5px,
-      rgba(0,0,0,0.05) 12.5px,
-      rgba(0,0,0,0.05) 14.5px,
-      transparent 14.5px,
-      transparent 20px
-    ),
-    repeating-linear-gradient(
-      -45deg,
-      transparent 0,
-      transparent 12.5px,
-      rgba(0,0,0,0.05) 12.5px,
-      rgba(0,0,0,0.05) 14.5px,
-      transparent 14.5px,
-      transparent 20px
-    );
+    background-image:
+      repeating-linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.05) 0,
+        rgba(0, 0, 0, 0.05) 1px,
+        transparent 1px,
+        transparent 20px      ),
+      repeating-linear-gradient(
+        -45deg,
+        rgba(0, 0, 0, 0.05) 0,
+        rgba(0, 0, 0, 0.05) 1px,
+        transparent 1px,
+        transparent 20px
+      );
   }
-  /* Текстовый слой с повторяющимся текстом */
+
   .watermark-text {
     position: absolute;
     top: 0; left: 0; right: 0; bottom: 0;
-    overflow: hidden;
     pointer-events: none;
+    user-select: none;
     z-index: 11;
     display: grid;
     grid-template-columns: repeat(auto-fill, 120px);
     grid-auto-rows: 40px;
     transform: rotate(-45deg);
     opacity: 0.05;
-    user-select: none;
+    overflow: hidden;
   }
+
   .watermark-text span {
     font-size: 16px;
     color: black;
-    opacity: 0.05;
+    opacity: 0.1;
     white-space: nowrap;
   }
 </style>
 </head>
 <body>
   <!-- Админский модал -->
-    <div id="adminModal" aria-hidden="true">
+  <div id="adminModal" aria-hidden="true">
     <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
       <h2 id="adminModalTitle">Доступ к редактированию</h2>
       <p>Введите код доступа администратора:</p>
@@ -192,7 +175,7 @@
   </div>
 
   <div style="max-width: 800px; margin: 2rem auto 1rem; padding: 0 1rem; display: flex; justify-content: space-between; align-items: center;">
-    <h1 id="articleTitle" class="watermark-container" contenteditable="false" style="margin:0; font-size: 2.5rem; font-weight: 700; position: relative;" tabindex="0" aria-label="Заголовок статьи" data-placeholder="Введите заголовок...">
+    <h1 id="articleTitle" class="watermark-container" contenteditable="false" style="margin: 0; font-size: 2.5rem; font-weight: 700; position: relative;" tabindex="0" aria-label="Заголовок статьи" data-placeholder="Введите заголовок...">
       <div class="watermark-overlay" style="display:none;"></div>
       <div class="watermark-text" style="display:none;"></div>
     </h1>
@@ -227,39 +210,47 @@
   const fontSizeSelect = document.getElementById("fontSizeSelect");
   let isAdmin = false;
 
+  // Создаем водяные знаки с текстом "kotonaft15"
   function createWatermarkText(container) {
-    const watermarkTextDiv = container.querySelector('.watermark-text');
-    watermarkTextDiv.innerHTML = '';
-    const repeatCount = Math.ceil(container.clientWidth / 120) * Math.ceil(container.clientHeight / 40);
-    for(let i=0; i<repeatCount; i++) {
-      const span = document.createElement('span');
-      span.textContent = 'kotonaft15';
+    const watermarkTextDiv = container.querySelector(".watermark-text");
+    if (!watermarkTextDiv) return;
+    watermarkTextDiv.innerHTML = "";
+    const count = Math.ceil(container.clientWidth / 120) * Math.ceil(container.clientHeight / 40);
+    for (let i = 0; i < count; i++) {
+      const span = document.createElement("span");
+      span.textContent = "kotonaft15";
       watermarkTextDiv.appendChild(span);
     }
   }
 
+  // Показать водяной знак
   function showWatermark() {
-    [articleContent, articleTitle].forEach(el => {
-      const overlay = el.querySelector('.watermark-overlay');
-      const textLayer = el.querySelector('.watermark-text');
-      overlay.style.display = "block";
-      textLayer.style.display = "grid";
-      createWatermarkText(el);
+    [articleContent, articleTitle].forEach((el) => {
+      const overlay = el.querySelector(".watermark-overlay");
+      const textLayer = el.querySelector(".watermark-text");
+      if (overlay && textLayer) {
+        overlay.style.display = "block";
+        textLayer.style.display = "grid";
+        createWatermarkText(el);
+      }
     });
   }
 
+  // Скрыть водяной знак
   function hideWatermark() {
-    [articleContent, articleTitle].forEach(el => {
-      const overlay = el.querySelector('.watermark-overlay');
-      const textLayer = el.querySelector('.watermark-text');
-      overlay.style.display = "none";
-      textLayer.style.display = "none";
+    [articleContent, articleTitle].forEach((el) => {
+      const overlay = el.querySelector(".watermark-overlay");
+      const textLayer = el.querySelector(".watermark-text");
+      if (overlay && textLayer) {
+        overlay.style.display = "none";
+        textLayer.style.display = "none";
+      }
     });
   }
 
   function showAdminModal() {
     adminModal.classList.add("active");
-    adminModal.setAttribute('aria-hidden', 'false');
+    adminModal.setAttribute("aria-hidden", "false");
     adminCodeInput.value = "";
     adminError.style.display = "none";
     adminCodeInput.focus();
@@ -267,7 +258,7 @@
 
   function hideAdminModal() {
     adminModal.classList.remove("active");
-    adminModal.setAttribute('aria-hidden', 'true');
+    adminModal.setAttribute("aria-hidden", "true");
   }
 
   adminSubmitBtn.addEventListener("click", () => {
@@ -278,7 +269,7 @@
       enableEditing();
     } else {
       adminError.style.display = "block";
-      adminCodeInput.setAttribute('aria-invalid', 'true');
+      adminCodeInput.setAttribute("aria-invalid", "true");
     }
   });
 
@@ -306,7 +297,7 @@
     updatePlaceholderClass();
   }
 
-  function applyNoSelect() {
+    function applyNoSelect() {
     articleContent.classList.add("no-select");
     articleTitle.classList.add("no-select");
   }
@@ -321,17 +312,18 @@
     articleContent.focus();
     updateFontSizeSelect();
   }
-
+  
   function setFontSize(size) {
     const selection = window.getSelection();
     if (!selection.rangeCount || selection.isCollapsed) return;
     const range = selection.getRangeAt(0);
-    const span = document.createElement('span');
-    span.style.fontSize = size + 'px';
+    const span = document.createElement("span");
+    span.style.fontSize = size + "px";
+
     try {
       range.surroundContents(span);
     } catch (e) {
-      document.execCommand('fontSize', false, '7');
+      document.execCommand("fontSize", false, "7");
       replaceFontSizeWithSpan(size);
     }
     articleContent.focus();
@@ -341,8 +333,8 @@
   function replaceFontSizeWithSpan(pxSize) {
     const fonts = articleContent.querySelectorAll('font[size="7"]');
     fonts.forEach(fontEl => {
-      const span = document.createElement('span');
-      span.style.fontSize = pxSize + 'px';
+      const span = document.createElement("span");
+      span.style.fontSize = pxSize + "px";
       span.innerHTML = fontEl.innerHTML;
       fontEl.parentNode.replaceChild(span, fontEl);
     });
@@ -350,7 +342,7 @@
 
   function updateFontSizeSelect() {
     const size = getCurrentFontSize();
-    if (size && fontSizeSelect.value != size.toString()) {
+    if (size && fontSizeSelect.value !== size.toString()) {
       if ([...fontSizeSelect.options].some(o => o.value === size.toString())) {
         fontSizeSelect.value = size.toString();
       } else {
@@ -363,10 +355,10 @@
     const selection = window.getSelection();
     if (!selection.rangeCount || selection.isCollapsed) return null;
     let node = selection.focusNode;
-    while(node && node !== articleContent) {
-      if(node.nodeType === 1) {
+    while (node && node !== articleContent) {
+      if (node.nodeType === 1) {
         const size = window.getComputedStyle(node).fontSize;
-        if(size) return parseInt(size);
+        if (size) return parseInt(size);
       }
       node = node.parentNode;
     }
@@ -430,7 +422,7 @@
   saveBtn.addEventListener("click", saveAndDownload);
 
   window.addEventListener("DOMContentLoaded", () => {
-    if(sessionStorage.getItem("isAdmin") === "true") {
+    if (sessionStorage.getItem("isAdmin") === "true") {
       isAdmin = true;
       enableEditing();
     } else {
@@ -441,20 +433,20 @@
     updateFontSizeSelect();
   });
 
-  document.body.addEventListener('contextmenu', e => {
-    if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
+  document.body.addEventListener("contextmenu", e => {
+    if (articleContent.classList.contains("no-select") || articleTitle.classList.contains("no-select")) e.preventDefault();
   });
-  document.body.addEventListener('copy', e => {
-    if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
+  document.body.addEventListener("copy", e => {
+    if (articleContent.classList.contains("no-select") || articleTitle.classList.contains("no-select")) e.preventDefault();
   });
-  document.body.addEventListener('cut', e => {
-    if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
+  document.body.addEventListener("cut", e => {
+    if (articleContent.classList.contains("no-select") || articleTitle.classList.contains("no-select")) e.preventDefault();
   });
-  document.body.addEventListener('selectstart', e => {
-    if(articleContent.classList.contains('no-select') || articleTitle.classList.contains('no-select')) e.preventDefault();
+  document.body.addEventListener("selectstart", e => {
+    if (articleContent.classList.contains("no-select") || articleTitle.classList.contains("no-select")) e.preventDefault();
   });
 
-  window.addEventListener('resize', () => {
+  window.addEventListener("resize", () => {
     if (!isAdmin) {
       showWatermark();
     }

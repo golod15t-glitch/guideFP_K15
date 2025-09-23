@@ -793,8 +793,58 @@
         function saveAndDownload() {
             disableEditing();
             
+            // Получаем текущие значения автора и даты
+            const authorName = authorNameInput.value.trim();
+            const authorLink = authorLinkInput.value.trim();
+            const articleDate = `${daySelect.value} ${monthSelect.value} ${yearSelect.value}`;
+            
+            // Создаем временный элемент для отображения автора и даты
+            const tempAuthorDisplay = document.createElement('div');
+            tempAuthorDisplay.className = 'author-display';
+            tempAuthorDisplay.style.display = 'flex';
+            
+            const authorText = document.createElement('span');
+            authorText.className = 'author-text';
+            authorText.textContent = 'Автор: ';
+            
+            const authorNameSpan = document.createElement('span');
+            if (authorName) {
+                if (authorLink) {
+                    authorNameSpan.innerHTML = `<a href="${authorLink}" class="author-link" target="_blank">${authorName}</a>`;
+                } else {
+                    authorNameSpan.textContent = authorName;
+                }
+            } else {
+                authorNameSpan.textContent = "Неизвестный автор";
+            }
+            
+            const separator = document.createElement('span');
+            separator.textContent = ' | ';
+            separator.className = 'author-text';
+            
+            const dateSpan = document.createElement('span');
+            dateSpan.className = 'article-date';
+            dateSpan.textContent = articleDate;
+            
+            authorText.appendChild(authorNameSpan);
+            tempAuthorDisplay.appendChild(authorText);
+            tempAuthorDisplay.appendChild(separator);
+            tempAuthorDisplay.appendChild(dateSpan);
+            
+            // Временно заменяем секцию автора
+            const originalAuthorSection = authorSection.innerHTML;
+            authorSection.innerHTML = '';
+            authorSection.appendChild(tempAuthorDisplay);
+            
             setTimeout(() => {
-                const docHtml = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+                // Создаем клон документа с актуальными данными
+                const docClone = document.cloneNode(true);
+                
+                // Восстанавливаем оригинальную секцию автора
+                authorSection.innerHTML = originalAuthorSection;
+                
+                // Создаем HTML из клона
+                const docHtml = "<!DOCTYPE html>\n" + docClone.documentElement.outerHTML;
                 const blob = new Blob([docHtml], { type: "text/html" });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");

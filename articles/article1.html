@@ -1109,26 +1109,20 @@
             // Сохраняем данные перед созданием клона
             saveAuthorData();
             updateAuthorDisplay();
-            disableEditing();
             
-            // Создаем клон для скачивания
-            const clone = document.cloneNode(true);
-            
-            // ОБНОВЛЯЕМ ДАННЫЕ АВТОРА И ДАТЫ В КЛОНЕ
-            const cloneAuthorNameDisplay = clone.getElementById('authorNameDisplay');
-            const cloneArticleDateDisplay = clone.getElementById('articleDateDisplay');
-            const cloneAuthorNameInput = clone.getElementById('authorNameInput');
-            const cloneAuthorLinkInput = clone.getElementById('authorLinkInput');
-            const cloneDaySelect = clone.getElementById('daySelect');
-            const cloneMonthSelect = clone.getElementById('monthSelect');
-            const cloneYearSelect = clone.getElementById('yearSelect');
-            
-            // Получаем текущие значения
+            // Получаем текущие значения ДО создания клона
             const authorName = authorNameInput.value.trim();
             const authorLink = authorLinkInput.value.trim();
             const articleDate = `${daySelect.value} ${monthSelect.value} ${yearSelect.value}`;
             
-            // Обновляем отображение автора в клоне
+            // Создаем клон для скачивания
+            const clone = document.cloneNode(true);
+            
+            // НАХОДИМ И ОБНОВЛЯЕМ ЭЛЕМЕНТЫ В КЛОНЕ ПРАВИЛЬНО
+            const cloneAuthorNameDisplay = clone.getElementById('authorNameDisplay');
+            const cloneArticleDateDisplay = clone.getElementById('articleDateDisplay');
+            
+            // ОБНОВЛЯЕМ ОТОБРАЖЕНИЕ АВТОРА И ДАТЫ В КЛОНЕ
             if (cloneAuthorNameDisplay) {
                 if (authorName) {
                     if (authorLink) {
@@ -1141,19 +1135,24 @@
                 }
             }
             
-            // Обновляем дату в клоне
             if (cloneArticleDateDisplay) {
                 cloneArticleDateDisplay.textContent = articleDate;
             }
             
-            // Обновляем значения полей ввода в клоне (на случай если кто-то откроет редактирование)
+            // ОБНОВЛЯЕМ ЗНАЧЕНИЯ ПОЛЕЙ ВВОДА В КЛОНЕ
+            const cloneAuthorNameInput = clone.getElementById('authorNameInput');
+            const cloneAuthorLinkInput = clone.getElementById('authorLinkInput');
+            const cloneDaySelect = clone.getElementById('daySelect');
+            const cloneMonthSelect = clone.getElementById('monthSelect');
+            const cloneYearSelect = clone.getElementById('yearSelect');
+            
             if (cloneAuthorNameInput) cloneAuthorNameInput.value = authorName;
             if (cloneAuthorLinkInput) cloneAuthorLinkInput.value = authorLink;
             if (cloneDaySelect) cloneDaySelect.value = daySelect.value;
             if (cloneMonthSelect) cloneMonthSelect.value = monthSelect.value;
             if (cloneYearSelect) cloneYearSelect.value = yearSelect.value;
             
-            // Настраиваем клон для режима чтения
+            // НАСТРАИВАЕМ РЕЖИМ ЧТЕНИЯ В КЛОНЕ
             const cloneContent = clone.getElementById('articleContent');
             const cloneTitle = clone.getElementById('articleTitle');
             const cloneEditBtn = clone.getElementById('editBtn');
@@ -1163,8 +1162,14 @@
             const cloneEditorToolbar = clone.getElementById('editorToolbar');
             const cloneWatermarkLayer = clone.getElementById('watermarkLayer');
             
-            if (cloneContent) cloneContent.contentEditable = 'false';
-            if (cloneTitle) cloneTitle.contentEditable = 'false';
+            if (cloneContent) {
+                cloneContent.contentEditable = 'false';
+                cloneContent.classList.add('no-select');
+            }
+            if (cloneTitle) {
+                cloneTitle.contentEditable = 'false';
+                cloneTitle.classList.add('no-select');
+            }
             if (cloneEditBtn) cloneEditBtn.style.display = 'flex';
             if (cloneSaveBtn) cloneSaveBtn.style.display = 'none';
             if (cloneAuthorInputs) cloneAuthorInputs.style.display = 'none';
@@ -1172,7 +1177,7 @@
             if (cloneEditorToolbar) cloneEditorToolbar.classList.remove('active');
             if (cloneWatermarkLayer) cloneWatermarkLayer.style.display = 'block';
             
-            // Добавляем скрипт для водяных знаков в скачанном файле
+            // ДОБАВЛЯЕМ СКРИПТ ДЛЯ ВОДЯНЫХ ЗНАКОВ
             const watermarkScript = clone.createElement('script');
             watermarkScript.textContent = `
                 window.addEventListener('load', function() {
@@ -1218,13 +1223,22 @@
                     
                     createWatermarks();
                     window.addEventListener('resize', createWatermarks);
+                    
+                    // ЗАЩИТА ОТ КОПИРОВАНИЯ ДЛЯ СКАЧАННОГО ФАЙЛА
+                    const articleContent = document.getElementById('articleContent');
+                    if (articleContent) {
+                        document.addEventListener('contextmenu', e => e.preventDefault());
+                        document.addEventListener('copy', e => e.preventDefault());
+                        document.addEventListener('cut', e => e.preventDefault());
+                        document.addEventListener('selectstart', e => e.preventDefault());
+                    }
                 });
             `;
             clone.body.appendChild(watermarkScript);
             
-            // Создаем HTML файл
+            // СОЗДАЕМ И СКАЧИВАЕМ ФАЙЛ
             const html = '<!DOCTYPE html>\n' + clone.documentElement.outerHTML;
-            const blob = new Blob([html], { type: 'text/html' });
+            const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             
@@ -1235,10 +1249,13 @@
             a.download = filename + '.html';
             document.body.appendChild(a);
             a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
             
-            alert('Статья сохранена! Автор и дата сохранены корректно. ✅');
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                disableEditing();
+                alert('Статья сохранена! Автор и дата сохранены корректно. ✅');
+            }, 100);
         }
 
         // Запускаем инициализацию при загрузке

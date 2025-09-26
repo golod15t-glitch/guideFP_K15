@@ -386,7 +386,7 @@
             }
             .btn-edit, .btn-save {
                 padding: 0.5rem;
-                min-width: 44px; /* Минимальный размер для удобного касания */
+                min-width: 44px;
                 min-height: 44px;
                 justify-content: center;
             }
@@ -410,7 +410,7 @@
             }
             .author-inputs input, .author-inputs select {
                 width: 100%;
-                font-size: 16px; /* Убирает увеличение в iOS */
+                font-size: 16px;
             }
             .date-inputs {
                 width: 100%;
@@ -622,10 +622,12 @@
         const authorLinkInput = document.getElementById("authorLinkInput");
         const authorNameDisplay = document.getElementById("authorNameDisplay");
         const articleDateDisplay = document.getElementById("articleDateDisplay");
+        const authorSection = document.getElementById("authorSection");
         const daySelect = document.getElementById("daySelect");
         const monthSelect = document.getElementById("monthSelect");
         const yearSelect = document.getElementById("yearSelect");
         let isAdmin = false;
+
         // Заполнение выпадающих списков даты
         function populateDateSelects() {
             // Заполнение дней (1-31)
@@ -646,34 +648,28 @@
             // Установка текущей даты по умолчанию
             const today = new Date();
             daySelect.value = today.getDate();
-            monthSelect.selectedIndex = today.getMonth(); // месяцы с 0 до 11
+            monthSelect.selectedIndex = today.getMonth();
             yearSelect.value = today.getFullYear();
         }
+
         // Создание водяных знаков
         function createWatermarks() {
-            // Очищаем слой от старых водяных знаков
             watermarkLayer.innerHTML = '';
-            // Если режим редактирования активен, не добавляем водяные знаки
             if (articleContent.contentEditable === "true") return;
             const containerWidth = watermarkContainer.offsetWidth;
             const containerHeight = watermarkContainer.offsetHeight;
             if (containerWidth === 0 || containerHeight === 0) return;
             const watermarkText = "kotonaft15";
-            const watermarkSize = 24;
-            const spacing = 150; // Расстояние между водяными знаками
-            // Рассчитываем количество водяных знаков по горизонтали и вертикали
+            const spacing = 150;
             const cols = Math.ceil(containerWidth / spacing) + 1;
             const rows = Math.ceil(containerHeight / spacing) + 1;
-            // Создаем водяные знаки в шахматном порядке
             for (let i = 0; i < rows; i++) {
                 for (let j = 0; j < cols; j++) {
                     const watermark = document.createElement('div');
                     watermark.className = 'watermark';
                     watermark.textContent = watermarkText;
-                    // Позиционируем водяные знаки в шахматном порядке
                     const offsetX = j * spacing;
                     const offsetY = i * spacing;
-                    // Смещение для шахматного порядка
                     if (i % 2 === 0) {
                         watermark.style.left = `${offsetX}px`;
                     } else {
@@ -684,6 +680,7 @@
                 }
             }
         }
+
         // Показать/скрыть кнопку прокрутки вверх
         function toggleScrollToTopButton() {
             if (window.pageYOffset > 300) {
@@ -692,6 +689,7 @@
                 scrollToTopBtn.classList.remove('visible');
             }
         }
+
         // Прокрутка вверх
         function scrollToTop() {
             window.scrollTo({
@@ -699,6 +697,7 @@
                 behavior: 'smooth'
             });
         }
+
         function showAdminModal() {
             adminModal.classList.add("active");
             adminModal.setAttribute('aria-hidden', 'false');
@@ -706,10 +705,12 @@
             adminError.style.display = "none";
             adminCodeInput.focus();
         }
+
         function hideAdminModal() {
             adminModal.classList.remove("active");
             adminModal.setAttribute('aria-hidden', 'true');
         }
+
         adminSubmitBtn.addEventListener("click", () => {
             if (adminCodeInput.value === ADMIN_CODE) {
                 isAdmin = true;
@@ -721,6 +722,7 @@
                 adminCodeInput.setAttribute('aria-invalid', 'true');
             }
         });
+
         function enableEditing() {
             articleContent.contentEditable = "true";
             articleTitle.contentEditable = "true";
@@ -733,7 +735,6 @@
             removeNoSelect();
             updateFontSizeSelect();
             articleTitle.focus();
-            // Удаляем водяные знаки при включении редактирования
             watermarkLayer.style.display = 'none';
             // Загружаем сохраненные данные автора, если есть
             const savedAuthor = sessionStorage.getItem("authorName");
@@ -748,6 +749,7 @@
                 yearSelect.value = parseInt(dateParts[2]);
             }
         }
+
         function disableEditing() {
             articleContent.contentEditable = "false";
             articleTitle.contentEditable = "false";
@@ -775,32 +777,29 @@
             } else {
                 authorNameDisplay.textContent = "Неизвестный автор";
             }
-            // Обновляем отображение даты
             articleDateDisplay.textContent = articleDate;
-            // Добавляем водяные знаки при выключении редактирования
             watermarkLayer.style.display = 'block';
             createWatermarks();
         }
-        // Добавляем класс no-select чтобы запретить выделение и копирование
+
         function applyNoSelect() {
-            // Применяем класс только если мы в режиме чтения (не редактирования)
             if (articleContent.contentEditable === "false") {
                 articleContent.classList.add("no-select");
                 articleTitle.classList.add("no-select");
             }
         }
-        // Убираем класс no-select чтобы разрешить выделение и копирование
+
         function removeNoSelect() {
             articleContent.classList.remove("no-select");
             articleTitle.classList.remove("no-select");
         }
-        // Форматирование текста через execCommand
+
         function formatText(command, value = null) {
             document.execCommand(command, false, value);
             articleContent.focus();
             updateFontSizeSelect();
         }
-        // Установка размера шрифта для выделенного текста
+
         function setFontSize(size) {
             const selection = window.getSelection();
             if (!selection.rangeCount || selection.isCollapsed) return;
@@ -810,13 +809,13 @@
             try {
                 range.surroundContents(span);
             } catch (e) {
-                // fallback
                 document.execCommand('fontSize', false, '7');
                 replaceFontSizeWithSpan(size);
             }
             articleContent.focus();
             updateFontSizeSelect();
         }
+
         function replaceFontSizeWithSpan(pxSize) {
             const fonts = articleContent.querySelectorAll('font[size="7"]');
             fonts.forEach(fontEl => {
@@ -826,11 +825,10 @@
                 fontEl.parentNode.replaceChild(span, fontEl);
             });
         }
-        // Обновить выпадающий список размера шрифта в тулбаре
+
         function updateFontSizeSelect() {
             const size = getCurrentFontSize();
             if (size && fontSizeSelect.value != size.toString()) {
-                // Если в списке нет этого размера, сбросим на пустое значение
                 if ([...fontSizeSelect.options].some(o => o.value === size.toString())) {
                     fontSizeSelect.value = size.toString();
                 } else {
@@ -838,186 +836,164 @@
                 }
             }
         }
-        // Получение текущего размера шрифта выделения
+
         function getCurrentFontSize() {
             const selection = window.getSelection();
             if (!selection.rangeCount || selection.isCollapsed) return null;
             let node = selection.focusNode;
-            while(node && node !== articleContent) {
-                if(node.nodeType === 1) { // ELEMENT_NODE
+            while (node && node !== articleContent) {
+                if (node.nodeType === 1) {
                     const size = window.getComputedStyle(node).fontSize;
-                    if(size) return parseInt(size);
+                    if (size) return parseInt(size);
                 }
                 node = node.parentNode;
             }
             return null;
         }
-        // Добавление изображения
+
         function addImage() {
             const url = prompt("Введите URL изображения", "https://");
             if (url) {
                 formatText("insertImage", url);
             }
         }
-        // Сохранение страницы - ИСПРАВЛЕННАЯ ВЕРСИЯ С ПОЛНОЙ ЗАЩИТОЙ
+
+        // Сохранение страницы - ПОЛНЫЙ КЛОН С ВСЕЙ ВОЗМОЖНОСТЬЮ РЕДАКТИРОВАНИЯ
         function saveAndDownload() {
             // Фиксируем режим чтения перед клонированием
             disableEditing();
-            // Получаем текущие значения автора и даты
+            // Получаем текущие значения
             const authorName = authorNameInput.value.trim();
             const authorLink = authorLinkInput.value.trim();
             const articleDate = `${daySelect.value} ${monthSelect.value} ${yearSelect.value}`;
-            // Создаем временный элемент для отображения автора и даты
-            const tempAuthorDisplay = document.createElement('div');
-            tempAuthorDisplay.className = 'author-display';
-            tempAuthorDisplay.style.display = 'flex';
-            const authorText = document.createElement('span');
-            authorText.className = 'author-text';
-            authorText.textContent = 'Автор: ';
-            const authorNameSpan = document.createElement('span');
-            if (authorName) {
-                if (authorLink) {
-                    authorNameSpan.innerHTML = `<a href="${authorLink}" class="author-link" target="_blank">${authorName}</a>`;
-                } else {
-                    authorNameSpan.textContent = authorName;
-                }
-            } else {
-                authorNameSpan.textContent = "Неизвестный автор";
-            }
-            const separator = document.createElement('span');
-            separator.textContent = ' | ';
-            separator.className = 'author-text';
-            const dateSpan = document.createElement('span');
-            dateSpan.className = 'article-date';
-            dateSpan.textContent = articleDate;
-            authorText.appendChild(authorNameSpan);
-            tempAuthorDisplay.appendChild(authorText);
-            tempAuthorDisplay.appendChild(separator);
-            tempAuthorDisplay.appendChild(dateSpan);
-            // Временно заменяем секцию автора
-            const originalAuthorSection = authorSection.innerHTML;
-            authorSection.innerHTML = '';
-            authorSection.appendChild(tempAuthorDisplay);
-            setTimeout(() => {
-                // Создаем клон всего документа
-                const docClone = document.cloneNode(true);
-                // *** НЕ УДАЛЯЕМ ЗАЩИТНЫЙ СКРИПТ - ОСТАВЛЯЕМ ПОЛНОСТЬЮ ***
-                // Удаляем ТОЛЬКО элементы редактирования
-                const adminModalClone = docClone.getElementById('adminModal');
-                if (adminModalClone) adminModalClone.remove();
-                const editorToolbarClone = docClone.getElementById('editorToolbar');
-                if (editorToolbarClone) editorToolbarClone.remove();
-                const editBtnClone = docClone.getElementById('editBtn');
-                if (editBtnClone) editBtnClone.remove();
-                const saveBtnClone = docClone.getElementById('saveBtn');
-                if (saveBtnClone) saveBtnClone.remove();
-                const buttonsContainerClone = docClone.querySelector('.buttons-container');
-                if (buttonsContainerClone && buttonsContainerClone.children.length === 0) {
-                    buttonsContainerClone.remove(); // Удаляем пустой контейнер кнопок
-                }
-                const authorInputsClone = docClone.getElementById('authorInputs');
-                if (authorInputsClone) authorInputsClone.remove();
-                // Фиксируем contenteditable="false" в клоне
-                const articleContentClone = docClone.getElementById('articleContent');
-                const articleTitleClone = docClone.getElementById('articleTitle');
-                if (articleContentClone) {
-                    articleContentClone.setAttribute('contenteditable', 'false');
-                    articleContentClone.classList.add('no-select');
-                }
-                if (articleTitleClone) {
-                    articleTitleClone.setAttribute('contenteditable', 'false');
-                    articleTitleClone.classList.add('no-select');
-                }
-                // Добавляем все защиты от копирования в скрипт клона (копируем основной скрипт, но адаптируем для чтения)
-                // Вставляем вызовы applyNoSelect, createWatermarks и event listeners для защиты в конец body клона
-                const protectionScript = docClone.createElement('script');
-                protectionScript.innerHTML = `
-                    // Автоматическая инициализация режима чтения в скачанном файле
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const articleContent = document.getElementById('articleContent');
-                        const articleTitle = document.getElementById('articleTitle');
-                        const watermarkLayer = document.getElementById('watermarkLayer');
-                        if (articleContent) {
-                            articleContent.contentEditable = 'false';
-                            articleContent.classList.add('no-select');
-                        }
-                        if (articleTitle) {
-                            articleTitle.contentEditable = 'false';
-                            articleTitle.classList.add('no-select');
-                        }
-                        if (watermarkLayer) {
-                            watermarkLayer.style.display = 'block';
-                        }
-                        // Создаём водяные знаки
-                        ${createWatermarks.toString()}
-                        createWatermarks();
-                        // Добавляем event listeners для защиты от копирования
-                        document.body.addEventListener('contextmenu', e => {
-                            if(articleContent && articleContent.contentEditable === "false") e.preventDefault();
-                        });
-                        document.body.addEventListener('copy', e => {
-                            if(articleContent && articleContent.contentEditable === "false") e.preventDefault();
-                        });
-                        document.body.addEventListener('cut', e => {
-                            if(articleContent && articleContent.contentEditable === "false") e.preventDefault();
-                        });
-                        document.body.addEventListener('selectstart', e => {
-                            if(articleContent && articleContent.contentEditable === "false") e.preventDefault();
-                        });
-                    });
-                    // Копируем остальные функции, если нужно (scroll, etc.)
-                    ${toggleScrollToTopButton.toString()}
-                    ${scrollToTop.toString()}
-                    window.addEventListener('scroll', toggleScrollToTopButton);
-                    const scrollToTopBtn = document.getElementById('scrollToTop');
-                    if (scrollToTopBtn) {
-                        scrollToTopBtn.addEventListener('click', scrollToTop);
+            // Создаем клон
+            const docClone = document.cloneNode(true);
+            // Обновляем отображение автора/даты в клоне для режима чтения
+            const authorDisplayClone = docClone.getElementById('authorDisplay');
+            const authorNameDisplayClone = docClone.getElementById('authorNameDisplay');
+            const articleDateDisplayClone = docClone.getElementById('articleDateDisplay');
+            if (authorDisplayClone) authorDisplayClone.style.display = 'flex';
+            if (authorNameDisplayClone) {
+                if (authorName) {
+                    if (authorLink) {
+                        authorNameDisplayClone.innerHTML = `<a href="${authorLink}" class="author-link" target="_blank">${authorName}</a>`;
+                    } else {
+                        authorNameDisplayClone.textContent = authorName;
                     }
-                    ${updatePlaceholderClass.toString()}
+                } else {
+                    authorNameDisplayClone.textContent = "Неизвестный автор";
+                }
+            }
+            if (articleDateDisplayClone) articleDateDisplayClone.textContent = articleDate;
+            // Применяем no-select в клоне
+            const articleContentClone = docClone.getElementById('articleContent');
+            const articleTitleClone = docClone.getElementById('articleTitle');
+            if (articleContentClone) articleContentClone.classList.add('no-select');
+            if (articleTitleClone) articleTitleClone.classList.add('no-select');
+            // Добавляем инициализационный скрипт для скачанного файла (водяные знаки и защиты)
+            const initScript = docClone.createElement('script');
+            initScript.innerHTML = `
+                document.addEventListener('DOMContentLoaded', function() {
+                    // Элементы
+                    const articleContent = document.getElementById('articleContent');
+                    const articleTitle = document.getElementById('articleTitle');
+                    const watermarkLayer = document.getElementById('watermarkLayer');
+                    const watermarkContainer = document.getElementById('watermarkContainer');
+                    // Применяем no-select
+                    if (articleContent) articleContent.classList.add('no-select');
+                    if (articleTitle) articleTitle.classList.add('no-select');
+                    // Водяные знаки
+                    function createWatermarks() {
+                        watermarkLayer.innerHTML = '';
+                        if (articleContent && articleContent.contentEditable === "true") return;
+                        const containerWidth = watermarkContainer.offsetWidth;
+                        const containerHeight = watermarkContainer.offsetHeight;
+                        if (containerWidth === 0 || containerHeight === 0) return;
+                        const watermarkText = "kotonaft15";
+                        const spacing = 150;
+                        const cols = Math.ceil(containerWidth / spacing) + 1;
+                        const rows = Math.ceil(containerHeight / spacing) + 1;
+                        for (let i = 0; i < rows; i++) {
+                            for (let j = 0; j < cols; j++) {
+                                const watermark = document.createElement('div');
+                                watermark.className = 'watermark';
+                                watermark.textContent = watermarkText;
+                                const offsetX = j * spacing;
+                                const offsetY = i * spacing;
+                                if (i % 2 === 0) {
+                                    watermark.style.left = \`\${offsetX}px\`;
+                                } else {
+                                    watermark.style.left = \`\${offsetX + spacing/2}px\`;
+                                }
+                                watermark.style.top = \`\${offsetY}px\`;
+                                watermarkLayer.appendChild(watermark);
+                            }
+                        }
+                    }
+                    if (watermarkLayer) {
+                        watermarkLayer.style.display = 'block';
+                        createWatermarks();
+                    }
+                    // Защиты от копирования
+                    document.body.addEventListener('contextmenu', e => {
+                        if (articleContent && articleContent.contentEditable === "false") e.preventDefault();
+                    });
+                    document.body.addEventListener('copy', e => {
+                        if (articleContent && articleContent.contentEditable === "false") e.preventDefault();
+                    });
+                    document.body.addEventListener('cut', e => {
+                        if (articleContent && articleContent.contentEditable === "false") e.preventDefault();
+                    });
+                    document.body.addEventListener('selectstart', e => {
+                        if (articleContent && articleContent.contentEditable === "false") e.preventDefault();
+                    });
+                    // Scroll to top (если нужно)
+                    function toggleScrollToTopButton() {
+                        if (window.pageYOffset > 300) {
+                            document.getElementById('scrollToTop').classList.add('visible');
+                        } else {
+                            document.getElementById('scrollToTop').classList.remove('visible');
+                        }
+                    }
+                    function scrollToTop() {
+                        window.scrollTo({
+                            top: 0,
+                            behavior: 'smooth'
+                        });
+                    }
+                    const scrollToTopBtn = document.getElementById('scrollToTop');
+                    if (scrollToTopBtn) scrollToTopBtn.addEventListener('click', scrollToTop);
+                    window.addEventListener('scroll', toggleScrollToTopButton);
+                    // Resize для водяных знаков
                     window.addEventListener('resize', () => {
                         if (articleContent && articleContent.contentEditable === "false") {
                             createWatermarks();
                         }
                     });
-                `;
-                docClone.body.appendChild(protectionScript);
-                // Добавляем мета-тег для корректного отображения на мобильных (если нет)
-                const viewportMeta = docClone.querySelector('meta[name="viewport"]');
-                if (!viewportMeta) {
-                    const newViewport = docClone.createElement('meta');
-                    newViewport.name = 'viewport';
-                    newViewport.content = 'width=device-width, initial-scale=1';
-                    docClone.head.appendChild(newViewport);
-                }
-                // Восстанавливаем оригинальную секцию автора в основном документе
-                authorSection.innerHTML = originalAuthorSection;
-                // Восстанавливаем класс no-select для текущего документа
-                if (articleContent.contentEditable === "false") {
-                    applyNoSelect();
-                }
-                // Создаем HTML из клона с DOCTYPE
-                const docType = '<!DOCTYPE html>';
-                const htmlContent = docType + '\n' + docClone.documentElement.outerHTML;
-                const blob = new Blob([htmlContent], { type: "text/html; charset=utf-8" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                const filename = (articleTitle.innerText.trim() || "article")
-                    .replace(/\s+/g, "_")
-                    .replace(/[^\w\-]/g, "")
-                    .substring(0, 50); // Ограничиваем длину имени файла
-                a.download = filename + ".html";
-                document.body.appendChild(a);
-                a.click();
-                // Очистка
-                setTimeout(() => {
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    alert("Статья успешно сохранена со всей защитой и обновлённым содержимым! 😊");
-                }, 100);
-            }, 300);
+                });
+            `;
+            docClone.body.appendChild(initScript);
+            // Создаём HTML и скачиваем
+            const docType = '<!DOCTYPE html>';
+            const htmlContent = docType + '\n' + docClone.documentElement.outerHTML;
+            const blob = new Blob([htmlContent], { type: "text/html; charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            const filename = (articleTitle.innerText.trim() || "article")
+                .replace(/\s+/g, "_")
+                .replace(/[^\w\-]/g, "")
+                .substring(0, 50);
+            a.download = filename + ".html";
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                alert("Статья сохранена с полным функционалом редактирования и защитой! 😊");
+            }, 100);
         }
-        // Плейсхолдеры
+
         function updatePlaceholderClass() {
             [articleTitle, articleContent].forEach(el => {
                 if (el.innerText.trim().length === 0) {
@@ -1027,14 +1003,16 @@
                 }
             });
         }
+
         [articleTitle, articleContent].forEach(el => {
             el.addEventListener("input", updatePlaceholderClass);
             el.addEventListener("focus", updatePlaceholderClass);
             el.addEventListener("blur", updatePlaceholderClass);
         });
-        // Обновляем тулбар при смене выделения
+
         articleContent.addEventListener("mouseup", updateFontSizeSelect);
         articleContent.addEventListener("keyup", updateFontSizeSelect);
+
         // Слушатели
         editBtn.addEventListener("click", () => {
             if (isAdmin) {
@@ -1044,72 +1022,35 @@
             }
         });
         saveBtn.addEventListener("click", saveAndDownload);
-        // Кнопка прокрутки вверх
         scrollToTopBtn.addEventListener("click", scrollToTop);
         window.addEventListener("scroll", toggleScrollToTopButton);
+
+        // Защиты от копирования в оригинальном файле
+        document.body.addEventListener('contextmenu', e => {
+            if (articleContent.contentEditable === "false") e.preventDefault();
+        });
+        document.body.addEventListener('copy', e => {
+            if (articleContent.contentEditable === "false") e.preventDefault();
+        });
+        document.body.addEventListener('cut', e => {
+            if (articleContent.contentEditable === "false") e.preventDefault();
+        });
+        document.body.addEventListener('selectstart', e => {
+            if (articleContent.contentEditable === "false") e.preventDefault();
+        });
+
         // Запуск
         window.addEventListener("DOMContentLoaded", () => {
             populateDateSelects();
-            // Проверяем, находимся ли мы в скачанном файле (нет кнопок редактирования)
-            const isDownloadedFile = !editBtn || !saveBtn;
-            if (isDownloadedFile) {
-                // Для скачанного файла: полный режим чтения с защитой
-                isAdmin = false;
-                disableEditing(); // Убеждаемся в false
-                applyNoSelect();
-                authorDisplay.style.display = "flex";
-                // Загружаем/отображаем автора и дату
-                const savedAuthor = sessionStorage.getItem("authorName") || "";
-                const savedLink = sessionStorage.getItem("authorLink") || "";
-                const savedDate = sessionStorage.getItem("articleDate") || (() => {
-                    const today = new Date();
-                    const months = ["января", "февраля", "марта", "апреля", "мая", "июня",
-                                   "июля", "августа", "сентября", "октября", "ноября", "декабря"];
-                    return `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
-                })();
-                if (savedAuthor) {
-                    if (savedLink) {
-                        authorNameDisplay.innerHTML = `<a href="${savedLink}" class="author-link" target="_blank">${savedAuthor}</a>`;
-                    } else {
-                        authorNameDisplay.textContent = savedAuthor;
-                    }
-                } else {
-                    authorNameDisplay.textContent = "Неизвестный автор";
-                }
-                articleDateDisplay.textContent = savedDate;
-                // Водяные знаки и защиты
-                watermarkLayer.style.display = 'block';
-                setTimeout(createWatermarks, 100);
-                // Event listeners для защиты (уже в основном скрипте, но дублируем для скачанного)
-                document.body.addEventListener('contextmenu', e => {
-                    if(articleContent.contentEditable === "false") e.preventDefault();
-                });
-                document.body.addEventListener('copy', e => {
-                    if(articleContent.contentEditable === "false") e.preventDefault();
-                });
-                document.body.addEventListener('cut', e => {
-                    if(articleContent.contentEditable === "false") e.preventDefault();
-                });
-                document.body.addEventListener('selectstart', e => {
-                    if(articleContent.contentEditable === "false") e.preventDefault();
-                });
-            } else if (sessionStorage.getItem("isAdmin") === "true") {
-                // Оригинальный файл с admin
+            if (sessionStorage.getItem("isAdmin") === "true") {
                 isAdmin = true;
                 enableEditing();
             } else {
-                // Оригинальный файл в режиме чтения
                 applyNoSelect();
-                // Загружаем сохраненные данные автора для отображения
-                const savedAuthor = sessionStorage.getItem("authorName") || "";
-                const savedLink = sessionStorage.getItem("authorLink") || "";
-                const savedDate = sessionStorage.getItem("articleDate") || (() => {
-                    const today = new Date();
-                    const months = ["января", "февраля", "марта", "апреля", "мая", "июня",
-                                   "июля", "августа", "сентября", "октября", "ноября", "декабря"];
-                    return `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
-                })();
                 authorDisplay.style.display = "flex";
+                const savedAuthor = sessionStorage.getItem("authorName");
+                const savedLink = sessionStorage.getItem("authorLink");
+                const savedDate = sessionStorage.getItem("articleDate");
                 if (savedAuthor) {
                     if (savedLink) {
                         authorNameDisplay.innerHTML = `<a href="${savedLink}" class="author-link" target="_blank">${savedAuthor}</a>`;
@@ -1119,34 +1060,27 @@
                 } else {
                     authorNameDisplay.textContent = "Неизвестный автор";
                 }
-                articleDateDisplay.textContent = savedDate;
+                if (savedDate) {
+                    articleDateDisplay.textContent = savedDate;
+                } else {
+                    const today = new Date();
+                    const months = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+                    articleDateDisplay.textContent = `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+                }
+                watermarkLayer.style.display = 'block';
                 setTimeout(createWatermarks, 100);
             }
             updatePlaceholderClass();
             updateFontSizeSelect();
-            toggleScrollToTopButton(); // Проверяем начальную позицию прокрутки
+            toggleScrollToTopButton();
         });
-        // Обработка изменения размера окна
+
         window.addEventListener('resize', () => {
             if (articleContent.contentEditable === "false") {
-                createWatermarks();
-            }
-        });
-        // Запрет контекстного меню и копирования если нет редактирования (для оригинального файла)
-        if (!(!editBtn || !saveBtn)) { // Только если не скачанный файл
-            document.body.addEventListener('contextmenu', e => {
-                if(articleContent.contentEditable === "false") e.preventDefault();
-            });
-            document.body.addEventListener('copy', e => {
-                if(articleContent.contentEditable === "false") e.preventDefault();
-            });
-            document.body.addEventListener('cut', e => {
-                if(articleContent.contentEditable === "false") e.preventDefault();
-            });
-            document.body.addEventListener('selectstart', e => {
-                if(articleContent.contentEditable === "false") e.preventDefault();
-            });
-        }
-    </script>
+               createWatermarks();
+}
+});
+</script>
+
 </body>
 </html>

@@ -1106,10 +1106,52 @@
         }
 
         function saveAndDownload() {
+            // Сохраняем данные перед созданием клона
+            saveAuthorData();
+            updateAuthorDisplay();
             disableEditing();
             
             // Создаем клон для скачивания
             const clone = document.cloneNode(true);
+            
+            // ОБНОВЛЯЕМ ДАННЫЕ АВТОРА И ДАТЫ В КЛОНЕ
+            const cloneAuthorNameDisplay = clone.getElementById('authorNameDisplay');
+            const cloneArticleDateDisplay = clone.getElementById('articleDateDisplay');
+            const cloneAuthorNameInput = clone.getElementById('authorNameInput');
+            const cloneAuthorLinkInput = clone.getElementById('authorLinkInput');
+            const cloneDaySelect = clone.getElementById('daySelect');
+            const cloneMonthSelect = clone.getElementById('monthSelect');
+            const cloneYearSelect = clone.getElementById('yearSelect');
+            
+            // Получаем текущие значения
+            const authorName = authorNameInput.value.trim();
+            const authorLink = authorLinkInput.value.trim();
+            const articleDate = `${daySelect.value} ${monthSelect.value} ${yearSelect.value}`;
+            
+            // Обновляем отображение автора в клоне
+            if (cloneAuthorNameDisplay) {
+                if (authorName) {
+                    if (authorLink) {
+                        cloneAuthorNameDisplay.innerHTML = `<a href="${authorLink}" class="author-link" target="_blank">${authorName}</a>`;
+                    } else {
+                        cloneAuthorNameDisplay.textContent = authorName;
+                    }
+                } else {
+                    cloneAuthorNameDisplay.textContent = "Неизвестный автор";
+                }
+            }
+            
+            // Обновляем дату в клоне
+            if (cloneArticleDateDisplay) {
+                cloneArticleDateDisplay.textContent = articleDate;
+            }
+            
+            // Обновляем значения полей ввода в клоне (на случай если кто-то откроет редактирование)
+            if (cloneAuthorNameInput) cloneAuthorNameInput.value = authorName;
+            if (cloneAuthorLinkInput) cloneAuthorLinkInput.value = authorLink;
+            if (cloneDaySelect) cloneDaySelect.value = daySelect.value;
+            if (cloneMonthSelect) cloneMonthSelect.value = monthSelect.value;
+            if (cloneYearSelect) cloneYearSelect.value = yearSelect.value;
             
             // Настраиваем клон для режима чтения
             const cloneContent = clone.getElementById('articleContent');
@@ -1118,6 +1160,8 @@
             const cloneSaveBtn = clone.getElementById('saveBtn');
             const cloneAuthorInputs = clone.getElementById('authorInputs');
             const cloneAuthorDisplay = clone.getElementById('authorDisplay');
+            const cloneEditorToolbar = clone.getElementById('editorToolbar');
+            const cloneWatermarkLayer = clone.getElementById('watermarkLayer');
             
             if (cloneContent) cloneContent.contentEditable = 'false';
             if (cloneTitle) cloneTitle.contentEditable = 'false';
@@ -1125,6 +1169,58 @@
             if (cloneSaveBtn) cloneSaveBtn.style.display = 'none';
             if (cloneAuthorInputs) cloneAuthorInputs.style.display = 'none';
             if (cloneAuthorDisplay) cloneAuthorDisplay.style.display = 'flex';
+            if (cloneEditorToolbar) cloneEditorToolbar.classList.remove('active');
+            if (cloneWatermarkLayer) cloneWatermarkLayer.style.display = 'block';
+            
+            // Добавляем скрипт для водяных знаков в скачанном файле
+            const watermarkScript = clone.createElement('script');
+            watermarkScript.textContent = `
+                window.addEventListener('load', function() {
+                    function createWatermarks() {
+                        const container = document.getElementById('watermarkContainer');
+                        const layer = document.getElementById('watermarkLayer');
+                        if (!container || !layer) return;
+                        
+                        layer.innerHTML = '';
+                        const width = container.offsetWidth;
+                        const height = container.offsetHeight;
+                        
+                        if (width === 0 || height === 0) {
+                            setTimeout(createWatermarks, 100);
+                            return;
+                        }
+                        
+                        const text = "kotonaft15";
+                        const spacing = 150;
+                        const cols = Math.ceil(width / spacing) + 1;
+                        const rows = Math.ceil(height / spacing) + 1;
+                        
+                        for (let i = 0; i < rows; i++) {
+                            for (let j = 0; j < cols; j++) {
+                                const watermark = document.createElement('div');
+                                watermark.className = 'watermark';
+                                watermark.textContent = text;
+                                
+                                const x = j * spacing;
+                                const y = i * spacing;
+                                
+                                if (i % 2 === 0) {
+                                    watermark.style.left = x + 'px';
+                                } else {
+                                    watermark.style.left = (x + spacing/2) + 'px';
+                                }
+                                
+                                watermark.style.top = y + 'px';
+                                layer.appendChild(watermark);
+                            }
+                        }
+                    }
+                    
+                    createWatermarks();
+                    window.addEventListener('resize', createWatermarks);
+                });
+            `;
+            clone.body.appendChild(watermarkScript);
             
             // Создаем HTML файл
             const html = '<!DOCTYPE html>\n' + clone.documentElement.outerHTML;
@@ -1142,7 +1238,7 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            alert('Статья сохранена!');
+            alert('Статья сохранена! Автор и дата сохранены корректно. ✅');
         }
 
         // Запускаем инициализацию при загрузке

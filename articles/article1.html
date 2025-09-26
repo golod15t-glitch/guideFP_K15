@@ -8,48 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
     
-    <!-- ЗАЩИТА ОТ ПРЯМОГО ДОСТУПА - ДОЛЖНА БЫТЬ ПЕРВОЙ -->
-    <script>
-    // Проверка до загрузки страницы
-    (function() {
-        // Разрешенные источники
-        const allowedSources = [
-            "https://golod15t-glitch.github.io/guideFP_K15/",
-            "https://golod15t-glitch.github.io/guideFP_K15",
-            "http://localhost", // для локальной разработки
-            "http://127.0.0.1"  // для локальной разработки
-        ];
-        
-        const currentUrl = window.location.href;
-        const referrer = document.referrer;
-        
-        // Проверяем, открыта ли статья напрямую (не с главной страницы)
-        let isValidAccess = false;
-        
-        // Проверяем реферер (откуда пришли)
-        for (const source of allowedSources) {
-            if (referrer.startsWith(source)) {
-                isValidAccess = true;
-                break;
-            }
-        }
-        
-        // Если реферер пустой (прямой доступ) или не из разрешенных источников
-        if (!isValidAccess && referrer !== "") {
-            // Перенаправляем на главную страницу
-            window.location.href = "https://golod15t-glitch.github.io/guideFP_K15/";
-            // Останавливаем дальнейшую загрузку страницы
-            throw new Error("Redirecting to main page");
-        }
-        
-        // Дополнительная проверка: если пытаются открыть статью напрямую через GitHub Pages
-        if (referrer === "" && currentUrl.includes('/articles/')) {
-            window.location.href = "https://golod15t-glitch.github.io/guideFP_K15/";
-            throw new Error("Redirecting to main page - direct access blocked");
-        }
-    })();
-    </script>
-    
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
         
@@ -103,7 +61,7 @@
             top: 1.5rem;
             left: 1.5rem;
             right: 1.5rem;
-            color: #94a3b8; /* серый цвет */
+            color: #94a3b8;
             pointer-events: none;
             user-select: none;
             white-space: pre-wrap;
@@ -179,18 +137,14 @@
             width: 100%;
             height: 100%;
             background: rgba(0, 0, 0, 0.5);
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: center;
             z-index: 9999;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.3s ease;
         }
         
         #adminModal.active {
-            visibility: visible;
-            opacity: 1;
+            display: flex;
         }
         
         #adminModal .modal-content {
@@ -228,7 +182,7 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            z-index: 2; /* Теперь водяные знаки будут поверх текста */
+            z-index: 2;
         }
         
         .watermark {
@@ -253,7 +207,7 @@
         
         .article-wrapper {
             position: relative;
-            z-index: 1; /* Текст статьи под водяными знаками */
+            z-index: 1;
         }
         
         /* Стили для автора и даты */
@@ -506,61 +460,30 @@
                 padding: 0.5rem;
             }
         }
-        
-        /* Для очень маленьких экранов */
-        @media (max-width: 480px) {
-            .article-title {
-                font-size: 1.75rem;
-            }
-            
-            .header-container {
-                padding: 0 0.5rem;
-            }
-            
-            .content-editable {
-                padding: 0.75rem;
-            }
-            
-            .author-text, .article-date {
-                font-size: 0.9rem;
-            }
-        }
-        
-        /* Для больших экранов */
-        @media (min-width: 769px) {
-            .btn-text {
-                display: inline;
-            }
-            
-            .btn-icon {
-                margin-right: 0.5rem;
-            }
-        }
     </style>
 </head>
 <body>
     <!-- Админский модал -->
-    <div id="adminModal" aria-hidden="true">
-        <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
-            <h2 id="adminModalTitle">Доступ к редактированию</h2>
+    <div id="adminModal">
+        <div class="modal-content">
+            <h2>Доступ к редактированию</h2>
             <p>Введите код доступа администратора:</p>
-            <input id="adminCodeInput" type="password" placeholder="Код доступа" autocomplete="off" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; font-size: 1rem;" aria-describedby="adminError" />
-            <div id="adminError" role="alert">Неверный код!</div>
+            <input id="adminCodeInput" type="password" placeholder="Код доступа" autocomplete="off" style="width: 100%; padding: 0.5rem; margin-top: 0.5rem; font-size: 1rem;" />
+            <div id="adminError">Неверный код!</div>
             <button id="adminSubmitBtn" style="margin-top: 1rem; width: 100%; padding: 0.5rem; font-size: 1rem; background: #4f46e5; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">Подтвердить</button>
         </div>
     </div>
     
     <!-- Панель инструментов редактора -->
-    <div id="editorToolbar" class="editor-toolbar" aria-label="Панель инструментов редактора">
-        <button class="tool-btn" title="Жирный" onclick="formatText('bold')" type="button" aria-pressed="false"><i class="fas fa-bold"></i></button>
-        <button class="tool-btn" title="Курсив" onclick="formatText('italic')" type="button" aria-pressed="false"><i class="fas fa-italic"></i></button>
-        <button class="tool-btn" title="Подчёркивание" onclick="formatText('underline')" type="button" aria-pressed="false"><i class="fas fa-underline"></i></button>
-        <button class="tool-btn" title="Маркированный список" onclick="formatText('insertUnorderedList')" type="button" aria-pressed="false"><i class="fas fa-list-ul"></i></button>
-        <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')" type="button" aria-pressed="false"><i class="fas fa-list-ol"></i></button>
-        <button class="tool-btn" title="Вставить изображение" onclick="addImage()" type="button"><i class="fas fa-image"></i></button>
+    <div id="editorToolbar" class="editor-toolbar">
+        <button class="tool-btn" title="Жирный" onclick="formatText('bold')"><i class="fas fa-bold"></i></button>
+        <button class="tool-btn" title="Курсив" onclick="formatText('italic')"><i class="fas fa-italic"></i></button>
+        <button class="tool-btn" title="Подчёркивание" onclick="formatText('underline')"><i class="fas fa-underline"></i></button>
+        <button class="tool-btn" title="Маркированный список" onclick="formatText('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
+        <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
+        <button class="tool-btn" title="Вставить изображение" onclick="addImage()"><i class="fas fa-image"></i></button>
         
-        <!-- Выпадающий список размеров шрифта -->
-        <select class="font-size-select" id="fontSizeSelect" aria-label="Выбор размера шрифта" onchange="setFontSize(parseInt(this.value))">
+        <select class="font-size-select" id="fontSizeSelect" onchange="setFontSize(parseInt(this.value))">
             <option value="8">8</option>
             <option value="9">9</option>
             <option value="10">10</option>
@@ -579,8 +502,7 @@
             <option value="72">72</option>
         </select>
         
-        <!-- Выпадающий список шрифтов -->
-        <select class="font-select" aria-label="Выбор шрифта" onchange="formatText('fontName', this.value)">
+        <select class="font-select" onchange="formatText('fontName', this.value)">
             <option value="" selected>Шрифт</option>
             <option value="Arial">Arial</option>
             <option value="'Times New Roman', Times, serif">Times New Roman</option>
@@ -595,13 +517,13 @@
     
     <!-- Заголовок статьи и кнопки -->
     <div class="header-container">
-        <h1 id="articleTitle" contenteditable="false" class="article-title" tabindex="0" aria-label="Заголовок статьи" data-placeholder="Введите заголовок..."></h1>
+        <h1 id="articleTitle" contenteditable="false" class="article-title" data-placeholder="Введите заголовок...">Заголовок статьи</h1>
         <div class="buttons-container">
-            <button id="editBtn" type="button" class="btn-edit">
+            <button id="editBtn" class="btn-edit">
                 <i class="fas fa-pencil-alt btn-icon"></i>
                 <span class="btn-text">Редактировать</span>
             </button>
-            <button id="saveBtn" type="button" class="btn-save" style="display: none;">
+            <button id="saveBtn" class="btn-save" style="display: none;">
                 <i class="fas fa-save btn-icon"></i>
                 <span class="btn-text">Сохранить</span>
             </button>
@@ -610,8 +532,8 @@
     
     <!-- Секция автора и даты -->
     <div id="authorSection" class="author-section">
-        <div id="authorDisplay" class="author-display" style="display: none;">
-            <span class="author-text">Автор: <span id="authorNameDisplay"></span> | </span>
+        <div id="authorDisplay" class="author-display">
+            <span class="author-text">Автор: <span id="authorNameDisplay">Неизвестный автор</span> | </span>
             <span class="article-date" id="articleDateDisplay"></span>
         </div>
         
@@ -627,9 +549,7 @@
             <div class="date-inputs">
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                     <label for="daySelect" style="font-size: 0.9rem; color: #4b5563;">День:</label>
-                    <select id="daySelect" class="date-select">
-                        <!-- Заполнится JavaScript -->
-                    </select>
+                    <select id="daySelect" class="date-select"></select>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                     <label for="monthSelect" style="font-size: 0.9rem; color: #4b5563;">Месяц:</label>
@@ -650,9 +570,7 @@
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                     <label for="yearSelect" style="font-size: 0.9rem; color: #4b5563;">Год:</label>
-                    <select id="yearSelect" class="date-select">
-                        <!-- Заполнится JavaScript -->
-                    </select>
+                    <select id="yearSelect" class="date-select"></select>
                 </div>
             </div>
         </div>
@@ -665,19 +583,17 @@
             <div class="article-wrapper">
                 <article
                     id="articleContent"
-                    class="content-editable empty"
+                    class="content-editable"
                     contenteditable="false"
                     style="background: white;"
-                    tabindex="0"
-                    aria-label="Контент статьи"
                     data-placeholder="Введите текст статьи..."
-                ></article>
+                >Начните вводить текст вашей статьи здесь...</article>
             </div>
         </div>
     </main>
     
     <!-- Кнопка прокрутки вверх -->
-    <button id="scrollToTop" class="scroll-to-top" aria-label="Прокрутить наверх">
+    <button id="scrollToTop" class="scroll-to-top">
         <i class="fas fa-chevron-up"></i>
     </button>
     
@@ -694,8 +610,6 @@
         const articleContent = document.getElementById("articleContent");
         const articleTitle = document.getElementById("articleTitle");
         const editorToolbar = document.getElementById("editorToolbar");
-        const fontSizeSelect = document.getElementById("fontSizeSelect");
-        const watermarkContainer = document.getElementById("watermarkContainer");
         const watermarkLayer = document.getElementById("watermarkLayer");
         const scrollToTopBtn = document.getElementById("scrollToTop");
         const authorDisplay = document.getElementById("authorDisplay");
@@ -704,16 +618,29 @@
         const authorLinkInput = document.getElementById("authorLinkInput");
         const authorNameDisplay = document.getElementById("authorNameDisplay");
         const articleDateDisplay = document.getElementById("articleDateDisplay");
-        const authorSection = document.getElementById("authorSection");
         const daySelect = document.getElementById("daySelect");
         const monthSelect = document.getElementById("monthSelect");
         const yearSelect = document.getElementById("yearSelect");
         
         let isAdmin = false;
+        let isEditing = false;
 
-        // Заполнение выпадающих списков даты
+        // Инициализация при загрузке
+        function init() {
+            populateDateSelects();
+            setCurrentDate();
+            createWatermarks();
+            applyProtections();
+            setupEventListeners();
+            
+            // Проверяем, был ли пользователь админом
+            if (sessionStorage.getItem("isAdmin") === "true") {
+                isAdmin = true;
+            }
+        }
+
         function populateDateSelects() {
-            // Заполнение дней (1-31)
+            // Дни
             for (let i = 1; i <= 31; i++) {
                 const option = document.createElement('option');
                 option.value = i;
@@ -721,7 +648,7 @@
                 daySelect.appendChild(option);
             }
             
-            // Заполнение годов (текущий год и 10 лет назад)
+            // Годы (текущий и 10 лет назад)
             const currentYear = new Date().getFullYear();
             for (let i = currentYear; i >= currentYear - 10; i--) {
                 const option = document.createElement('option');
@@ -729,116 +656,213 @@
                 option.textContent = i;
                 yearSelect.appendChild(option);
             }
-            
-            // Установка текущей даты по умолчанию
-            const today = new Date();
-            daySelect.value = today.getDate();
-            monthSelect.selectedIndex = today.getMonth();
-            yearSelect.value = today.getFullYear();
         }
 
-        // Создание водяных знаков
+        function setCurrentDate() {
+            const today = new Date();
+            const months = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+            
+            daySelect.value = today.getDate();
+            monthSelect.value = months[today.getMonth()];
+            yearSelect.value = today.getFullYear();
+            
+            articleDateDisplay.textContent = `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+        }
+
         function createWatermarks() {
+            if (isEditing) return;
+            
             watermarkLayer.innerHTML = '';
-            if (articleContent.contentEditable === "true") return;
+            const container = document.getElementById('watermarkContainer');
+            const width = container.offsetWidth;
+            const height = container.offsetHeight;
             
-            const containerWidth = watermarkContainer.offsetWidth;
-            const containerHeight = watermarkContainer.offsetHeight;
+            if (width === 0 || height === 0) return;
             
-            if (containerWidth === 0 || containerHeight === 0) return;
-            
-            const watermarkText = "kotonaft15";
+            const text = "kotonaft15";
             const spacing = 150;
-            const cols = Math.ceil(containerWidth / spacing) + 1;
-            const rows = Math.ceil(containerHeight / spacing) + 1;
+            const cols = Math.ceil(width / spacing) + 1;
+            const rows = Math.ceil(height / spacing) + 1;
             
             for (let i = 0; i < rows; i++) {
                 for (let j = 0; j < cols; j++) {
                     const watermark = document.createElement('div');
                     watermark.className = 'watermark';
-                    watermark.textContent = watermarkText;
+                    watermark.textContent = text;
                     
-                    const offsetX = j * spacing;
-                    const offsetY = i * spacing;
+                    const x = j * spacing;
+                    const y = i * spacing;
                     
                     if (i % 2 === 0) {
-                        watermark.style.left = `${offsetX}px`;
+                        watermark.style.left = x + 'px';
                     } else {
-                        watermark.style.left = `${offsetX + spacing/2}px`;
+                        watermark.style.left = (x + spacing/2) + 'px';
                     }
                     
-                    watermark.style.top = `${offsetY}px`;
+                    watermark.style.top = y + 'px';
                     watermarkLayer.appendChild(watermark);
                 }
             }
         }
 
-        // Показать/скрыть кнопку прокрутки вверх
-        function toggleScrollToTopButton() {
-            if (window.pageYOffset > 300) {
-                scrollToTopBtn.classList.add('visible');
-            } else {
-                scrollToTopBtn.classList.remove('visible');
+        function applyProtections() {
+            if (!isEditing) {
+                articleContent.classList.add('no-select');
+                articleTitle.classList.add('no-select');
             }
         }
 
-        // Прокрутка вверх
-        function scrollToTop() {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
+        function removeProtections() {
+            articleContent.classList.remove('no-select');
+            articleTitle.classList.remove('no-select');
+        }
+
+        function setupEventListeners() {
+            // Кнопка редактирования
+            editBtn.addEventListener('click', function() {
+                if (isAdmin) {
+                    enableEditing();
+                } else {
+                    showAdminModal();
+                }
+            });
+            
+            // Кнопка сохранения
+            saveBtn.addEventListener('click', saveAndDownload);
+            
+            // Модальное окно админа
+            adminSubmitBtn.addEventListener('click', function() {
+                if (adminCodeInput.value === ADMIN_CODE) {
+                    isAdmin = true;
+                    sessionStorage.setItem("isAdmin", "true");
+                    hideAdminModal();
+                    enableEditing();
+                } else {
+                    adminError.style.display = "block";
+                }
+            });
+            
+            // Enter в модальном окне
+            adminCodeInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    adminSubmitBtn.click();
+                }
+            });
+            
+            // Кнопка прокрутки вверх
+            scrollToTopBtn.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // Прокрутка страницы
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    scrollToTopBtn.classList.add('visible');
+                } else {
+                    scrollToTopBtn.classList.remove('visible');
+                }
+            });
+            
+            // Ресайз окна
+            window.addEventListener('resize', function() {
+                if (!isEditing) {
+                    createWatermarks();
+                }
+            });
+            
+            // Защита от копирования
+            document.addEventListener('contextmenu', function(e) {
+                if (!isEditing) e.preventDefault();
+            });
+            
+            document.addEventListener('copy', function(e) {
+                if (!isEditing) e.preventDefault();
+            });
+            
+            document.addEventListener('cut', function(e) {
+                if (!isEditing) e.preventDefault();
+            });
+            
+            document.addEventListener('selectstart', function(e) {
+                if (!isEditing) e.preventDefault();
             });
         }
 
         function showAdminModal() {
-            adminModal.classList.add("active");
-            adminModal.setAttribute('aria-hidden', 'false');
-            adminCodeInput.value = "";
-            adminError.style.display = "none";
+            adminModal.classList.add('active');
+            adminCodeInput.value = '';
+            adminError.style.display = 'none';
             adminCodeInput.focus();
         }
 
         function hideAdminModal() {
-            adminModal.classList.remove("active");
-            adminModal.setAttribute('aria-hidden', 'true');
+            adminModal.classList.remove('active');
         }
 
-        // ОСНОВНОЕ ИСПРАВЛЕНИЕ: Добавлен обработчик Enter для модального окна
-        adminCodeInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                adminSubmitBtn.click();
-            }
-        });
-
-        adminSubmitBtn.addEventListener("click", () => {
-            if (adminCodeInput.value === ADMIN_CODE) {
-                isAdmin = true;
-                sessionStorage.setItem("isAdmin", "true");
-                hideAdminModal();
-                enableEditing();
-            } else {
-                adminError.style.display = "block";
-                adminCodeInput.setAttribute('aria-invalid', 'true');
-            }
-        });
-
         function enableEditing() {
-            // ИСПРАВЛЕНИЕ: Правильное установление contenteditable
-            articleContent.contentEditable = "true";
-            articleTitle.contentEditable = "true";
+            isEditing = true;
             
-            editorToolbar.classList.add("active");
-            editBtn.style.display = "none";
-            saveBtn.style.display = "flex";
-            authorDisplay.style.display = "none";
-            authorInputs.style.display = "flex";
-            updatePlaceholderClass();
-            removeNoSelect();
-            updateFontSizeSelect();
-            articleTitle.focus();
+            // Включаем редактирование
+            articleContent.contentEditable = 'true';
+            articleTitle.contentEditable = 'true';
+            
+            // Показываем панель инструментов
+            editorToolbar.classList.add('active');
+            
+            // Переключаем кнопки
+            editBtn.style.display = 'none';
+            saveBtn.style.display = 'flex';
+            
+            // Переключаем режим автора
+            authorDisplay.style.display = 'none';
+            authorInputs.style.display = 'flex';
+            
+            // Убираем водяные знаки
             watermarkLayer.style.display = 'none';
             
-            // Загружаем сохраненные данные автора, если есть
+            // Убираем защиту
+            removeProtections();
+            
+            // Фокус на заголовок
+            setTimeout(() => {
+                articleTitle.focus();
+            }, 100);
+            
+            // Загружаем сохраненные данные
+            loadSavedData();
+        }
+
+        function disableEditing() {
+            isEditing = false;
+            
+            // Выключаем редактирование
+            articleContent.contentEditable = 'false';
+            articleTitle.contentEditable = 'false';
+            
+            // Скрываем панель инструментов
+            editorToolbar.classList.remove('active');
+            
+            // Переключаем кнопки
+            editBtn.style.display = 'flex';
+            saveBtn.style.display = 'none';
+            
+            // Переключаем режим автора
+            authorDisplay.style.display = 'flex';
+            authorInputs.style.display = 'none';
+            
+            // Сохраняем данные
+            saveAuthorData();
+            updateAuthorDisplay();
+            
+            // Включаем водяные знаки
+            watermarkLayer.style.display = 'block';
+            createWatermarks();
+            
+            // Включаем защиту
+            applyProtections();
+        }
+
+        function loadSavedData() {
             const savedAuthor = sessionStorage.getItem("authorName");
             const savedLink = sessionStorage.getItem("authorLink");
             const savedDate = sessionStorage.getItem("articleDate");
@@ -851,25 +875,9 @@
                 monthSelect.value = dateParts[1];
                 yearSelect.value = parseInt(dateParts[2]);
             }
-            
-            // ИСПРАВЛЕНИЕ: Убедимся, что элемент действительно фокусируется
-            setTimeout(() => {
-                articleTitle.focus();
-            }, 100);
         }
 
-        function disableEditing() {
-            articleContent.contentEditable = "false";
-            articleTitle.contentEditable = "false";
-            editorToolbar.classList.remove("active");
-            editBtn.style.display = "flex";
-            saveBtn.style.display = "none";
-            authorDisplay.style.display = "flex";
-            authorInputs.style.display = "none";
-            updatePlaceholderClass();
-            applyNoSelect();
-            
-            // Сохраняем данные автора
+        function saveAuthorData() {
             const authorName = authorNameInput.value.trim();
             const authorLink = authorLinkInput.value.trim();
             const articleDate = `${daySelect.value} ${monthSelect.value} ${yearSelect.value}`;
@@ -877,8 +885,13 @@
             sessionStorage.setItem("authorName", authorName);
             sessionStorage.setItem("authorLink", authorLink);
             sessionStorage.setItem("articleDate", articleDate);
+        }
+
+        function updateAuthorDisplay() {
+            const authorName = authorNameInput.value.trim();
+            const authorLink = authorLinkInput.value.trim();
+            const articleDate = `${daySelect.value} ${monthSelect.value} ${yearSelect.value}`;
             
-            // Обновляем отображение автора
             if (authorName) {
                 if (authorLink) {
                     authorNameDisplay.innerHTML = `<a href="${authorLink}" class="author-link" target="_blank">${authorName}</a>`;
@@ -890,363 +903,74 @@
             }
             
             articleDateDisplay.textContent = articleDate;
-            watermarkLayer.style.display = 'block';
-            createWatermarks();
         }
 
-        function applyNoSelect() {
-            if (articleContent.contentEditable === "false") {
-                articleContent.classList.add("no-select");
-                articleTitle.classList.add("no-select");
-            }
-        }
-
-        function removeNoSelect() {
-            articleContent.classList.remove("no-select");
-            articleTitle.classList.remove("no-select");
-        }
-
+        // Функции редактора
         function formatText(command, value = null) {
-            // ИСПРАВЛЕНИЕ: Убедимся, что элемент в фокусе перед выполнением команды
-            if (document.activeElement !== articleContent) {
-                articleContent.focus();
-            }
-            
             document.execCommand(command, false, value);
-            updateFontSizeSelect();
+            articleContent.focus();
         }
 
         function setFontSize(size) {
-            const selection = window.getSelection();
-            if (!selection.rangeCount || selection.isCollapsed) return;
-            
-            const range = selection.getRangeAt(0);
-            const span = document.createElement('span');
-            span.style.fontSize = size + 'px';
-            
-            try {
-                range.surroundContents(span);
-            } catch (e) {
-                document.execCommand('fontSize', false, '7');
-                replaceFontSizeWithSpan(size);
-            }
-            
-            articleContent.focus();
-            updateFontSizeSelect();
-        }
-
-        function replaceFontSizeWithSpan(pxSize) {
+            document.execCommand('fontSize', false, '7');
             const fonts = articleContent.querySelectorAll('font[size="7"]');
-            fonts.forEach(fontEl => {
+            fonts.forEach(font => {
                 const span = document.createElement('span');
-                span.style.fontSize = pxSize + 'px';
-                span.innerHTML = fontEl.innerHTML;
-                fontEl.parentNode.replaceChild(span, fontEl);
+                span.style.fontSize = size + 'px';
+                span.innerHTML = font.innerHTML;
+                font.parentNode.replaceChild(span, font);
             });
-        }
-
-        function updateFontSizeSelect() {
-            const size = getCurrentFontSize();
-            if (size && fontSizeSelect.value != size.toString()) {
-                if ([...fontSizeSelect.options].some(o => o.value === size.toString())) {
-                    fontSizeSelect.value = size.toString();
-                } else {
-                    fontSizeSelect.value = "";
-                }
-            }
-        }
-
-        function getCurrentFontSize() {
-            const selection = window.getSelection();
-            if (!selection.rangeCount || selection.isCollapsed) return null;
-            
-            let node = selection.focusNode;
-            while (node && node !== articleContent) {
-                if (node.nodeType === 1) {
-                    const size = window.getComputedStyle(node).fontSize;
-                    if (size) return parseInt(size);
-                }
-                node = node.parentNode;
-            }
-            return null;
         }
 
         function addImage() {
-            const url = prompt("Введите URL изображения", "https://");
+            const url = prompt("Введите URL изображения:", "https://");
             if (url) {
-                formatText("insertImage", url);
+                formatText('insertImage', url);
             }
         }
 
-        // ИСПРАВЛЕННАЯ функция сохранения
         function saveAndDownload() {
-            // Сохраняем текущие данные перед клонированием
-            const authorName = authorNameInput.value.trim();
-            const authorLink = authorLinkInput.value.trim();
-            const articleDate = `${daySelect.value} ${monthSelect.value} ${yearSelect.value}`;
-            
-            // Обновляем отображение в основном документе
             disableEditing();
             
-            // Создаем клон документа
-            const docClone = document.cloneNode(true);
+            // Создаем клон для скачивания
+            const clone = document.cloneNode(true);
             
-            // Обновляем данные автора и даты в клоне
-            const authorNameDisplayClone = docClone.getElementById('authorNameDisplay');
-            const articleDateDisplayClone = docClone.getElementById('articleDateDisplay');
-            const authorInputsClone = docClone.getElementById('authorInputs');
-            const authorDisplayClone = docClone.getElementById('authorDisplay');
+            // Настраиваем клон для режима чтения
+            const cloneContent = clone.getElementById('articleContent');
+            const cloneTitle = clone.getElementById('articleTitle');
+            const cloneEditBtn = clone.getElementById('editBtn');
+            const cloneSaveBtn = clone.getElementById('saveBtn');
+            const cloneAuthorInputs = clone.getElementById('authorInputs');
+            const cloneAuthorDisplay = clone.getElementById('authorDisplay');
             
-            if (authorNameDisplayClone) {
-                if (authorName) {
-                    if (authorLink) {
-                        authorNameDisplayClone.innerHTML = `<a href="${authorLink}" class="author-link" target="_blank">${authorName}</a>`;
-                    } else {
-                        authorNameDisplayClone.textContent = authorName;
-                    }
-                } else {
-                    authorNameDisplayClone.textContent = "Неизвестный автор";
-                }
-            }
+            if (cloneContent) cloneContent.contentEditable = 'false';
+            if (cloneTitle) cloneTitle.contentEditable = 'false';
+            if (cloneEditBtn) cloneEditBtn.style.display = 'flex';
+            if (cloneSaveBtn) cloneSaveBtn.style.display = 'none';
+            if (cloneAuthorInputs) cloneAuthorInputs.style.display = 'none';
+            if (cloneAuthorDisplay) cloneAuthorDisplay.style.display = 'flex';
             
-            if (articleDateDisplayClone) {
-                articleDateDisplayClone.textContent = articleDate;
-            }
-            
-            // Настраиваем правильное отображение в клоне
-            if (authorInputsClone) authorInputsClone.style.display = 'none';
-            if (authorDisplayClone) authorDisplayClone.style.display = 'flex';
-            
-            // Убедимся, что кнопки редактирования видны в клоне
-            const editBtnClone = docClone.getElementById('editBtn');
-            const saveBtnClone = docClone.getElementById('saveBtn');
-            if (editBtnClone) {
-                editBtnClone.style.display = 'flex';
-                editBtnClone.onclick = function() {
-                    const adminModalClone = docClone.getElementById('adminModal');
-                    if (adminModalClone) adminModalClone.classList.add('active');
-                };
-            }
-            if (saveBtnClone) saveBtnClone.style.display = 'none';
-            
-            // Добавляем скрипт инициализации для скачанного файла
-            const initScript = docClone.createElement('script');
-            initScript.innerHTML = `
-                // Инициализация после загрузки
-                document.addEventListener('DOMContentLoaded', function() {
-                    // Восстанавливаем функциональность
-                    const adminCode = "123";
-                    const articleContent = document.getElementById('articleContent');
-                    const articleTitle = document.getElementById('articleTitle');
-                    const editBtn = document.getElementById('editBtn');
-                    const saveBtn = document.getElementById('saveBtn');
-                    const adminModal = document.getElementById('adminModal');
-                    const adminCodeInput = document.getElementById('adminCodeInput');
-                    const adminError = document.getElementById('adminError');
-                    const adminSubmitBtn = document.getElementById('adminSubmitBtn');
-                    const watermarkLayer = document.getElementById('watermarkLayer');
-                    const watermarkContainer = document.getElementById('watermarkContainer');
-                    
-                    // Функция создания водяных знаков
-                    function createWatermarks() {
-                        if (!watermarkLayer) return;
-                        watermarkLayer.innerHTML = '';
-                        if (articleContent.contentEditable === "true") return;
-                        
-                        const containerWidth = watermarkContainer.offsetWidth;
-                        const containerHeight = watermarkContainer.offsetHeight;
-                        if (containerWidth === 0 || containerHeight === 0) return;
-                        
-                        const watermarkText = "kotonaft15";
-                        const spacing = 150;
-                        const cols = Math.ceil(containerWidth / spacing) + 1;
-                        const rows = Math.ceil(containerHeight / spacing) + 1;
-                        
-                        for (let i = 0; i < rows; i++) {
-                            for (let j = 0; j < cols; j++) {
-                                const watermark = document.createElement('div');
-                                watermark.className = 'watermark';
-                                watermark.textContent = watermarkText;
-                                const offsetX = j * spacing;
-                                const offsetY = i * spacing;
-                                if (i % 2 === 0) {
-                                    watermark.style.left = \`\${offsetX}px\`;
-                                } else {
-                                    watermark.style.left = \`\${offsetX + spacing/2}px\`;
-                                }
-                                watermark.style.top = \`\${offsetY}px\`;
-                                watermarkLayer.appendChild(watermark);
-                            }
-                        }
-                    }
-                    
-                    // Создаем водяные знаки
-                    if (watermarkLayer) {
-                        setTimeout(createWatermarks, 100);
-                    }
-                    
-                    // Защита от копирования
-                    if (articleContent) {
-                        document.addEventListener('contextmenu', e => {
-                            if (articleContent.contentEditable === "false") e.preventDefault();
-                        });
-                        document.addEventListener('copy', e => {
-                            if (articleContent.contentEditable === "false") e.preventDefault();
-                        });
-                        document.addEventListener('cut', e => {
-                            if (articleContent.contentEditable === "false") e.preventDefault();
-                        });
-                        document.addEventListener('selectstart', e => {
-                            if (articleContent.contentEditable === "false") e.preventDefault();
-                        });
-                    }
-                    
-                    // Обработка модального окна админа
-                    if (adminSubmitBtn && adminModal) {
-                        adminSubmitBtn.onclick = function() {
-                            if (adminCodeInput.value === adminCode) {
-                                articleContent.contentEditable = "true";
-                                articleTitle.contentEditable = "true";
-                                editBtn.style.display = "none";
-                                saveBtn.style.display = "flex";
-                                adminModal.classList.remove("active");
-                                if (watermarkLayer) watermarkLayer.style.display = 'none';
-                            } else {
-                                adminError.style.display = "block";
-                            }
-                        };
-                    }
-                    
-                    // Обработка кнопки сохранения
-                    if (saveBtn) {
-                        saveBtn.onclick = function() {
-                            alert('Для полного функционала редактирования используйте оригинальную версию статьи.');
-                        };
-                    }
-                    
-                    // Обработка ресайза для водяных знаков
-                    window.addEventListener('resize', createWatermarks);
-                });
-            `;
-            docClone.body.appendChild(initScript);
-            
-            // Создаем и скачиваем файл
-            const docType = '<!DOCTYPE html>';
-            const htmlContent = docType + '\\n' + docClone.documentElement.outerHTML;
-            const blob = new Blob([htmlContent], { type: "text/html; charset=utf-8" });
+            // Создаем HTML файл
+            const html = '<!DOCTYPE html>\n' + clone.documentElement.outerHTML;
+            const blob = new Blob([html], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
+            const a = document.createElement('a');
+            
+            const title = articleTitle.innerText.trim() || 'article';
+            const filename = title.replace(/\s+/g, '_').replace(/[^\w\-]/g, '').substring(0, 50);
+            
             a.href = url;
-            
-            const filename = (articleTitle.innerText.trim() || "article")
-                .replace(/\\s+/g, "_")
-                .replace(/[^\\w\\-]/g, "")
-                .substring(0, 50);
-            
-            a.download = filename + ".html";
+            a.download = filename + '.html';
             document.body.appendChild(a);
             a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
             
-            setTimeout(() => {
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                alert("Статья успешно сохранена! Автор и дата сохранены корректно. ✅");
-            }, 100);
+            alert('Статья сохранена!');
         }
 
-        function updatePlaceholderClass() {
-            [articleTitle, articleContent].forEach(el => {
-                if (el.innerText.trim().length === 0) {
-                    el.classList.add("empty");
-                } else {
-                    el.classList.remove("empty");
-                }
-            });
-        }
-
-        [articleTitle, articleContent].forEach(el => {
-            el.addEventListener("input", updatePlaceholderClass);
-            el.addEventListener("focus", updatePlaceholderClass);
-            el.addEventListener("blur", updatePlaceholderClass);
-        });
-
-        articleContent.addEventListener("mouseup", updateFontSizeSelect);
-        articleContent.addEventListener("keyup", updateFontSizeSelect);
-
-        // Слушатели
-        editBtn.addEventListener("click", () => {
-            if (isAdmin) {
-                enableEditing();
-            } else {
-                showAdminModal();
-            }
-        });
-        
-        saveBtn.addEventListener("click", saveAndDownload);
-        scrollToTopBtn.addEventListener("click", scrollToTop);
-        window.addEventListener("scroll", toggleScrollToTopButton);
-
-        // Защиты от копирования
-        document.addEventListener('contextmenu', e => {
-            if (articleContent.contentEditable === "false") e.preventDefault();
-        });
-        document.addEventListener('copy', e => {
-            if (articleContent.contentEditable === "false") e.preventDefault();
-        });
-        document.addEventListener('cut', e => {
-            if (articleContent.contentEditable === "false") e.preventDefault();
-        });
-        document.addEventListener('selectstart', e => {
-            if (articleContent.contentEditable === "false") e.preventDefault();
-        });
-
-        // Запуск
-        window.addEventListener("DOMContentLoaded", () => {
-            populateDateSelects();
-            
-            if (sessionStorage.getItem("isAdmin") === "true") {
-                isAdmin = true;
-                enableEditing();
-            } else {
-                applyNoSelect();
-                authorDisplay.style.display = "flex";
-                
-                const savedAuthor = sessionStorage.getItem("authorName");
-                const savedLink = sessionStorage.getItem("authorLink");
-                const savedDate = sessionStorage.getItem("articleDate");
-                
-                if (savedAuthor) {
-                    if (savedLink) {
-                        authorNameDisplay.innerHTML = \`<a href="\${savedLink}" class="author-link" target="_blank">\${savedAuthor}</a>\`;
-                    } else {
-                        authorNameDisplay.textContent = savedAuthor;
-                    }
-                } else {
-                    authorNameDisplay.textContent = "Неизвестный автор";
-                }
-                
-                if (savedDate) {
-                    articleDateDisplay.textContent = savedDate;
-                } else {
-                    const today = new Date();
-                    const months = ["января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"];
-                    articleDateDisplay.textContent = \`\${today.getDate()} \${months[today.getMonth()]} \${today.getFullYear()}\`;
-                }
-                
-                watermarkLayer.style.display = 'block';
-                setTimeout(createWatermarks, 100);
-            }
-            
-            updatePlaceholderClass();
-            updateFontSizeSelect();
-            toggleScrollToTopButton();
-        });
-
-        window.addEventListener('resize', () => {
-            if (articleContent.contentEditable === "false") {
-                createWatermarks();
-            }
-        });
+        // Запускаем инициализацию при загрузке
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>

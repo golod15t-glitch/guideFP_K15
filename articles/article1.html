@@ -803,6 +803,13 @@
             adminModal.setAttribute('aria-hidden', 'true');
         }
 
+        // ОСНОВНОЕ ИСПРАВЛЕНИЕ: Добавлен обработчик Enter для модального окна
+        adminCodeInput.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                adminSubmitBtn.click();
+            }
+        });
+
         adminSubmitBtn.addEventListener("click", () => {
             if (adminCodeInput.value === ADMIN_CODE) {
                 isAdmin = true;
@@ -816,8 +823,10 @@
         });
 
         function enableEditing() {
+            // ИСПРАВЛЕНИЕ: Правильное установление contenteditable
             articleContent.contentEditable = "true";
             articleTitle.contentEditable = "true";
+            
             editorToolbar.classList.add("active");
             editBtn.style.display = "none";
             saveBtn.style.display = "flex";
@@ -842,6 +851,11 @@
                 monthSelect.value = dateParts[1];
                 yearSelect.value = parseInt(dateParts[2]);
             }
+            
+            // ИСПРАВЛЕНИЕ: Убедимся, что элемент действительно фокусируется
+            setTimeout(() => {
+                articleTitle.focus();
+            }, 100);
         }
 
         function disableEditing() {
@@ -893,8 +907,12 @@
         }
 
         function formatText(command, value = null) {
+            // ИСПРАВЛЕНИЕ: Убедимся, что элемент в фокусе перед выполнением команды
+            if (document.activeElement !== articleContent) {
+                articleContent.focus();
+            }
+            
             document.execCommand(command, false, value);
-            articleContent.focus();
             updateFontSizeSelect();
         }
 

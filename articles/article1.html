@@ -1,36 +1,3 @@
-<script>
-// Более надежная проверка в начале КАЖДОЙ статьи
-(function() {
-    // Разрешенные источники
-    const allowedReferrers = [
-        "golod15t-glitch.github.io/guideFP_K15",
-        "golod15t-glitch.github.io/guideFP_K15/",
-        "https://golod15t-glitch.github.io/guideFP_K15",
-        "https://golod15t-glitch.github.io/guideFP_K15/"
-    ];
-    
-    // Для локальной разработки
-    const isLocalhost = window.location.hostname === "localhost" || 
-                        window.location.hostname === "127.0.0.1";
-    
-    // Проверяем реферер
-    const referrer = document.referrer;
-    let isValidReferrer = false;
-    
-    for (const allowed of allowedReferrers) {
-        if (referrer.includes(allowed)) {
-            isValidReferrer = true;
-            break;
-        }
-    }
-    
-    // Если не локальная разработка и невалидный реферер - перенаправляем
-    if (!isLocalhost && !isValidReferrer && referrer !== "") {
-        window.location.href = "https://golod15t-glitch.github.io/guideFP_K15/";
-    }
-})();
-</script>
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -40,6 +7,49 @@
     <link rel="icon" type="image/svg+xml" href="https://github.com/golod15t-glitch/guideFP_K15/blob/main/favicon.ico?raw=true">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    
+    <!-- ЗАЩИТА ОТ ПРЯМОГО ДОСТУПА - ДОЛЖНА БЫТЬ ПЕРВОЙ -->
+    <script>
+    // Проверка до загрузки страницы
+    (function() {
+        // Разрешенные источники
+        const allowedSources = [
+            "https://golod15t-glitch.github.io/guideFP_K15/",
+            "https://golod15t-glitch.github.io/guideFP_K15",
+            "http://localhost", // для локальной разработки
+            "http://127.0.0.1"  // для локальной разработки
+        ];
+        
+        const currentUrl = window.location.href;
+        const referrer = document.referrer;
+        
+        // Проверяем, открыта ли статья напрямую (не с главной страницы)
+        let isValidAccess = false;
+        
+        // Проверяем реферер (откуда пришли)
+        for (const source of allowedSources) {
+            if (referrer.startsWith(source)) {
+                isValidAccess = true;
+                break;
+            }
+        }
+        
+        // Если реферер пустой (прямой доступ) или не из разрешенных источников
+        if (!isValidAccess && referrer !== "") {
+            // Перенаправляем на главную страницу
+            window.location.href = "https://golod15t-glitch.github.io/guideFP_K15/";
+            // Останавливаем дальнейшую загрузку страницы
+            throw new Error("Redirecting to main page");
+        }
+        
+        // Дополнительная проверка: если пытаются открыть статью напрямую через GitHub Pages
+        if (referrer === "" && currentUrl.includes('/articles/')) {
+            window.location.href = "https://golod15t-glitch.github.io/guideFP_K15/";
+            throw new Error("Redirecting to main page - direct access blocked");
+        }
+    })();
+    </script>
+    
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
         

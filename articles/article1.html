@@ -1119,46 +1119,21 @@
         function saveAndDownload() {
             console.log('=== НАЧАЛО ПРОЦЕССА СОХРАНЕНИЯ ===');
             
-            // ШАГ 1: Сохраняем все данные и применяем изменения на странице
+            // ШАГ 1: Сохраняем все данные
             saveAuthorData();
             console.log('✅ Данные автора сохранены в sessionStorage');
             
-            updateAuthorDisplay();
-            console.log('✅ Отображение автора и даты обновлено на странице');
+            // ШАГ 2: ЗАКРЫВАЕМ РЕЖИМ РЕДАКТИРОВАНИЯ (переходим в режим чтения)
+            disableEditing();
+            console.log('✅ Режим редактирования закрыт, включен режим чтения');
             
-            // Применяем водяные знаки и защиту
-            createWatermarks();
-            applyProtections();
-            console.log('✅ Водяные знаки и защита применены');
-            
-            // Ждем 3 секунды для полного применения всех изменений
-            console.log('⏳ Ожидание 3 секунды для применения изменений...');
-            
+            // Ждем немного для применения всех изменений в DOM
             setTimeout(() => {
-                console.log('✅ 3 секунды прошли, все изменения применены');
+                console.log('✅ Все изменения применены, страница в режиме чтения');
                 
-                // ШАГ 2: Создаем клон ТЕКУЩЕЙ страницы (после всех примененных изменений)
+                // ШАГ 3: Создаем клон ТЕКУЩЕЙ страницы (уже в режиме чтения)
                 const clone = document.cloneNode(true);
-                console.log('✅ Клон текущей страницы создан');
-                
-                // ШАГ 3: Настраиваем клон для режима чтения
-                const cloneContent = clone.getElementById('articleContent');
-                const cloneTitle = clone.getElementById('articleTitle');
-                const cloneEditBtn = clone.getElementById('editBtn');
-                const cloneSaveBtn = clone.getElementById('saveBtn');
-                const cloneAuthorInputs = clone.getElementById('authorInputs');
-                const cloneAuthorDisplay = clone.getElementById('authorDisplay');
-                const cloneEditorToolbar = clone.getElementById('editorToolbar');
-                
-                if (cloneContent) cloneContent.contentEditable = 'false';
-                if (cloneTitle) cloneTitle.contentEditable = 'false';
-                if (cloneEditBtn) cloneEditBtn.style.display = 'flex';
-                if (cloneSaveBtn) cloneSaveBtn.style.display = 'none';
-                if (cloneAuthorInputs) cloneAuthorInputs.style.display = 'none';
-                if (cloneAuthorDisplay) cloneAuthorDisplay.style.display = 'flex';
-                if (cloneEditorToolbar) cloneEditorToolbar.classList.remove('active');
-                
-                console.log('✅ Клон настроен для режима чтения');
+                console.log('✅ Клон страницы в режиме чтения создан');
                 
                 // ШАГ 4: Создаем и скачиваем файл
                 const html = '<!DOCTYPE html>\n' + clone.documentElement.outerHTML;
@@ -1181,14 +1156,11 @@
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
                     
-                    // Возвращаем страницу в режим редактирования
-                    enableEditing();
-                    
                     console.log('=== ПРОЦЕСС СОХРАНЕНИЯ ЗАВЕРШЕН ===');
                     alert('✅ Статья успешно сохранена! Все данные применены корректно.');
                 }, 1000);
                 
-            }, 3000); // Ждем 3 секунды перед скачиванием
+            }, 500); // Короткая задержка для применения изменений DOM
         }
 
         // Запускаем инициализацию при загрузке

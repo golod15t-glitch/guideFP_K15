@@ -1,3 +1,36 @@
+<script>
+// Более надежная проверка в начале КАЖДОЙ статьи
+(function() {
+    // Разрешенные источники
+    const allowedReferrers = [
+        "golod15t-glitch.github.io/guideFP_K15",
+        "golod15t-glitch.github.io/guideFP_K15/",
+        "https://golod15t-glitch.github.io/guideFP_K15",
+        "https://golod15t-glitch.github.io/guideFP_K15/"
+    ];
+    
+    // Для локальной разработки
+    const isLocalhost = window.location.hostname === "localhost" || 
+                        window.location.hostname === "127.0.0.1";
+    
+    // Проверяем реферер
+    const referrer = document.referrer;
+    let isValidReferrer = false;
+    
+    for (const allowed of allowedReferrers) {
+        if (referrer.includes(allowed)) {
+            isValidReferrer = true;
+            break;
+        }
+    }
+    
+    // Если не локальная разработка и невалидный реферер - перенаправляем
+    if (!isLocalhost && !isValidReferrer && referrer !== "") {
+        window.location.href = "https://golod15t-glitch.github.io/guideFP_K15/";
+    }
+})();
+</script>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>

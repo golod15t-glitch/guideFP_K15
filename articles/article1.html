@@ -892,13 +892,12 @@
             
             // Кнопка сохранения
             saveBtn.addEventListener('click', function() {
-                // Добавляем задержку для корректного сохранения
+                // Блокируем кнопку на время сохранения
                 saveBtn.disabled = true;
                 saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin btn-icon"></i><span class="btn-text">Сохранение...</span>';
                 
-                setTimeout(() => {
-                    saveAndDownload();
-                }, 300);
+                // Запускаем процесс сохранения
+                saveAndDownload();
             });
             
             // Модальное окно админа
@@ -1118,193 +1117,78 @@
         }
 
         function saveAndDownload() {
-            console.log('Начало сохранения...');
+            console.log('=== НАЧАЛО ПРОЦЕССА СОХРАНЕНИЯ ===');
             
-            // ШАГ 1: Сохраняем данные в sessionStorage
+            // ШАГ 1: Сохраняем все данные и применяем изменения на странице
             saveAuthorData();
-            console.log('Данные автора сохранены в sessionStorage');
+            console.log('✅ Данные автора сохранены в sessionStorage');
             
-            // ШАГ 2: Обновляем отображение на странице
             updateAuthorDisplay();
-            console.log('Отображение автора и даты обновлено');
+            console.log('✅ Отображение автора и даты обновлено на странице');
             
-            // Задержка для применения изменений в DOM
+            // Применяем водяные знаки и защиту
+            createWatermarks();
+            applyProtections();
+            console.log('✅ Водяные знаки и защита применены');
+            
+            // Ждем 3 секунды для полного применения всех изменений
+            console.log('⏳ Ожидание 3 секунды для применения изменений...');
+            
             setTimeout(() => {
-                // ШАГ 3: Получаем текущие значения после обновления DOM
-                const authorName = authorNameInput.value.trim();
-                const authorLink = authorLinkInput.value.trim();
-                const articleDate = `${daySelect.value} ${monthSelect.value} ${yearSelect.value}`;
+                console.log('✅ 3 секунды прошли, все изменения применены');
                 
-                console.log('Текущие значения:', { authorName, authorLink, articleDate });
-                
-                // ШАГ 4: Создаем клон для скачивания
+                // ШАГ 2: Создаем клон ТЕКУЩЕЙ страницы (после всех примененных изменений)
                 const clone = document.cloneNode(true);
-                console.log('Клон документа создан');
+                console.log('✅ Клон текущей страницы создан');
                 
-                // Задержка для полного клонирования DOM
+                // ШАГ 3: Настраиваем клон для режима чтения
+                const cloneContent = clone.getElementById('articleContent');
+                const cloneTitle = clone.getElementById('articleTitle');
+                const cloneEditBtn = clone.getElementById('editBtn');
+                const cloneSaveBtn = clone.getElementById('saveBtn');
+                const cloneAuthorInputs = clone.getElementById('authorInputs');
+                const cloneAuthorDisplay = clone.getElementById('authorDisplay');
+                const cloneEditorToolbar = clone.getElementById('editorToolbar');
+                
+                if (cloneContent) cloneContent.contentEditable = 'false';
+                if (cloneTitle) cloneTitle.contentEditable = 'false';
+                if (cloneEditBtn) cloneEditBtn.style.display = 'flex';
+                if (cloneSaveBtn) cloneSaveBtn.style.display = 'none';
+                if (cloneAuthorInputs) cloneAuthorInputs.style.display = 'none';
+                if (cloneAuthorDisplay) cloneAuthorDisplay.style.display = 'flex';
+                if (cloneEditorToolbar) cloneEditorToolbar.classList.remove('active');
+                
+                console.log('✅ Клон настроен для режима чтения');
+                
+                // ШАГ 4: Создаем и скачиваем файл
+                const html = '<!DOCTYPE html>\n' + clone.documentElement.outerHTML;
+                const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                
+                const title = articleTitle.innerText.trim() || 'article';
+                const filename = title.replace(/\s+/g, '_').replace(/[^\w\-]/g, '').substring(0, 50);
+                
+                a.href = url;
+                a.download = filename + '.html';
+                document.body.appendChild(a);
+                a.click();
+                
+                console.log('✅ Файл начал скачиваться');
+                
+                // Очистка
                 setTimeout(() => {
-                    // ШАГ 5: Находим и обновляем элементы в клоне
-                    const cloneAuthorNameDisplay = clone.getElementById('authorNameDisplay');
-                    const cloneArticleDateDisplay = clone.getElementById('articleDateDisplay');
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
                     
-                    console.log('Элементы в клоне найдены:', {
-                        authorDisplay: !!cloneAuthorNameDisplay,
-                        dateDisplay: !!cloneArticleDateDisplay
-                    });
+                    // Возвращаем страницу в режим редактирования
+                    enableEditing();
                     
-                    // ОБНОВЛЯЕМ ОТОБРАЖЕНИЕ АВТОРА И ДАТЫ В КЛОНЕ
-                    if (cloneAuthorNameDisplay) {
-                        if (authorName) {
-                            if (authorLink) {
-                                cloneAuthorNameDisplay.innerHTML = `<a href="${authorLink}" class="author-link" target="_blank">${authorName}</a>`;
-                            } else {
-                                cloneAuthorNameDisplay.textContent = authorName;
-                            }
-                        } else {
-                            cloneAuthorNameDisplay.textContent = "Неизвестный автор";
-                        }
-                        console.log('Отображение автора в клоне обновлено');
-                    }
-                    
-                    if (cloneArticleDateDisplay) {
-                        cloneArticleDateDisplay.textContent = articleDate;
-                        console.log('Дата в клоне обновлена:', articleDate);
-                    }
-                    
-                    // ОБНОВЛЯЕМ ЗНАЧЕНИЯ ПОЛЕЙ ВВОДА В КЛОНЕ
-                    const cloneAuthorNameInput = clone.getElementById('authorNameInput');
-                    const cloneAuthorLinkInput = clone.getElementById('authorLinkInput');
-                    const cloneDaySelect = clone.getElementById('daySelect');
-                    const cloneMonthSelect = clone.getElementById('monthSelect');
-                    const cloneYearSelect = clone.getElementById('yearSelect');
-                    
-                    if (cloneAuthorNameInput) cloneAuthorNameInput.value = authorName;
-                    if (cloneAuthorLinkInput) cloneAuthorLinkInput.value = authorLink;
-                    if (cloneDaySelect) cloneDaySelect.value = daySelect.value;
-                    if (cloneMonthSelect) cloneMonthSelect.value = monthSelect.value;
-                    if (cloneYearSelect) cloneYearSelect.value = yearSelect.value;
-                    
-                    console.log('Поля ввода в клоне обновлены');
-                    
-                    // ШАГ 6: Настраиваем режим чтения в клоне
-                    const cloneContent = clone.getElementById('articleContent');
-                    const cloneTitle = clone.getElementById('articleTitle');
-                    const cloneEditBtn = clone.getElementById('editBtn');
-                    const cloneSaveBtn = clone.getElementById('saveBtn');
-                    const cloneAuthorInputs = clone.getElementById('authorInputs');
-                    const cloneAuthorDisplay = clone.getElementById('authorDisplay');
-                    const cloneEditorToolbar = clone.getElementById('editorToolbar');
-                    const cloneWatermarkLayer = clone.getElementById('watermarkLayer');
-                    
-                    if (cloneContent) {
-                        cloneContent.contentEditable = 'false';
-                        cloneContent.classList.add('no-select');
-                    }
-                    if (cloneTitle) {
-                        cloneTitle.contentEditable = 'false';
-                        cloneTitle.classList.add('no-select');
-                    }
-                    if (cloneEditBtn) cloneEditBtn.style.display = 'flex';
-                    if (cloneSaveBtn) cloneSaveBtn.style.display = 'none';
-                    if (cloneAuthorInputs) cloneAuthorInputs.style.display = 'none';
-                    if (cloneAuthorDisplay) cloneAuthorDisplay.style.display = 'flex';
-                    if (cloneEditorToolbar) cloneEditorToolbar.classList.remove('active');
-                    if (cloneWatermarkLayer) cloneWatermarkLayer.style.display = 'block';
-                    
-                    console.log('Режим чтения в клоне настроен');
-                    
-                    // ШАГ 7: Добавляем скрипт для водяных знаков
-                    const watermarkScript = clone.createElement('script');
-                    watermarkScript.textContent = `
-                        window.addEventListener('load', function() {
-                            function createWatermarks() {
-                                const container = document.getElementById('watermarkContainer');
-                                const layer = document.getElementById('watermarkLayer');
-                                if (!container || !layer) return;
-                                
-                                layer.innerHTML = '';
-                                const width = container.offsetWidth;
-                                const height = container.offsetHeight;
-                                
-                                if (width === 0 || height === 0) {
-                                    setTimeout(createWatermarks, 100);
-                                    return;
-                                }
-                                
-                                const text = "kotonaft15";
-                                const spacing = 150;
-                                const cols = Math.ceil(width / spacing) + 1;
-                                const rows = Math.ceil(height / spacing) + 1;
-                                
-                                for (let i = 0; i < rows; i++) {
-                                    for (let j = 0; j < cols; j++) {
-                                        const watermark = document.createElement('div');
-                                        watermark.className = 'watermark';
-                                        watermark.textContent = text;
-                                        
-                                        const x = j * spacing;
-                                        const y = i * spacing;
-                                        
-                                        if (i % 2 === 0) {
-                                            watermark.style.left = x + 'px';
-                                        } else {
-                                            watermark.style.left = (x + spacing/2) + 'px';
-                                        }
-                                        
-                                        watermark.style.top = y + 'px';
-                                        layer.appendChild(watermark);
-                                    }
-                                }
-                            }
-                            
-                            createWatermarks();
-                            window.addEventListener('resize', createWatermarks);
-                            
-                            // Защита от копирования для скачанного файла
-                            const articleContent = document.getElementById('articleContent');
-                            if (articleContent) {
-                                document.addEventListener('contextmenu', e => e.preventDefault());
-                                document.addEventListener('copy', e => e.preventDefault());
-                                document.addEventListener('cut', e => e.preventDefault());
-                                document.addEventListener('selectstart', e => e.preventDefault());
-                            }
-                        });
-                    `;
-                    clone.body.appendChild(watermarkScript);
-                    console.log('Скрипт водяных знаков добавлен');
-                    
-                    // Задержка для применения скрипта
-                    setTimeout(() => {
-                        // ШАГ 8: Создаем и скачиваем файл
-                        const html = '<!DOCTYPE html>\n' + clone.documentElement.outerHTML;
-                        const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        
-                        const title = articleTitle.innerText.trim() || 'article';
-                        const filename = title.replace(/\s+/g, '_').replace(/[^\w\-]/g, '').substring(0, 50);
-                        
-                        a.href = url;
-                        a.download = filename + '.html';
-                        document.body.appendChild(a);
-                        a.click();
-                        
-                        console.log('Файл начал скачиваться');
-                        
-                        // ШАГ 9: Завершаем процесс
-                        setTimeout(() => {
-                            document.body.removeChild(a);
-                            URL.revokeObjectURL(url);
-                            disableEditing();
-                            console.log('Процесс сохранения завершен');
-                            alert('Статья сохранена! Автор и дата сохранены корректно. ✅');
-                        }, 500);
-                        
-                    }, 100);
-                    
-                }, 200);
+                    console.log('=== ПРОЦЕСС СОХРАНЕНИЯ ЗАВЕРШЕН ===');
+                    alert('✅ Статья успешно сохранена! Все данные применены корректно.');
+                }, 1000);
                 
-            }, 100);
+            }, 3000); // Ждем 3 секунды перед скачиванием
         }
 
         // Запускаем инициализацию при загрузке

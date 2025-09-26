@@ -7,7 +7,6 @@
     <link rel="icon" type="image/svg+xml" href="https://github.com/golod15t-glitch/guideFP_K15/blob/main/favicon.ico?raw=true">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    
     <!-- ЗАЩИТА ОТ ПРЯМОГО ДОСТУПА - ДОЛЖНА БЫТЬ ПЕРВОЙ -->
     <script>
     // Проверка до загрузки страницы
@@ -19,13 +18,10 @@
             "http://localhost", // для локальной разработки
             "http://127.0.0.1"  // для локальной разработки
         ];
-        
         const currentUrl = window.location.href;
         const referrer = document.referrer;
-        
         // Проверяем, открыта ли статья напрямую (не с главной страницы)
         let isValidAccess = false;
-        
         // Проверяем реферер (откуда пришли)
         for (const source of allowedSources) {
             if (referrer.startsWith(source)) {
@@ -33,7 +29,6 @@
                 break;
             }
         }
-        
         // Если реферер пустой (прямой доступ) или не из разрешенных источников
         if (!isValidAccess && referrer !== "") {
             // Перенаправляем на главную страницу
@@ -41,7 +36,6 @@
             // Останавливаем дальнейшую загрузку страницы
             throw new Error("Redirecting to main page");
         }
-        
         // Дополнительная проверка: если пытаются открыть статью напрямую через GitHub Pages
         if (referrer === "" && currentUrl.includes('/articles/')) {
             window.location.href = "https://golod15t-glitch.github.io/guideFP_K15/";
@@ -49,10 +43,8 @@
         }
     })();
     </script>
-    
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
-        
         body {
             font-family: "Inter", sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
@@ -63,7 +55,6 @@
             min-height: 100vh;
             position: relative;
         }
-        
         /* Фоновый узор */
         body::before {
             content: "";
@@ -72,12 +63,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: 
+            background-image:
                 radial-gradient(circle at 25% 25%, rgba(120, 119, 198, 0.05) 0%, transparent 55%),
                 radial-gradient(circle at 75% 75%, rgba(255, 119, 198, 0.05) 0%, transparent 55%);
             z-index: -1;
         }
-        
         .content-editable {
             min-height: 300px;
             outline: none;
@@ -89,13 +79,11 @@
             background-color: white;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
-        
         .content-editable[contenteditable="true"] {
             border-color: #4f46e5;
             background-color: #ffffff;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
         }
-        
         /* Стиль для плейсхолдера */
         .content-editable.empty::before {
             content: attr(data-placeholder);
@@ -108,7 +96,6 @@
             user-select: none;
             white-space: pre-wrap;
         }
-        
         /* Запрет выделения и копирования когда нужно */
         .no-select {
             user-select: none !important;
@@ -117,7 +104,6 @@
             -ms-user-select: none !important;
             -webkit-touch-callout: none !important;
         }
-        
         .editor-toolbar {
             background: #fff;
             border-bottom: 1px solid #e5e7eb;
@@ -129,11 +115,9 @@
             border-radius: 0.75rem 0.75rem 0 0;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
-        
         .editor-toolbar.active {
             display: flex;
         }
-        
         .tool-btn {
             cursor: pointer;
             padding: 0.5rem;
@@ -149,12 +133,10 @@
             min-width: 36px;
             min-height: 36px;
         }
-        
         .tool-btn:hover {
             background-color: #c7d2fe;
             border-color: #4338ca;
         }
-        
         select.font-size-select, select.font-select, select.date-select {
             font-size: 0.9rem;
             padding: 0.4rem 0.5rem;
@@ -166,12 +148,10 @@
             transition: background-color 0.2s, border-color 0.2s;
             font-family: inherit;
         }
-        
         select.font-size-select:hover, select.font-select:hover, select.date-select:hover {
             background-color: #c7d2fe;
             border-color: #4338ca;
         }
-        
         #adminModal {
             position: fixed;
             top: 0;
@@ -187,12 +167,10 @@
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
         #adminModal.active {
             visibility: visible;
             opacity: 1;
         }
-        
         #adminModal .modal-content {
             background: white;
             padding: 1.5rem;
@@ -202,25 +180,21 @@
             box-sizing: border-box;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
         }
-        
         #adminError {
             color: #dc2626;
             margin-top: 0.5rem;
             display: none;
             font-size: 0.9rem;
         }
-        
         button:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
-        
         /* Водяные знаки */
         .watermark-container {
             position: relative;
             overflow: hidden;
         }
-        
         .watermark-layer {
             position: absolute;
             top: 0;
@@ -230,7 +204,6 @@
             pointer-events: none;
             z-index: 2; /* Теперь водяные знаки будут поверх текста */
         }
-        
         .watermark {
             position: absolute;
             opacity: 0.1;
@@ -242,20 +215,16 @@
             white-space: nowrap;
             font-weight: bold;
         }
-        
         .watermark:nth-child(odd) {
             color: #555;
         }
-        
         .watermark:nth-child(even) {
             color: #777;
         }
-        
         .article-wrapper {
             position: relative;
             z-index: 1; /* Текст статьи под водяными знаками */
         }
-        
         /* Стили для автора и даты */
         .author-section {
             display: flex;
@@ -265,19 +234,16 @@
             max-width: 800px;
             padding: 0 1rem;
         }
-        
         .author-info {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-        
         .author-text {
             font-size: 1.1rem;
             color: #4b5563;
             font-style: italic;
         }
-        
         .author-link {
             color: #4f46e5;
             text-decoration: none;
@@ -285,17 +251,14 @@
             font-style: normal;
             font-weight: 500;
         }
-        
         .author-link:hover {
             color: #3730a3;
             text-decoration: underline;
         }
-        
         .article-date {
             color: #6b7280;
             font-size: 1rem;
         }
-        
         /* Кнопка прокрутки вверх */
         .scroll-to-top {
             position: fixed;
@@ -318,18 +281,15 @@
             visibility: hidden;
             z-index: 1000;
         }
-        
         .scroll-to-top.visible {
             opacity: 1;
             visibility: visible;
         }
-        
         .scroll-to-top:hover {
             background: #3730a3;
             transform: translateY(-2px);
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
-        
         /* Стили для полей ввода автора и даты в режиме редактирования */
         .author-inputs {
             display: flex;
@@ -338,7 +298,6 @@
             margin-bottom: 1rem;
             flex-wrap: wrap;
         }
-        
         .author-inputs input, .author-inputs select {
             padding: 0.5rem;
             border: 1px solid #d1d5db;
@@ -346,26 +305,22 @@
             font-size: 1rem;
             font-family: inherit;
         }
-        
         .author-inputs input:focus, .author-inputs select:focus {
             outline: none;
             border-color: #4f46e5;
             box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
         }
-        
         .date-inputs {
             display: flex;
             gap: 0.5rem;
             align-items: center;
         }
-        
         /* Стили для отображения автора и даты в режиме чтения */
         .author-display {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-        
         /* Стили для заголовка и кнопок */
         .header-container {
             max-width: 800px;
@@ -376,7 +331,6 @@
             align-items: flex-start;
             gap: 1rem;
         }
-        
         .article-title {
             margin: 0;
             font-size: 2.5rem;
@@ -384,13 +338,11 @@
             flex: 1;
             word-wrap: break-word;
         }
-        
         .buttons-container {
             display: flex;
             gap: 0.5rem;
             flex-shrink: 0;
         }
-        
         .btn-edit, .btn-save {
             font-size: 1rem;
             padding: 0.75rem 1rem;
@@ -403,22 +355,18 @@
             transition: all 0.3s ease;
             white-space: nowrap;
         }
-        
         .btn-edit {
             background: #4f46e5;
             color: white;
         }
-        
         .btn-save {
             background: #10b981;
             color: white;
         }
-        
         .btn-edit:hover, .btn-save:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
-        
         /* Мобильная версия */
         @media (max-width: 768px) {
             .header-container {
@@ -427,111 +375,91 @@
                 gap: 1rem;
                 margin: 1rem auto 1rem;
             }
-            
             .article-title {
                 font-size: 2rem;
                 text-align: center;
                 order: 1;
             }
-            
             .buttons-container {
                 justify-content: flex-end;
                 order: 2;
             }
-            
             .btn-edit, .btn-save {
                 padding: 0.5rem;
                 min-width: 44px; /* Минимальный размер для удобного касания */
                 min-height: 44px;
                 justify-content: center;
             }
-            
             .btn-text {
                 display: none;
             }
-            
             .btn-icon {
                 margin: 0 !important;
             }
-            
             .author-section {
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 0.5rem;
                 margin: 0.5rem auto 1.5rem;
             }
-            
             .author-inputs {
                 flex-direction: column;
                 align-items: flex-start;
                 width: 100%;
                 gap: 0.5rem;
             }
-            
             .author-inputs input, .author-inputs select {
                 width: 100%;
                 font-size: 16px; /* Убирает увеличение в iOS */
             }
-            
             .date-inputs {
                 width: 100%;
                 justify-content: space-between;
             }
-            
             .content-editable {
                 padding: 1rem;
                 min-height: 200px;
             }
-            
             .scroll-to-top {
                 bottom: 1rem;
                 right: 1rem;
                 width: 44px;
                 height: 44px;
             }
-            
             .editor-toolbar {
                 padding: 0.5rem;
                 gap: 0.25rem;
             }
-            
             .tool-btn {
                 min-width: 44px;
                 min-height: 44px;
                 padding: 0.5rem;
             }
-            
             select.font-size-select, select.font-select, select.date-select {
                 font-size: 14px;
                 padding: 0.5rem;
             }
         }
-        
         /* Для очень маленьких экранов */
         @media (max-width: 480px) {
             .article-title {
                 font-size: 1.75rem;
             }
-            
             .header-container {
                 padding: 0 0.5rem;
             }
-            
             .content-editable {
                 padding: 0.75rem;
             }
-            
             .author-text, .article-date {
                 font-size: 0.9rem;
             }
         }
-        
         /* Для больших экранов */
         @media (min-width: 769px) {
             .btn-text {
                 display: inline;
             }
-            
             .btn-icon {
                 margin-right: 0.5rem;
             }
@@ -549,7 +477,6 @@
             <button id="adminSubmitBtn" style="margin-top: 1rem; width: 100%; padding: 0.5rem; font-size: 1rem; background: #4f46e5; color: white; border: none; border-radius: 0.375rem; cursor: pointer;">Подтвердить</button>
         </div>
     </div>
-    
     <!-- Панель инструментов редактора -->
     <div id="editorToolbar" class="editor-toolbar" aria-label="Панель инструментов редактора">
         <button class="tool-btn" title="Жирный" onclick="formatText('bold')" type="button" aria-pressed="false"><i class="fas fa-bold"></i></button>
@@ -558,7 +485,6 @@
         <button class="tool-btn" title="Маркированный список" onclick="formatText('insertUnorderedList')" type="button" aria-pressed="false"><i class="fas fa-list-ul"></i></button>
         <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')" type="button" aria-pressed="false"><i class="fas fa-list-ol"></i></button>
         <button class="tool-btn" title="Вставить изображение" onclick="addImage()" type="button"><i class="fas fa-image"></i></button>
-        
         <!-- Выпадающий список размеров шрифта -->
         <select class="font-size-select" id="fontSizeSelect" aria-label="Выбор размера шрифта" onchange="setFontSize(parseInt(this.value))">
             <option value="8">8</option>
@@ -578,7 +504,6 @@
             <option value="48">48</option>
             <option value="72">72</option>
         </select>
-        
         <!-- Выпадающий список шрифтов -->
         <select class="font-select" aria-label="Выбор шрифта" onchange="formatText('fontName', this.value)">
             <option value="" selected>Шрифт</option>
@@ -592,7 +517,6 @@
             <option value="Comic Sans MS">Comic Sans MS</option>
         </select>
     </div>
-    
     <!-- Заголовок статьи и кнопки -->
     <div class="header-container">
         <h1 id="articleTitle" contenteditable="false" class="article-title" tabindex="0" aria-label="Заголовок статьи" data-placeholder="Введите заголовок..."></h1>
@@ -607,14 +531,12 @@
             </button>
         </div>
     </div>
-    
     <!-- Секция автора и даты -->
     <div id="authorSection" class="author-section">
         <div id="authorDisplay" class="author-display" style="display: none;">
             <span class="author-text">Автор: <span id="authorNameDisplay"></span> | </span>
             <span class="article-date" id="articleDateDisplay"></span>
         </div>
-        
         <div id="authorInputs" class="author-inputs" style="display: none;">
             <div style="display: flex; flex-direction: column; gap: 0.25rem;">
                 <label for="authorNameInput" style="font-size: 0.9rem; color: #4b5563;">Имя автора:</label>
@@ -657,7 +579,6 @@
             </div>
         </div>
     </div>
-    
     <!-- Контент статьи -->
     <main>
         <div id="watermarkContainer" class="watermark-container" style="max-width: 800px; margin: 0 auto 3rem;">
@@ -675,15 +596,12 @@
             </div>
         </div>
     </main>
-    
     <!-- Кнопка прокрутки вверх -->
     <button id="scrollToTop" class="scroll-to-top" aria-label="Прокрутить наверх">
         <i class="fas fa-chevron-up"></i>
     </button>
-    
     <script>
         const ADMIN_CODE = "123";
-        
         // Элементы DOM
         const adminModal = document.getElementById("adminModal");
         const adminCodeInput = document.getElementById("adminCodeInput");
@@ -707,9 +625,7 @@
         const daySelect = document.getElementById("daySelect");
         const monthSelect = document.getElementById("monthSelect");
         const yearSelect = document.getElementById("yearSelect");
-        
         let isAdmin = false;
-        
         // Заполнение выпадающих списков даты
         function populateDateSelects() {
             // Заполнение дней (1-31)
@@ -719,7 +635,6 @@
                 option.textContent = i;
                 daySelect.appendChild(option);
             }
-            
             // Заполнение годов (текущий год и 10 лет назад)
             const currentYear = new Date().getFullYear();
             for (let i = currentYear; i >= currentYear - 10; i--) {
@@ -728,60 +643,47 @@
                 option.textContent = i;
                 yearSelect.appendChild(option);
             }
-            
             // Установка текущей даты по умолчанию
             const today = new Date();
             daySelect.value = today.getDate();
             monthSelect.selectedIndex = today.getMonth(); // месяцы с 0 до 11
             yearSelect.value = today.getFullYear();
         }
-        
         // Создание водяных знаков
         function createWatermarks() {
             // Очищаем слой от старых водяных знаков
             watermarkLayer.innerHTML = '';
-            
             // Если режим редактирования активен, не добавляем водяные знаки
             if (articleContent.contentEditable === "true") return;
-            
             const containerWidth = watermarkContainer.offsetWidth;
             const containerHeight = watermarkContainer.offsetHeight;
-            
             if (containerWidth === 0 || containerHeight === 0) return;
-            
             const watermarkText = "kotonaft15";
             const watermarkSize = 24;
             const spacing = 150; // Расстояние между водяными знаками
-            
             // Рассчитываем количество водяных знаков по горизонтали и вертикали
             const cols = Math.ceil(containerWidth / spacing) + 1;
             const rows = Math.ceil(containerHeight / spacing) + 1;
-            
             // Создаем водяные знаки в шахматном порядке
             for (let i = 0; i < rows; i++) {
                 for (let j = 0; j < cols; j++) {
                     const watermark = document.createElement('div');
                     watermark.className = 'watermark';
                     watermark.textContent = watermarkText;
-                    
                     // Позиционируем водяные знаки в шахматном порядке
                     const offsetX = j * spacing;
                     const offsetY = i * spacing;
-                    
                     // Смещение для шахматного порядка
                     if (i % 2 === 0) {
                         watermark.style.left = `${offsetX}px`;
                     } else {
                         watermark.style.left = `${offsetX + spacing/2}px`;
                     }
-                    
                     watermark.style.top = `${offsetY}px`;
-                    
                     watermarkLayer.appendChild(watermark);
                 }
             }
         }
-        
         // Показать/скрыть кнопку прокрутки вверх
         function toggleScrollToTopButton() {
             if (window.pageYOffset > 300) {
@@ -790,7 +692,6 @@
                 scrollToTopBtn.classList.remove('visible');
             }
         }
-        
         // Прокрутка вверх
         function scrollToTop() {
             window.scrollTo({
@@ -798,7 +699,6 @@
                 behavior: 'smooth'
             });
         }
-        
         function showAdminModal() {
             adminModal.classList.add("active");
             adminModal.setAttribute('aria-hidden', 'false');
@@ -806,12 +706,10 @@
             adminError.style.display = "none";
             adminCodeInput.focus();
         }
-        
         function hideAdminModal() {
             adminModal.classList.remove("active");
             adminModal.setAttribute('aria-hidden', 'true');
         }
-        
         adminSubmitBtn.addEventListener("click", () => {
             if (adminCodeInput.value === ADMIN_CODE) {
                 isAdmin = true;
@@ -823,7 +721,6 @@
                 adminCodeInput.setAttribute('aria-invalid', 'true');
             }
         });
-        
         function enableEditing() {
             articleContent.contentEditable = "true";
             articleTitle.contentEditable = "true";
@@ -836,15 +733,12 @@
             removeNoSelect();
             updateFontSizeSelect();
             articleTitle.focus();
-            
             // Удаляем водяные знаки при включении редактирования
             watermarkLayer.style.display = 'none';
-            
             // Загружаем сохраненные данные автора, если есть
             const savedAuthor = sessionStorage.getItem("authorName");
             const savedLink = sessionStorage.getItem("authorLink");
             const savedDate = sessionStorage.getItem("articleDate");
-            
             if (savedAuthor) authorNameInput.value = savedAuthor;
             if (savedLink) authorLinkInput.value = savedLink;
             if (savedDate) {
@@ -854,7 +748,6 @@
                 yearSelect.value = parseInt(dateParts[2]);
             }
         }
-        
         function disableEditing() {
             articleContent.contentEditable = "false";
             articleTitle.contentEditable = "false";
@@ -865,16 +758,13 @@
             authorInputs.style.display = "none";
             updatePlaceholderClass();
             applyNoSelect();
-            
             // Сохраняем данные автора
             const authorName = authorNameInput.value.trim();
             const authorLink = authorLinkInput.value.trim();
             const articleDate = `${daySelect.value} ${monthSelect.value} ${yearSelect.value}`;
-            
             sessionStorage.setItem("authorName", authorName);
             sessionStorage.setItem("authorLink", authorLink);
             sessionStorage.setItem("articleDate", articleDate);
-            
             // Обновляем отображение автора
             if (authorName) {
                 if (authorLink) {
@@ -885,15 +775,12 @@
             } else {
                 authorNameDisplay.textContent = "Неизвестный автор";
             }
-            
             // Обновляем отображение даты
             articleDateDisplay.textContent = articleDate;
-            
             // Добавляем водяные знаки при выключении редактирования
             watermarkLayer.style.display = 'block';
             createWatermarks();
         }
-        
         // Добавляем класс no-select чтобы запретить выделение и копирование
         function applyNoSelect() {
             // Применяем класс только если мы в режиме чтения (не редактирования)
@@ -902,29 +789,24 @@
                 articleTitle.classList.add("no-select");
             }
         }
-        
         // Убираем класс no-select чтобы разрешить выделение и копирование
         function removeNoSelect() {
             articleContent.classList.remove("no-select");
             articleTitle.classList.remove("no-select");
         }
-        
         // Форматирование текста через execCommand
         function formatText(command, value = null) {
             document.execCommand(command, false, value);
             articleContent.focus();
             updateFontSizeSelect();
         }
-        
         // Установка размера шрифта для выделенного текста
         function setFontSize(size) {
             const selection = window.getSelection();
             if (!selection.rangeCount || selection.isCollapsed) return;
-            
             const range = selection.getRangeAt(0);
             const span = document.createElement('span');
             span.style.fontSize = size + 'px';
-            
             try {
                 range.surroundContents(span);
             } catch (e) {
@@ -932,11 +814,9 @@
                 document.execCommand('fontSize', false, '7');
                 replaceFontSizeWithSpan(size);
             }
-            
             articleContent.focus();
             updateFontSizeSelect();
         }
-        
         function replaceFontSizeWithSpan(pxSize) {
             const fonts = articleContent.querySelectorAll('font[size="7"]');
             fonts.forEach(fontEl => {
@@ -946,7 +826,6 @@
                 fontEl.parentNode.replaceChild(span, fontEl);
             });
         }
-        
         // Обновить выпадающий список размера шрифта в тулбаре
         function updateFontSizeSelect() {
             const size = getCurrentFontSize();
@@ -959,12 +838,10 @@
                 }
             }
         }
-        
         // Получение текущего размера шрифта выделения
         function getCurrentFontSize() {
             const selection = window.getSelection();
             if (!selection.rangeCount || selection.isCollapsed) return null;
-            
             let node = selection.focusNode;
             while(node && node !== articleContent) {
                 if(node.nodeType === 1) { // ELEMENT_NODE
@@ -975,7 +852,6 @@
             }
             return null;
         }
-        
         // Добавление изображения
         function addImage() {
             const url = prompt("Введите URL изображения", "https://");
@@ -983,25 +859,21 @@
                 formatText("insertImage", url);
             }
         }
-        
-        // Сохранение страницы - УЛУЧШЕННАЯ ВЕРСИЯ
+        // Сохранение страницы - ИСПРАВЛЕННАЯ ВЕРСИЯ С ПОЛНОЙ ЗАЩИТОЙ
         function saveAndDownload() {
+            // Фиксируем режим чтения перед клонированием
             disableEditing();
-            
             // Получаем текущие значения автора и даты
             const authorName = authorNameInput.value.trim();
             const authorLink = authorLinkInput.value.trim();
             const articleDate = `${daySelect.value} ${monthSelect.value} ${yearSelect.value}`;
-            
             // Создаем временный элемент для отображения автора и даты
             const tempAuthorDisplay = document.createElement('div');
             tempAuthorDisplay.className = 'author-display';
             tempAuthorDisplay.style.display = 'flex';
-            
             const authorText = document.createElement('span');
             authorText.className = 'author-text';
             authorText.textContent = 'Автор: ';
-            
             const authorNameSpan = document.createElement('span');
             if (authorName) {
                 if (authorLink) {
@@ -1012,64 +884,104 @@
             } else {
                 authorNameSpan.textContent = "Неизвестный автор";
             }
-            
             const separator = document.createElement('span');
             separator.textContent = ' | ';
             separator.className = 'author-text';
-            
             const dateSpan = document.createElement('span');
             dateSpan.className = 'article-date';
             dateSpan.textContent = articleDate;
-            
             authorText.appendChild(authorNameSpan);
             tempAuthorDisplay.appendChild(authorText);
             tempAuthorDisplay.appendChild(separator);
             tempAuthorDisplay.appendChild(dateSpan);
-            
             // Временно заменяем секцию автора
             const originalAuthorSection = authorSection.innerHTML;
             authorSection.innerHTML = '';
             authorSection.appendChild(tempAuthorDisplay);
-            
-            // Убираем класс no-select из скачиваемого документа
-            articleContent.classList.remove("no-select");
-            articleTitle.classList.remove("no-select");
-            
             setTimeout(() => {
                 // Создаем клон всего документа
                 const docClone = document.cloneNode(true);
-                
-                // Удаляем защитный скрипт из клона (чтобы скачанная статья открывалась без проверок)
-                const protectionScript = docClone.querySelector('script');
-                if (protectionScript && protectionScript.innerHTML.includes('ЗАЩИТА ОТ ПРЯМОГО ДОСТУПА')) {
-                    protectionScript.remove();
-                }
-                
-                // Удаляем кнопки редактирования из клона
-                const editBtnClone = docClone.getElementById('editBtn');
-                const saveBtnClone = docClone.getElementById('saveBtn');
-                if (editBtnClone) editBtnClone.remove();
-                if (saveBtnClone) saveBtnClone.remove();
-                
-                // Удаляем админскую модалку из клона
+                // *** НЕ УДАЛЯЕМ ЗАЩИТНЫЙ СКРИПТ - ОСТАВЛЯЕМ ПОЛНОСТЬЮ ***
+                // Удаляем ТОЛЬКО элементы редактирования
                 const adminModalClone = docClone.getElementById('adminModal');
                 if (adminModalClone) adminModalClone.remove();
-                
-                // Удаляем тулбар редактора из клона
                 const editorToolbarClone = docClone.getElementById('editorToolbar');
                 if (editorToolbarClone) editorToolbarClone.remove();
-                
-                // Удаляем водяные знаки из клона
-                const watermarkLayerClone = docClone.getElementById('watermarkLayer');
-                if (watermarkLayerClone) watermarkLayerClone.remove();
-                
-                // Убираем contenteditable атрибуты из клона
+                const editBtnClone = docClone.getElementById('editBtn');
+                if (editBtnClone) editBtnClone.remove();
+                const saveBtnClone = docClone.getElementById('saveBtn');
+                if (saveBtnClone) saveBtnClone.remove();
+                const buttonsContainerClone = docClone.querySelector('.buttons-container');
+                if (buttonsContainerClone && buttonsContainerClone.children.length === 0) {
+                    buttonsContainerClone.remove(); // Удаляем пустой контейнер кнопок
+                }
+                const authorInputsClone = docClone.getElementById('authorInputs');
+                if (authorInputsClone) authorInputsClone.remove();
+                // Фиксируем contenteditable="false" в клоне
                 const articleContentClone = docClone.getElementById('articleContent');
                 const articleTitleClone = docClone.getElementById('articleTitle');
-                if (articleContentClone) articleContentClone.removeAttribute('contenteditable');
-                if (articleTitleClone) articleTitleClone.removeAttribute('contenteditable');
-                
-                // Добавляем мета-тег для корректного отображения на мобильных
+                if (articleContentClone) {
+                    articleContentClone.setAttribute('contenteditable', 'false');
+                    articleContentClone.classList.add('no-select');
+                }
+                if (articleTitleClone) {
+                    articleTitleClone.setAttribute('contenteditable', 'false');
+                    articleTitleClone.classList.add('no-select');
+                }
+                // Добавляем все защиты от копирования в скрипт клона (копируем основной скрипт, но адаптируем для чтения)
+                // Вставляем вызовы applyNoSelect, createWatermarks и event listeners для защиты в конец body клона
+                const protectionScript = docClone.createElement('script');
+                protectionScript.innerHTML = `
+                    // Автоматическая инициализация режима чтения в скачанном файле
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const articleContent = document.getElementById('articleContent');
+                        const articleTitle = document.getElementById('articleTitle');
+                        const watermarkLayer = document.getElementById('watermarkLayer');
+                        if (articleContent) {
+                            articleContent.contentEditable = 'false';
+                            articleContent.classList.add('no-select');
+                        }
+                        if (articleTitle) {
+                            articleTitle.contentEditable = 'false';
+                            articleTitle.classList.add('no-select');
+                        }
+                        if (watermarkLayer) {
+                            watermarkLayer.style.display = 'block';
+                        }
+                        // Создаём водяные знаки
+                        ${createWatermarks.toString()}
+                        createWatermarks();
+                        // Добавляем event listeners для защиты от копирования
+                        document.body.addEventListener('contextmenu', e => {
+                            if(articleContent && articleContent.contentEditable === "false") e.preventDefault();
+                        });
+                        document.body.addEventListener('copy', e => {
+                            if(articleContent && articleContent.contentEditable === "false") e.preventDefault();
+                        });
+                        document.body.addEventListener('cut', e => {
+                            if(articleContent && articleContent.contentEditable === "false") e.preventDefault();
+                        });
+                        document.body.addEventListener('selectstart', e => {
+                            if(articleContent && articleContent.contentEditable === "false") e.preventDefault();
+                        });
+                    });
+                    // Копируем остальные функции, если нужно (scroll, etc.)
+                    ${toggleScrollToTopButton.toString()}
+                    ${scrollToTop.toString()}
+                    window.addEventListener('scroll', toggleScrollToTopButton);
+                    const scrollToTopBtn = document.getElementById('scrollToTop');
+                    if (scrollToTopBtn) {
+                        scrollToTopBtn.addEventListener('click', scrollToTop);
+                    }
+                    ${updatePlaceholderClass.toString()}
+                    window.addEventListener('resize', () => {
+                        if (articleContent && articleContent.contentEditable === "false") {
+                            createWatermarks();
+                        }
+                    });
+                `;
+                docClone.body.appendChild(protectionScript);
+                // Добавляем мета-тег для корректного отображения на мобильных (если нет)
                 const viewportMeta = docClone.querySelector('meta[name="viewport"]');
                 if (!viewportMeta) {
                     const newViewport = docClone.createElement('meta');
@@ -1077,44 +989,34 @@
                     newViewport.content = 'width=device-width, initial-scale=1';
                     docClone.head.appendChild(newViewport);
                 }
-                
                 // Восстанавливаем оригинальную секцию автора в основном документе
                 authorSection.innerHTML = originalAuthorSection;
-                
                 // Восстанавливаем класс no-select для текущего документа
                 if (articleContent.contentEditable === "false") {
-                    articleContent.classList.add("no-select");
-                    articleTitle.classList.add("no-select");
+                    applyNoSelect();
                 }
-                
                 // Создаем HTML из клона с DOCTYPE
                 const docType = '<!DOCTYPE html>';
                 const htmlContent = docType + '\n' + docClone.documentElement.outerHTML;
-                
                 const blob = new Blob([htmlContent], { type: "text/html; charset=utf-8" });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                
                 const filename = (articleTitle.innerText.trim() || "article")
                     .replace(/\s+/g, "_")
                     .replace(/[^\w\-]/g, "")
                     .substring(0, 50); // Ограничиваем длину имени файла
-                
                 a.download = filename + ".html";
                 document.body.appendChild(a);
                 a.click();
-                
                 // Очистка
                 setTimeout(() => {
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
-                    alert("Статья успешно сохранена со всеми стилями и содержимым!");
+                    alert("Статья успешно сохранена со всей защитой и обновлённым содержимым! 😊");
                 }, 100);
-                
             }, 300);
         }
-        
         // Плейсхолдеры
         function updatePlaceholderClass() {
             [articleTitle, articleContent].forEach(el => {
@@ -1125,17 +1027,14 @@
                 }
             });
         }
-        
         [articleTitle, articleContent].forEach(el => {
             el.addEventListener("input", updatePlaceholderClass);
             el.addEventListener("focus", updatePlaceholderClass);
             el.addEventListener("blur", updatePlaceholderClass);
         });
-        
         // Обновляем тулбар при смене выделения
         articleContent.addEventListener("mouseup", updateFontSizeSelect);
         articleContent.addEventListener("keyup", updateFontSizeSelect);
-        
         // Слушатели
         editBtn.addEventListener("click", () => {
             if (isAdmin) {
@@ -1144,87 +1043,110 @@
                 showAdminModal();
             }
         });
-        
         saveBtn.addEventListener("click", saveAndDownload);
-        
         // Кнопка прокрутки вверх
         scrollToTopBtn.addEventListener("click", scrollToTop);
         window.addEventListener("scroll", toggleScrollToTopButton);
-        
         // Запуск
         window.addEventListener("DOMContentLoaded", () => {
             populateDateSelects();
-            
             // Проверяем, находимся ли мы в скачанном файле (нет кнопок редактирования)
             const isDownloadedFile = !editBtn || !saveBtn;
-            
-            if (!isDownloadedFile && sessionStorage.getItem("isAdmin") === "true") {
-                isAdmin = true;
-                enableEditing();
-            } else {
-                // В режиме чтения применяем запрет выделения
-                if (articleContent.contentEditable === "false") {
-                    applyNoSelect();
-                }
-                
-                // Загружаем сохраненные данные автора для отображения
-                const savedAuthor = sessionStorage.getItem("authorName");
-                const savedLink = sessionStorage.getItem("authorLink");
-                const savedDate = sessionStorage.getItem("articleDate");
-                
+            if (isDownloadedFile) {
+                // Для скачанного файла: полный режим чтения с защитой
+                isAdmin = false;
+                disableEditing(); // Убеждаемся в false
+                applyNoSelect();
+                authorDisplay.style.display = "flex";
+                // Загружаем/отображаем автора и дату
+                const savedAuthor = sessionStorage.getItem("authorName") || "";
+                const savedLink = sessionStorage.getItem("authorLink") || "";
+                const savedDate = sessionStorage.getItem("articleDate") || (() => {
+                    const today = new Date();
+                    const months = ["января", "февраля", "марта", "апреля", "мая", "июня",
+                                   "июля", "августа", "сентября", "октября", "ноября", "декабря"];
+                    return `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+                })();
                 if (savedAuthor) {
                     if (savedLink) {
-                        authorNameDisplay.innerHTML = `<a href="${savedLink}" class="author-link" target="_blank">${authorName}</a>`;
+                        authorNameDisplay.innerHTML = `<a href="${savedLink}" class="author-link" target="_blank">${savedAuthor}</a>`;
                     } else {
                         authorNameDisplay.textContent = savedAuthor;
                     }
                 } else {
                     authorNameDisplay.textContent = "Неизвестный автор";
                 }
-                
-                if (savedDate) {
-                    articleDateDisplay.textContent = savedDate;
-                } else {
+                articleDateDisplay.textContent = savedDate;
+                // Водяные знаки и защиты
+                watermarkLayer.style.display = 'block';
+                setTimeout(createWatermarks, 100);
+                // Event listeners для защиты (уже в основном скрипте, но дублируем для скачанного)
+                document.body.addEventListener('contextmenu', e => {
+                    if(articleContent.contentEditable === "false") e.preventDefault();
+                });
+                document.body.addEventListener('copy', e => {
+                    if(articleContent.contentEditable === "false") e.preventDefault();
+                });
+                document.body.addEventListener('cut', e => {
+                    if(articleContent.contentEditable === "false") e.preventDefault();
+                });
+                document.body.addEventListener('selectstart', e => {
+                    if(articleContent.contentEditable === "false") e.preventDefault();
+                });
+            } else if (sessionStorage.getItem("isAdmin") === "true") {
+                // Оригинальный файл с admin
+                isAdmin = true;
+                enableEditing();
+            } else {
+                // Оригинальный файл в режиме чтения
+                applyNoSelect();
+                // Загружаем сохраненные данные автора для отображения
+                const savedAuthor = sessionStorage.getItem("authorName") || "";
+                const savedLink = sessionStorage.getItem("authorLink") || "";
+                const savedDate = sessionStorage.getItem("articleDate") || (() => {
                     const today = new Date();
-                    const months = ["января", "февраля", "марта", "апреля", "мая", "июня", 
+                    const months = ["января", "февраля", "марта", "апреля", "мая", "июня",
                                    "июля", "августа", "сентября", "октября", "ноября", "декабря"];
-                    articleDateDisplay.textContent = `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
-                }
-                
+                    return `${today.getDate()} ${months[today.getMonth()]} ${today.getFullYear()}`;
+                })();
                 authorDisplay.style.display = "flex";
-                
-                // Создаем водяные знаки при загрузке в режиме чтения
+                if (savedAuthor) {
+                    if (savedLink) {
+                        authorNameDisplay.innerHTML = `<a href="${savedLink}" class="author-link" target="_blank">${savedAuthor}</a>`;
+                    } else {
+                        authorNameDisplay.textContent = savedAuthor;
+                    }
+                } else {
+                    authorNameDisplay.textContent = "Неизвестный автор";
+                }
+                articleDateDisplay.textContent = savedDate;
                 setTimeout(createWatermarks, 100);
             }
-            
             updatePlaceholderClass();
             updateFontSizeSelect();
             toggleScrollToTopButton(); // Проверяем начальную позицию прокрутки
         });
-        
         // Обработка изменения размера окна
         window.addEventListener('resize', () => {
             if (articleContent.contentEditable === "false") {
                 createWatermarks();
             }
         });
-        
-        // Запрет контекстного меню и копирования если нет редактирования
-        document.body.addEventListener('contextmenu', e => {
-            if(articleContent.contentEditable === "false") e.preventDefault();
-        });
-        
-        document.body.addEventListener('copy', e => {
-            if(articleContent.contentEditable === "false") e.preventDefault();
-        });
-        
-        document.body.addEventListener('cut', e => {
-            if(articleContent.contentEditable === "false") e.preventDefault();
-        });
-        
-        document.body.addEventListener('selectstart', e => {
-            if(articleContent.contentEditable === "false") e.preventDefault();
-        });
+        // Запрет контекстного меню и копирования если нет редактирования (для оригинального файла)
+        if (!(!editBtn || !saveBtn)) { // Только если не скачанный файл
+            document.body.addEventListener('contextmenu', e => {
+                if(articleContent.contentEditable === "false") e.preventDefault();
+            });
+            document.body.addEventListener('copy', e => {
+                if(articleContent.contentEditable === "false") e.preventDefault();
+            });
+            document.body.addEventListener('cut', e => {
+                if(articleContent.contentEditable === "false") e.preventDefault();
+            });
+            document.body.addEventListener('selectstart', e => {
+                if(articleContent.contentEditable === "false") e.preventDefault();
+            });
+        }
     </script>
 </body>
 </html>

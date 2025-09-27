@@ -53,6 +53,10 @@
     <style>
         @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
         
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: "Inter", sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
@@ -62,6 +66,7 @@
             padding: 0;
             min-height: 100vh;
             position: relative;
+            overflow-x: hidden;
         }
         
         /* Фоновый узор */
@@ -88,6 +93,11 @@
             position: relative;
             background-color: white;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            hyphens: auto;
         }
         
         .content-editable[contenteditable="true"] {
@@ -128,6 +138,8 @@
             flex-wrap: wrap;
             border-radius: 0.75rem 0.75rem 0 0;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 100%;
         }
         
         .editor-toolbar.active {
@@ -148,6 +160,7 @@
             justify-content: center;
             min-width: 36px;
             min-height: 36px;
+            flex-shrink: 0;
         }
         
         .tool-btn:hover {
@@ -165,6 +178,7 @@
             cursor: pointer;
             transition: background-color 0.2s, border-color 0.2s;
             font-family: inherit;
+            max-width: 100%;
         }
         
         select.font-size-select:hover, select.font-select:hover, select.date-select:hover {
@@ -216,6 +230,9 @@
         .watermark-container {
             position: relative;
             overflow: hidden;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto 3rem;
         }
         
         .watermark-layer {
@@ -251,6 +268,7 @@
         .article-wrapper {
             position: relative;
             z-index: 1;
+            width: 100%;
         }
         
         /* Стили для автора и даты */
@@ -261,12 +279,15 @@
             margin: 1rem auto 2rem;
             max-width: 800px;
             padding: 0 1rem;
+            width: 100%;
+            flex-wrap: wrap;
         }
         
         .author-info {
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
         
         .author-text {
@@ -281,6 +302,7 @@
             transition: color 0.2s;
             font-style: normal;
             font-weight: 500;
+            word-break: break-all;
         }
         
         .author-link:hover {
@@ -334,6 +356,7 @@
             align-items: center;
             margin-bottom: 1rem;
             flex-wrap: wrap;
+            width: 100%;
         }
         
         .author-inputs input, .author-inputs select {
@@ -342,6 +365,8 @@
             border-radius: 0.375rem;
             font-size: 1rem;
             font-family: inherit;
+            max-width: 100%;
+            box-sizing: border-box;
         }
         
         .author-inputs input:focus, .author-inputs select:focus {
@@ -354,6 +379,7 @@
             display: flex;
             gap: 0.5rem;
             align-items: center;
+            flex-wrap: wrap;
         }
         
         /* Стили для отображения автора и даты в режиме чтения */
@@ -361,6 +387,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            flex-wrap: wrap;
         }
         
         /* Стили для заголовка и кнопок */
@@ -372,6 +399,8 @@
             justify-content: space-between;
             align-items: flex-start;
             gap: 1rem;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         .article-title {
@@ -380,6 +409,10 @@
             font-weight: 700;
             flex: 1;
             word-wrap: break-word;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            min-width: 0;
+            line-height: 1.3;
         }
         
         .buttons-container {
@@ -399,6 +432,7 @@
             gap: 0.5rem;
             transition: all 0.3s ease;
             white-space: nowrap;
+            flex-shrink: 0;
         }
         
         .btn-edit {
@@ -418,6 +452,12 @@
         
         /* Мобильная версия - ОПТИМИЗИРОВАННАЯ */
         @media (max-width: 768px) {
+            body {
+                font-size: 16px;
+                line-height: 1.5;
+                padding: 0.5rem;
+            }
+            
             .header-container {
                 flex-direction: column;
                 align-items: stretch;
@@ -432,12 +472,16 @@
                 order: 1;
                 line-height: 1.3;
                 padding: 0 0.5rem;
+                word-break: break-word;
+                hyphens: auto;
+                overflow-wrap: break-word;
             }
             
             .buttons-container {
                 justify-content: flex-end;
                 order: 2;
                 position: relative;
+                width: 100%;
             }
             
             /* На мобильных оставляем только иконку карандаша */
@@ -480,8 +524,9 @@
             
             .author-inputs input, .author-inputs select {
                 width: 100%;
-                font-size: 16px; /* Увеличиваем для мобильных */
+                font-size: 16px;
                 padding: 0.75rem;
+                min-height: 44px;
             }
             
             .date-inputs {
@@ -493,13 +538,19 @@
             .date-inputs select {
                 flex: 1;
                 min-width: 0;
+                font-size: 14px;
             }
             
             .content-editable {
                 padding: 1rem;
                 min-height: 200px;
-                font-size: 18px; /* Увеличиваем шрифт для удобства чтения */
+                font-size: 18px;
                 line-height: 1.6;
+                word-break: break-word;
+                overflow-wrap: break-word;
+                hyphens: auto;
+                -webkit-hyphens: auto;
+                -ms-hyphens: auto;
             }
             
             .scroll-to-top {
@@ -517,6 +568,7 @@
                 top: 0;
                 z-index: 100;
                 overflow-x: auto;
+                max-width: 100vw;
             }
             
             .tool-btn {
@@ -524,12 +576,14 @@
                 min-height: 44px;
                 padding: 0.5rem;
                 font-size: 1.1rem;
+                flex-shrink: 0;
             }
             
             select.font-size-select, select.font-select, select.date-select {
                 font-size: 14px;
                 padding: 0.5rem;
                 min-height: 44px;
+                max-width: 120px;
             }
             
             /* Улучшаем читаемость текста */
@@ -545,10 +599,11 @@
             #adminModal .modal-content {
                 margin: 1rem;
                 padding: 1.5rem;
+                max-width: 95vw;
             }
             
             #adminCodeInput {
-                font-size: 16px; /* Убираем zoom на iOS */
+                font-size: 16px;
                 padding: 1rem;
             }
             
@@ -556,12 +611,33 @@
                 padding: 1rem;
                 font-size: 1.1rem;
             }
+            
+            /* Улучшаем перенос текста */
+            .content-editable p, 
+            .content-editable div, 
+            .content-editable span {
+                word-break: break-word;
+                overflow-wrap: break-word;
+                hyphens: auto;
+                -webkit-hyphens: auto;
+                -ms-hyphens: auto;
+            }
+            
+            .watermark-container {
+                margin: 0 auto 2rem;
+                max-width: 95vw;
+            }
         }
         
         /* Для очень маленьких экранов */
         @media (max-width: 480px) {
+            body {
+                padding: 0.25rem;
+            }
+            
             .article-title {
                 font-size: 1.6rem;
+                line-height: 1.2;
             }
             
             .header-container {
@@ -571,6 +647,7 @@
             .content-editable {
                 padding: 0.75rem;
                 font-size: 17px;
+                line-height: 1.5;
             }
             
             .author-text, .article-date {
@@ -582,6 +659,27 @@
                 right: 5px;
                 min-width: 45px;
                 min-height: 45px;
+            }
+            
+            .editor-toolbar {
+                padding: 0.4rem;
+                gap: 0.2rem;
+            }
+            
+            .tool-btn {
+                min-width: 40px;
+                min-height: 40px;
+                padding: 0.4rem;
+                font-size: 1rem;
+            }
+            
+            select.font-size-select, select.font-select {
+                max-width: 100px;
+                font-size: 12px;
+            }
+            
+            .watermark {
+                font-size: 20px;
             }
         }
         
@@ -603,6 +701,28 @@
                 font-size: 18px;
                 line-height: 1.7;
             }
+        }
+        
+        /* Общие стили для правильного переноса текста */
+        .content-editable * {
+            max-width: 100%;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+        
+        .content-editable img {
+            max-width: 100%;
+            height: auto;
+        }
+        
+        .content-editable table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .content-editable td, .content-editable th {
+            word-break: break-word;
+            overflow-wrap: break-word;
         }
     </style>
 </head>
@@ -722,7 +842,7 @@
     
     <!-- Контент статьи -->
     <main>
-        <div id="watermarkContainer" class="watermark-container" style="max-width: 800px; margin: 0 auto 3rem;">
+        <div id="watermarkContainer" class="watermark-container">
             <div id="watermarkLayer" class="watermark-layer"></div>
             <div class="article-wrapper">
                 <article
@@ -741,6 +861,8 @@
     </button>
     
     <script>
+        // ... (остальной JavaScript код остается без изменений)
+        // Тот же самый JavaScript код что и в предыдущей версии
         const ADMIN_CODE = "123";
         
         // Элементы DOM

@@ -1,32 +1,27 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Статья</title>
     <link rel="icon" type="image/svg+xml" href="https://github.com/golod15t-glitch/guideFP_K15/blob/main/favicon.ico?raw=true">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- ЗАЩИТА ОТ ПРЯМОГО ДОСТУПА - ДОЛЖНА БЫТЬ ПЕРВОЙ -->
     <script>
-    // Проверка до загрузки страницы
     (function() {
-        // Разрешенные источники
         const allowedSources = [
             "https://golod15t-glitch.github.io/guideFP_K15/",
             "https://golod15t-glitch.github.io/guideFP_K15",
-            "http://localhost", // для локальной разработки
-            "http://127.0.0.1"  // для локальной разработки
+            "http://localhost",
+            "http://127.0.0.1"  
         ];
         
         const currentUrl = window.location.href;
         const referrer = document.referrer;
         
-        // Проверяем, открыта ли статья напрямую (не с главной страницы)
         let isValidAccess = false;
         
-        // Проверяем реферер (откуда пришли)
         for (const source of allowedSources) {
             if (referrer.startsWith(source)) {
                 isValidAccess = true;
@@ -34,15 +29,11 @@
             }
         }
         
-        // Если реферер пустой (прямой доступ) или не из разрешенных источников
         if (!isValidAccess && referrer !== "") {
-            // Перенаправляем на главную страницу
             window.location.href = "https://golod15t-glitch.github.io/guideFP_K15/";
-            // Останавливаем дальнейшую загрузку страницы
             throw new Error("Redirecting to main page");
         }
         
-        // Дополнительная проверка: если пытаются открыть статью напрямую через GitHub Pages
         if (referrer === "" && currentUrl.includes('/articles/')) {
             window.location.href = "https://golod15t-glitch.github.io/guideFP_K15/";
             throw new Error("Redirecting to main page - direct access blocked");
@@ -69,7 +60,6 @@
             overflow-x: hidden;
         }
         
-        /* Фоновый узор */
         body::before {
             content: "";
             position: fixed;
@@ -106,7 +96,6 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
         }
         
-        /* Стиль для плейсхолдера */
         .content-editable.empty::before {
             content: attr(data-placeholder);
             position: absolute;
@@ -119,7 +108,6 @@
             white-space: pre-wrap;
         }
         
-        /* Запрет выделения и копирования когда нужно */
         .no-select {
             user-select: none !important;
             -webkit-user-select: none !important;
@@ -226,7 +214,6 @@
             cursor: not-allowed;
         }
         
-        /* Водяные знаки */
         .watermark-container {
             position: relative;
             overflow: hidden;
@@ -271,7 +258,6 @@
             width: 100%;
         }
         
-        /* Стили для автора и даты */
         .author-section {
             display: flex;
             justify-content: space-between;
@@ -315,7 +301,6 @@
             font-size: 1rem;
         }
         
-        /* Кнопка прокрутки вверх */
         .scroll-to-top {
             position: fixed;
             bottom: 2rem;
@@ -349,7 +334,6 @@
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
         
-        /* Стили для полей ввода автора и даты в режиме редактирования */
         .author-inputs {
             display: flex;
             gap: 1rem;
@@ -382,7 +366,6 @@
             flex-wrap: wrap;
         }
         
-        /* Стили для отображения автора и даты в режиме чтения */
         .author-display {
             display: flex;
             align-items: center;
@@ -390,7 +373,6 @@
             flex-wrap: wrap;
         }
         
-        /* Стили для заголовка и кнопок */
         .header-container {
             max-width: 800px;
             margin: 2rem auto 1rem;
@@ -450,7 +432,6 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
         
-        /* Мобильная версия - ОПТИМИЗИРОВАННАЯ */
         @media (max-width: 768px) {
             body {
                 font-size: 16px;
@@ -484,7 +465,6 @@
                 width: 100%;
             }
             
-            /* На мобильных оставляем только иконку карандаша */
             .btn-edit, .btn-save {
                 padding: 0.75rem;
                 min-width: 50px;
@@ -586,7 +566,6 @@
                 max-width: 120px;
             }
             
-            /* Улучшаем читаемость текста */
             .article-title {
                 font-size: 2rem;
             }
@@ -595,7 +574,6 @@
                 font-size: 1rem;
             }
             
-            /* Адаптируем модальное окно */
             #adminModal .modal-content {
                 margin: 1rem;
                 padding: 1.5rem;
@@ -612,7 +590,6 @@
                 font-size: 1.1rem;
             }
             
-            /* Улучшаем перенос текста */
             .content-editable p, 
             .content-editable div, 
             .content-editable span {
@@ -629,7 +606,6 @@
             }
         }
         
-        /* Для очень маленьких экранов */
         @media (max-width: 480px) {
             body {
                 padding: 0.25rem;
@@ -683,7 +659,6 @@
             }
         }
         
-        /* Для больших экранов */
         @media (min-width: 769px) {
             .btn-text {
                 display: inline;
@@ -694,7 +669,6 @@
             }
         }
         
-        /* Улучшение для очень высоких экранов */
         @media (min-width: 769px) and (min-height: 1000px) {
             .content-editable {
                 min-height: 500px;
@@ -703,7 +677,6 @@
             }
         }
         
-        /* Общие стили для правильного переноса текста */
         .content-editable * {
             max-width: 100%;
             word-break: break-word;
@@ -725,27 +698,26 @@
             overflow-wrap: break-word;
         }
     </style>
+    <style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }</style>
 </head>
 <body>
-    <!-- Админский модал -->
-    <div id="adminModal">
+    <div id="adminModal" class="">
         <div class="modal-content">
-            <h2>Доступ к редактированию</h2>
-            <p>Введите код доступа администратора:</p>
-            <input id="adminCodeInput" type="password" placeholder="Код доступа" autocomplete="off" />
-            <div id="adminError">Неверный код!</div>
-            <button id="adminSubmitBtn">Подтвердить</button>
+            <h2>Edit Access</h2>
+            <p>Enter administrator access code:</p>
+            <input id="adminCodeInput" type="password" placeholder="Access code" autocomplete="off">
+            <div id="adminError" style="display: none;">Incorrect code!</div>
+            <button id="adminSubmitBtn">Confirm</button>
         </div>
     </div>
     
-    <!-- Панель инструментов редактора -->
     <div id="editorToolbar" class="editor-toolbar">
-        <button class="tool-btn" title="Жирный" onclick="formatText('bold')"><i class="fas fa-bold"></i></button>
-        <button class="tool-btn" title="Курсив" onclick="formatText('italic')"><i class="fas fa-italic"></i></button>
-        <button class="tool-btn" title="Подчёркивание" onclick="formatText('underline')"><i class="fas fa-underline"></i></button>
-        <button class="tool-btn" title="Маркированный список" onclick="formatText('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
-        <button class="tool-btn" title="Нумерованный список" onclick="formatText('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
-        <button class="tool-btn" title="Вставить изображение" onclick="addImage()"><i class="fas fa-image"></i></button>
+        <button class="tool-btn" title="Bold" onclick="formatText('bold')"><i class="fas fa-bold"></i></button>
+        <button class="tool-btn" title="Italic" onclick="formatText('italic')"><i class="fas fa-italic"></i></button>
+        <button class="tool-btn" title="Underline" onclick="formatText('underline')"><i class="fas fa-underline"></i></button>
+        <button class="tool-btn" title="Bullet List" onclick="formatText('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
+        <button class="tool-btn" title="Numbered List" onclick="formatText('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
+        <button class="tool-btn" title="Insert Image" onclick="addImage()"><i class="fas fa-image"></i></button>
         
         <select class="font-size-select" id="fontSizeSelect" onchange="setFontSize(parseInt(this.value))">
             <option value="8">8</option>
@@ -754,7 +726,7 @@
             <option value="11">11</option>
             <option value="12">12</option>
             <option value="14">14</option>
-            <option value="16" selected>16</option>
+            <option value="16" selected="">16</option>
             <option value="18">18</option>
             <option value="20">20</option>
             <option value="22">22</option>
@@ -767,7 +739,7 @@
         </select>
         
         <select class="font-select" onchange="formatText('fontName', this.value)">
-            <option value="" selected>Шрифт</option>
+            <option value="" selected="">Font</option>
             <option value="Arial">Arial</option>
             <option value="'Times New Roman', Times, serif">Times New Roman</option>
             <option value="'Courier New', Courier, monospace">Courier New</option>
@@ -779,44 +751,39 @@
         </select>
     </div>
     
-    <!-- Заголовок статьи и кнопки -->
     <div class="header-container">
-        <h1 id="articleTitle" contenteditable="false" class="article-title" data-placeholder="Введите заголовок...">Заголовок статьи</h1>
+        <h1 id="articleTitle" contenteditable="false" class="article-title no-select" data-placeholder="Enter title..."><h1 style="font-family: CustomSansSerif, &quot;Lucida Grande&quot;, Arial, sans-serif; font-weight: 700; font-size: 32px; margin: 21px 21px 12px; line-height: 34px; color: rgba(0, 0, 0, 0.8);">Гайд по Перерождению в Roblox Steal a Brainrot</h1></h1>
         <div class="buttons-container">
-            <button id="editBtn" class="btn-edit">
+            <button id="editBtn" class="btn-edit" style="display: flex;">
                 <i class="fas fa-pencil-alt btn-icon"></i>
-                <span class="btn-text">Редактировать</span>
+                <span class="btn-text">Edit</span>
             </button>
-            <button id="saveBtn" class="btn-save" style="display: none;">
-                <i class="fas fa-save btn-icon"></i>
-                <span class="btn-text">Сохранить</span>
-            </button>
+            <button id="saveBtn" class="btn-save" style="display: none;"><i class="fas fa-save btn-icon"></i><span class="btn-text">Save</span></button>
         </div>
     </div>
     
-    <!-- Секция автора и даты -->
     <div id="authorSection" class="author-section">
-        <div id="authorDisplay" class="author-display">
-            <span class="author-text">Автор: <span id="authorNameDisplay">Неизвестный автор</span> | </span>
-            <span class="article-date" id="articleDateDisplay"></span>
+        <div id="authorDisplay" class="author-display" style="display: flex;">
+            <span class="author-text">Author: <span id="authorNameDisplay"><a href="https://funpay.com/users/15995448/" class="author-link" target="_blank">Kotonaft15</a></span> | </span>
+            <span class="article-date" id="articleDateDisplay">23 сентября 2025</span>
         </div>
         
         <div id="authorInputs" class="author-inputs" style="display: none;">
             <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                <label for="authorNameInput" style="font-size: 0.9rem; color: #4b5563;">Имя автора:</label>
-                <input type="text" id="authorNameInput" placeholder="Имя автора">
+                <label for="authorNameInput" style="font-size: 0.9rem; color: #4b5563;">Author name:</label>
+                <input type="text" id="authorNameInput" placeholder="Author name">
             </div>
             <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                <label for="authorLinkInput" style="font-size: 0.9rem; color: #4b5563;">Ссылка автора:</label>
+                <label for="authorLinkInput" style="font-size: 0.9rem; color: #4b5563;">Author link:</label>
                 <input type="text" id="authorLinkInput" placeholder="https://example.com">
             </div>
             <div class="date-inputs">
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="daySelect" style="font-size: 0.9rem; color: #4b5563;">День:</label>
-                    <select id="daySelect" class="date-select"></select>
+                    <label for="daySelect" style="font-size: 0.9rem; color: #4b5563;">Day:</label>
+                    <select id="daySelect" class="date-select"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option><option value="21">21</option><option value="22">22</option><option value="23">23</option><option value="24">24</option><option value="25">25</option><option value="26">26</option><option value="27">27</option><option value="28">28</option><option value="29">29</option><option value="30">30</option><option value="31">31</option></select>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="monthSelect" style="font-size: 0.9rem; color: #4b5563;">Месяц:</label>
+                    <label for="monthSelect" style="font-size: 0.9rem; color: #4b5563;">Month:</label>
                     <select id="monthSelect" class="date-select">
                         <option value="января">января</option>
                         <option value="февраля">февраля</option>
@@ -833,39 +800,29 @@
                     </select>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label for="yearSelect" style="font-size: 0.9rem; color: #4b5563;">Год:</label>
-                    <select id="yearSelect" class="date-select"></select>
+                    <label for="yearSelect" style="font-size: 0.9rem; color: #4b5563;">Year:</label>
+                    <select id="yearSelect" class="date-select"><option value="2025">2025</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option><option value="2017">2017</option><option value="2016">2016</option><option value="2015">2015</option></select>
                 </div>
             </div>
         </div>
     </div>
     
-    <!-- Контент статьи -->
     <main>
         <div id="watermarkContainer" class="watermark-container">
-            <div id="watermarkLayer" class="watermark-layer"></div>
+            <div id="watermarkLayer" class="watermark-layer" style="display: block;"><div class="watermark" style="left: 0px; top: 0px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 0px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 0px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 0px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 0px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 0px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 0px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 150px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 150px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 150px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 150px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 150px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 150px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 150px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 300px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 300px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 300px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 300px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 300px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 300px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 300px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 450px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 450px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 450px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 450px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 450px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 450px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 450px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 600px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 600px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 600px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 600px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 600px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 600px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 600px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 750px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 750px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 750px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 750px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 750px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 750px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 750px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 900px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 900px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 900px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 900px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 900px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 900px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 900px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 1050px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 1050px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 1050px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 1050px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 1050px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 1050px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 1050px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 1200px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 1200px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 1200px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 1200px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 1200px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 1200px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 1200px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 1350px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 1350px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 1350px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 1350px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 1350px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 1350px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 1350px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 1500px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 1500px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 1500px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 1500px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 1500px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 1500px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 1500px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 1650px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 1650px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 1650px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 1650px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 1650px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 1650px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 1650px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 1800px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 1800px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 1800px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 1800px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 1800px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 1800px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 1800px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 1950px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 1950px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 1950px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 1950px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 1950px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 1950px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 1950px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 2100px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 2100px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 2100px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 2100px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 2100px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 2100px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 2100px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 2250px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 2250px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 2250px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 2250px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 2250px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 2250px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 2250px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 2400px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 2400px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 2400px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 2400px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 2400px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 2400px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 2400px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 2550px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 2550px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 2550px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 2550px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 2550px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 2550px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 2550px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 2700px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 2700px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 2700px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 2700px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 2700px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 2700px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 2700px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 2850px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 2850px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 2850px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 2850px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 2850px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 2850px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 2850px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 3000px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 3000px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 3000px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 3000px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 3000px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 3000px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 3000px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 3150px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 3150px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 3150px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 3150px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 3150px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 3150px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 3150px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 3300px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 3300px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 3300px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 3300px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 3300px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 3300px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 3300px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 3450px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 3450px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 3450px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 3450px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 3450px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 3450px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 3450px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 3600px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 3600px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 3600px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 3600px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 3600px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 3600px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 3600px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 3750px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 3750px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 3750px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 3750px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 3750px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 3750px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 3750px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 3900px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 3900px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 3900px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 3900px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 3900px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 3900px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 3900px;">kotonaft15</div><div class="watermark" style="left: 75px; top: 4050px;">kotonaft15</div><div class="watermark" style="left: 225px; top: 4050px;">kotonaft15</div><div class="watermark" style="left: 375px; top: 4050px;">kotonaft15</div><div class="watermark" style="left: 525px; top: 4050px;">kotonaft15</div><div class="watermark" style="left: 675px; top: 4050px;">kotonaft15</div><div class="watermark" style="left: 825px; top: 4050px;">kotonaft15</div><div class="watermark" style="left: 975px; top: 4050px;">kotonaft15</div><div class="watermark" style="left: 0px; top: 4200px;">kotonaft15</div><div class="watermark" style="left: 150px; top: 4200px;">kotonaft15</div><div class="watermark" style="left: 300px; top: 4200px;">kotonaft15</div><div class="watermark" style="left: 450px; top: 4200px;">kotonaft15</div><div class="watermark" style="left: 600px; top: 4200px;">kotonaft15</div><div class="watermark" style="left: 750px; top: 4200px;">kotonaft15</div><div class="watermark" style="left: 900px; top: 4200px;">kotonaft15</div></div>
             <div class="article-wrapper">
-                <article
-                    id="articleContent"
-                    class="content-editable"
-                    contenteditable="false"
-                    data-placeholder="Введите текст статьи..."
-                >Начните вводить текст вашей статьи здесь...</article>
+                <article id="articleContent" class="content-editable no-select" contenteditable="false" data-placeholder="Enter article text..."><h3 dir="auto" id="Почему-Перерождение-—-Ваш-Ключ-к-Власти" style="margin: 18px 21px 9px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSansSerif, &quot;Lucida Grande&quot;, Arial, sans-serif; font-weight: 700; font-size: 28px; white-space-collapse: preserve;">Почему Перерождение — Ваш Ключ к Власти</h3><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">В Steal a Brainrot перерождение — это не просто сброс прогресса. Это&nbsp;жестокий ритуал возрождения, который либо сделает вас королём игры, либо уничтожит всё, что вы строили. Механика перерождения сбрасывает все деньги и коллекцию брейнротов, но взамен дарит&nbsp;множитель дохода, новые слоты и мощное оружие. Без перерождения вы обречены стоять на месте, наблюдая, как другие игроки наращивают империю.</p><hr style="width: 366px; margin: 30px auto; border: none; font-size: 2px; text-align: right; overflow: visible; white-space-collapse: preserve;"><h3 dir="auto" id="Суть-Перерождения:-Что-Вы-Получаете-и-Что-Теряете" style="margin: 18px 21px 9px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSansSerif, &quot;Lucida Grande&quot;, Arial, sans-serif; font-weight: 700; font-size: 28px; white-space-collapse: preserve;">Суть Перерождения: Что Вы Получаете и Что Теряете</h3><ul dir="auto" style="margin: 21px; counter-reset: list 0; white-space-collapse: preserve;"><li style="list-style-type: none; padding: 0px; margin-left: 30px; margin-bottom: 14px; position: relative;">Сброс коллекции брейнротов и денег&nbsp;— жестокая цена, но без неё нет роста.</li><li style="list-style-type: none; padding: 0px; margin-left: 30px; margin-bottom: 14px; position: relative;">Увеличение множителя дохода&nbsp;— от х1 до х13 и выше, что умножает ваш заработок на каждом шаге.</li><li style="list-style-type: none; padding: 0px; margin-left: 30px; margin-bottom: 14px; position: relative;">Открытие новых слотов для брейнротов&nbsp;— больше места для редких юнитов.</li><li style="list-style-type: none; padding: 0px; margin-left: 30px; margin-bottom: 14px; position: relative;">Доступ к мощному оружию и улучшениям&nbsp;— от невидимости до квантового клонирования.</li><li style="list-style-type: none; padding: 0px; margin-left: 30px; margin-bottom: 14px; position: relative;">Увеличение времени защиты базы&nbsp;— даёт вам дополнительные секунды, чтобы отбиться от врагов.</li></ul><hr style="width: 366px; margin: 30px auto; border: none; font-size: 2px; text-align: right; overflow: visible; white-space-collapse: preserve;"><h3 dir="auto" id="Как-Переродиться-и-Не-Потерять-Всё" style="margin: 18px 21px 9px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSansSerif, &quot;Lucida Grande&quot;, Arial, sans-serif; font-weight: 700; font-size: 28px; white-space-collapse: preserve;">Как Переродиться и Не Потерять Всё</h3><h3 dir="auto" id="Шаг-1:-Подготовка-—-Ваше-Выживание-в-Мире-Жестоких-Перерождений" style="margin: 18px 21px 9px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSansSerif, &quot;Lucida Grande&quot;, Arial, sans-serif; font-weight: 700; font-size: 28px; white-space-collapse: preserve;">Шаг 1: Подготовка — Ваше Выживание в Мире Жестоких Перерождений</h3><ul dir="auto" style="margin: 21px; counter-reset: list 0; white-space-collapse: preserve;"><li style="list-style-type: none; padding: 0px; margin-left: 30px; margin-bottom: 14px; position: relative;">Накопите необходимое количество денег (от 1 млн Cash и выше).</li><li style="list-style-type: none; padding: 0px; margin-left: 30px; margin-bottom: 14px; position: relative;">Соберите обязательный набор брейнротов для следующего уровня перерождения.</li><li style="list-style-type: none; padding: 0px; margin-left: 30px; margin-bottom: 14px; position: relative;">Спрячьте ценных брейнротов:Используйте&nbsp;альтернативный аккаунт&nbsp;для хранения.</li><li style="list-style-type: none; padding: 0px; margin-left: 30px; margin-bottom: 14px; position: relative;">Попросите друзей временно "украсть" и сохранить ваших лучших юнитов.</li></ul><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Без этих хитростей вы потеряете всё и останетесь без шансов на дальнейший рост.</p><h3 dir="auto" id="Шаг-2:-Нажмите-кнопку-«Перерождение»-—-и-начнётся-новый-цикл" style="margin: 18px 21px 9px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSansSerif, &quot;Lucida Grande&quot;, Arial, sans-serif; font-weight: 700; font-size: 28px; white-space-collapse: preserve;">Шаг 2: Нажмите кнопку «Перерождение» — и начнётся новый цикл</h3><ul dir="auto" style="margin: 21px; counter-reset: list 0; white-space-collapse: preserve;"><li style="list-style-type: none; padding: 0px; margin-left: 30px; margin-bottom: 14px; position: relative;">Все деньги и брейнроты сбросятся.</li><li style="list-style-type: none; padding: 0px; margin-left: 30px; margin-bottom: 14px; position: relative;">Вы получите новые множители, слоты и предметы.</li><li style="list-style-type: none; padding: 0px; margin-left: 30px; margin-bottom: 14px; position: relative;">Ваш доход возрастёт, и вы сможете быстрее собирать ресурсы для следующего перерождения.</li></ul><hr style="width: 366px; margin: 30px auto; border: none; font-size: 2px; text-align: right; overflow: visible; white-space-collapse: preserve;"><h3 dir="auto" id="Уровни-Перерождения:-Ваш-Путь-к-Абсолютной-Власти" style="margin: 18px 21px 9px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSansSerif, &quot;Lucida Grande&quot;, Arial, sans-serif; font-weight: 700; font-size: 28px; white-space-collapse: preserve;">Уровни Перерождения: Ваш Путь к Абсолютной Власти</h3><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Каждый уровень требует всё больше денег и уникальных брейнротов, но награды растут в геометрической прогрессии:</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 1</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 1 миллион денег, Trippi Troppi, Tung Tung Sahur</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 0.5x множитель, 5,000 денег, Блокировка базы +10 секунд, Friend Controller, Iron Slap, Gravity Coil, Bee Launcher</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 2</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 3 миллиона денег, Boneca Ambalabu, Brr Brr Patapim</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 1x множитель, 10,000 денег, Блокировка базы +10 секунд, +1 слот, Gold Slap, Coil Combo, Rage Table</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 3</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 12.5 миллионов денег, Trulimero Trulicina, Chimpanzini Bananini</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 2x множитель, 25,000 денег, Блокировка базы +10 секунд, +1 слот, Diamond Slap, Grapple Hook, Taser Gun</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 4</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 35 миллионов денег, Chef Cabracadabra, Glorbo Fruttodrillo</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 3x множитель, 50,000 денег, Блокировка базы +10 секунд, +1 слот, Emerald Slap, Invisibility Cloak, Boogie Bomb</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 5</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 100 миллионов денег, Frigo Camelo, Orangutini Ananassini</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 4x множитель, 100,000 денег, Блокировка базы +10 секунд, +1 слот, Ruby Slap, Medusa’s Head</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 6</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 350 миллионов денег, Bombardilo Crocodilo, Bombombini Gusini</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 5x множитель, 250,000 денег, Блокировка базы +10 секунд, +1 слот, Dark Matter Slap, Web Slinger</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 7</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 1 миллиард денег, Bombombini Gusini</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 6x множитель, 500,000 денег, Блокировка базы +10 секунд, +1 слот, Flame Slap, Quantum Cloner, All Seeing Sentry</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 8</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 5 миллиардов денег, Cocofanto Elefanto</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 7x множитель, 1 миллион денег, Блокировка базы +10 секунд, +1 слот, Nuclear Slap, Rainbowrath Sword</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 9</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 25 миллиардов денег, Girafa Celestre</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 8x множитель, 5 миллионов денег, Блокировка базы +10 секунд, +1 слот, Galaxy Slap, Laser Cape</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 10</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 250 миллиардов денег, Tralalero Tralala</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 9x множитель, 25 миллионов денег, Блокировка базы +10 секунд, +1 слот, Glitched Slap, Body Swap Potion</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 11</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 1 триллион денег, Odin Din Din Dun</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 10x множитель, 45 миллионов денег, Блокировка базы +10 секунд, +1 слот, Splatter Slap, Paintball Gun</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 12</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 7 триллионов денег, Trenostruzzo Turbo 3000</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 11x множитель, 500 миллионов денег, Блокировка базы +10 секунд, +1 слот, Heart Balloon, Magnet</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 13</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 50 триллионов денег, Ballerino Lololo</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 12x множитель, 1 миллиард денег, Блокировка базы +10 секунд, +1 слот, Megaphone, Beehive</p><blockquote dir="auto" style="margin-top: 18px; margin-right: 21px; margin-bottom: 16px; padding: 0px 0px 0px 15px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; position: relative; font-style: italic; border-left-width: 3px; border-left-color: rgb(0, 0, 0); white-space-collapse: preserve;">Уровень: 14</blockquote><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Требования: 100 триллионов денег, Trippi Troppi Troppa Trippa</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Награда: 13x множитель, 1,5 миллиарда денег, Блокировка базы +10 секунд, +1 слот, Липкая пощечина (Gummy Slap), Подпространственная мина (Subspace Mine)</p><hr style="width: 366px; margin: 30px auto; border: none; font-size: 2px; text-align: right; overflow: visible; white-space-collapse: preserve;"><h3 dir="auto" id="Практические-Советы-для-Успешного-Перерождения" style="margin: 18px 21px 9px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSansSerif, &quot;Lucida Grande&quot;, Arial, sans-serif; font-weight: 700; font-size: 28px; white-space-collapse: preserve;">Практические Советы для Успешного Перерождения</h3><ol dir="auto" style="margin: 21px; counter-reset: list 0; white-space-collapse: preserve;"><li style="list-style-type: none; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; counter-increment: list-num 1; margin-left: 30px; margin-bottom: 14px; position: relative;">Планируйте заранее&nbsp;— не начинайте перерождение без полного комплекта брейнротов и нужной суммы.</li><li style="list-style-type: none; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; counter-increment: list-num 1; margin-left: 30px; margin-bottom: 14px; position: relative;">Используйте друзей и альтернативные аккаунты&nbsp;— сохраните лучшие юниты, чтобы не начинать с нуля.</li><li style="list-style-type: none; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; counter-increment: list-num 1; margin-left: 30px; margin-bottom: 14px; position: relative;">Фокусируйтесь на редких брейнротах&nbsp;— они критичны для требований уровней.</li><li style="list-style-type: none; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; counter-increment: list-num 1; margin-left: 30px; margin-bottom: 14px; position: relative;">Не бойтесь сбрасывать прогресс&nbsp;— без этого вы не сможете расти.</li><li style="list-style-type: none; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; counter-increment: list-num 1; margin-left: 30px; margin-bottom: 14px; position: relative;">Используйте полученное оружие и слоты максимально эффективно&nbsp;— ускорьте сбор денег и защиту базы.</li></ol><hr style="width: 366px; margin: 30px auto; border: none; font-size: 2px; text-align: right; overflow: visible; white-space-collapse: preserve;"><h3 dir="auto" id="Итог:-Перерождение-—-Ваш-Единственный-Путь-к-Власти" style="margin: 18px 21px 9px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; font-family: CustomSansSerif, &quot;Lucida Grande&quot;, Arial, sans-serif; font-weight: 700; font-size: 28px; white-space-collapse: preserve;">Итог: Перерождение — Ваш Единственный Путь к Власти</h3><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">В Steal a Brainrot перерождение — не просто механика, а&nbsp;жестокий ритуал власти и выживания. Либо вы принимаете эту игру по её правилам, либо останетесь в тени, наблюдая, как другие строят империю на ваших костях.</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">Перерождайтесь. Рискуйте. Доминируйте.</p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;">И помните — каждый сброс приближает вас к вершине. Но вершина доступна только тем, кто готов пожертвовать всем.</p><hr style="width: 366px; margin: 30px auto; border: none; font-size: 2px; text-align: right; overflow: visible; white-space-collapse: preserve;"><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;"><em>Ваша жадность — ваш двигатель. Используйте её, чтобы стать легендой Steal a Brainrot.</em></p><p dir="auto" style="margin-right: 21px; margin-bottom: 12px; margin-left: 21px; padding: 0px; counter-reset: list-1 0 list-2 0 list-3 0 list-4 0 list-5 0 list-6 0 list-7 0 list-8 0 list-9 0; white-space-collapse: preserve;"><br style="color: rgba(0, 0, 0, 0.8); font-family: CustomSerif, Georgia, Cambria, &quot;Times New Roman&quot;, serif; font-size: 18px;"></p></article>
             </div>
         </div>
     </main>
     
-    <!-- Кнопка прокрутки вверх -->
     <button id="scrollToTop" class="scroll-to-top">
         <i class="fas fa-chevron-up"></i>
     </button>
     
     <script>
-        // ... (остальной JavaScript код остается без изменений)
-        // Тот же самый JavaScript код что и в предыдущей версии
         const ADMIN_CODE = "123";
         
-        // Элементы DOM
         const adminModal = document.getElementById("adminModal");
         const adminCodeInput = document.getElementById("adminCodeInput");
         const adminError = document.getElementById("adminError");
@@ -890,11 +847,9 @@
         let isAdmin = false;
         let isEditing = false;
 
-        // Инициализация при загрузке
         function init() {
-            // Проверяем, прошли ли мы защиту от прямого доступа
             if (typeof window.redirected !== 'undefined') {
-                return; // Если была переадресация, не продолжаем инициализацию
+                return;
             }
             
             populateDateSelects();
@@ -903,25 +858,21 @@
             applyProtections();
             setupEventListeners();
             
-            // Проверяем, был ли пользователь админом
             if (sessionStorage.getItem("isAdmin") === "true") {
                 isAdmin = true;
             }
             
-            // Адаптация для мобильных устройств
             adaptForMobile();
         }
 
         function adaptForMobile() {
             if (window.innerWidth <= 768) {
-                // На мобильных устройствах добавляем дополнительные стили
                 document.body.style.fontSize = '16px';
                 articleContent.style.fontSize = '18px';
             }
         }
 
         function populateDateSelects() {
-            // Дни
             for (let i = 1; i <= 31; i++) {
                 const option = document.createElement('option');
                 option.value = i;
@@ -929,7 +880,6 @@
                 daySelect.appendChild(option);
             }
             
-            // Годы (текущий и 10 лет назад)
             const currentYear = new Date().getFullYear();
             for (let i = currentYear; i >= currentYear - 10; i--) {
                 const option = document.createElement('option');
@@ -959,7 +909,6 @@
             const height = container.offsetHeight;
             
             if (width === 0 || height === 0) {
-                // Если размеры еще не определены, пробуем позже
                 setTimeout(createWatermarks, 100);
                 return;
             }
@@ -1003,7 +952,6 @@
         }
 
         function setupEventListeners() {
-            // Кнопка редактирования
             editBtn.addEventListener('click', function() {
                 if (isAdmin) {
                     enableEditing();
@@ -1012,17 +960,13 @@
                 }
             });
             
-            // Кнопка сохранения
             saveBtn.addEventListener('click', function() {
-                // Блокируем кнопку на время сохранения
                 saveBtn.disabled = true;
-                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin btn-icon"></i><span class="btn-text">Сохранение...</span>';
+                saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin btn-icon"></i><span class="btn-text">Saving...</span>';
                 
-                // Запускаем процесс сохранения
                 saveAndDownload();
             });
             
-            // Модальное окно админа
             adminSubmitBtn.addEventListener('click', function() {
                 if (adminCodeInput.value === ADMIN_CODE) {
                     isAdmin = true;
@@ -1034,19 +978,16 @@
                 }
             });
             
-            // Enter в модальном окне
             adminCodeInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     adminSubmitBtn.click();
                 }
             });
             
-            // Кнопка прокрутки вверх
             scrollToTopBtn.addEventListener('click', function() {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             });
             
-            // Прокрутка страницы
             window.addEventListener('scroll', function() {
                 if (window.pageYOffset > 300) {
                     scrollToTopBtn.classList.add('visible');
@@ -1055,7 +996,6 @@
                 }
             });
             
-            // Ресайз окна
             window.addEventListener('resize', function() {
                 if (!isEditing) {
                     createWatermarks();
@@ -1063,7 +1003,6 @@
                 adaptForMobile();
             });
             
-            // Защита от копирования
             document.addEventListener('contextmenu', function(e) {
                 if (!isEditing) {
                     e.preventDefault();
@@ -1107,68 +1046,52 @@
         function enableEditing() {
             isEditing = true;
             
-            // Включаем редактирование
             articleContent.contentEditable = 'true';
             articleTitle.contentEditable = 'true';
             
-            // Показываем панель инструментов
             editorToolbar.classList.add('active');
             
-            // Переключаем кнопки
             editBtn.style.display = 'none';
             saveBtn.style.display = 'flex';
             
-            // Переключаем режим автора
             authorDisplay.style.display = 'none';
             authorInputs.style.display = 'flex';
             
-            // Убираем водяные знаки
             watermarkLayer.style.display = 'none';
             
-            // Убираем защиту
             removeProtections();
             
-            // Фокус на заголовок
             setTimeout(() => {
                 articleTitle.focus();
             }, 100);
             
-            // Загружаем сохраненные данные
             loadSavedData();
         }
 
         function disableEditing() {
             isEditing = false;
             
-            // Выключаем редактирование
             articleContent.contentEditable = 'false';
             articleTitle.contentEditable = 'false';
             
-            // Скрываем панель инструментов
             editorToolbar.classList.remove('active');
             
-            // Переключаем кнопки
             editBtn.style.display = 'flex';
             saveBtn.style.display = 'none';
             
-            // Переключаем режим автора
             authorDisplay.style.display = 'flex';
             authorInputs.style.display = 'none';
             
-            // Сохраняем данные
             saveAuthorData();
             updateAuthorDisplay();
             
-            // Включаем водяные знаки
             watermarkLayer.style.display = 'block';
             createWatermarks();
             
-            // Включаем защиту
             applyProtections();
             
-            // Восстанавливаем кнопку сохранения
             saveBtn.disabled = false;
-            saveBtn.innerHTML = '<i class="fas fa-save btn-icon"></i><span class="btn-text">Сохранить</span>';
+            saveBtn.innerHTML = '<i class="fas fa-save btn-icon"></i><span class="btn-text">Save</span>';
         }
 
         function loadSavedData() {
@@ -1208,13 +1131,12 @@
                     authorNameDisplay.textContent = authorName;
                 }
             } else {
-                authorNameDisplay.textContent = "Неизвестный автор";
+                authorNameDisplay.textContent = "Unknown author";
             }
             
             articleDateDisplay.textContent = articleDate;
         }
 
-        // Функции редактора
         function formatText(command, value = null) {
             document.execCommand(command, false, value);
             articleContent.focus();
@@ -1232,32 +1154,20 @@
         }
 
         function addImage() {
-            const url = prompt("Введите URL изображения:", "https://");
+            const url = prompt("Enter image URL:", "https://");
             if (url) {
                 formatText('insertImage', url);
             }
         }
 
         function saveAndDownload() {
-            console.log('=== НАЧАЛО ПРОЦЕССА СОХРАНЕНИЯ ===');
-            
-            // ШАГ 1: Сохраняем все данные
             saveAuthorData();
-            console.log('✅ Данные автора сохранены в sessionStorage');
             
-            // ШАГ 2: ЗАКРЫВАЕМ РЕЖИМ РЕДАКТИРОВАНИЯ (переходим в режим чтения)
             disableEditing();
-            console.log('✅ Режим редактирования закрыт, включен режим чтения');
             
-            // Ждем немного для применения всех изменений в DOM
             setTimeout(() => {
-                console.log('✅ Все изменения применены, страница в режиме чтения');
-                
-                // ШАГ 3: Создаем клон ТЕКУЩЕЙ страницы (уже в режиме чтения)
                 const clone = document.cloneNode(true);
-                console.log('✅ Клон страницы в режиме чтения создан');
                 
-                // ШАГ 4: Создаем и скачиваем файл
                 const html = '<!DOCTYPE html>\n' + clone.documentElement.outerHTML;
                 const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
                 const url = URL.createObjectURL(blob);
@@ -1271,21 +1181,16 @@
                 document.body.appendChild(a);
                 a.click();
                 
-                console.log('✅ Файл начал скачиваться');
-                
-                // Очистка
                 setTimeout(() => {
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
                     
-                    console.log('=== ПРОЦЕСС СОХРАНЕНИЯ ЗАВЕРШЕН ===');
-                    alert('✅ Статья успешно сохранена! Все данные применены корректно.');
+                    alert('Article saved successfully! All data applied correctly.');
                 }, 1000);
                 
-            }, 500); // Короткая задержка для применения изменений DOM
+            }, 500);
         }
 
-        // Запускаем инициализацию при загрузке
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>

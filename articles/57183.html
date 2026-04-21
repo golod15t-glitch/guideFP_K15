@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Информация о гайде | Kotonaft15</title>
+    <link rel="icon" type="image/svg+xml" href="https://clck.ru/3PSNMy">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+        
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --secondary: #f59e0b;
+            --dark: #1e293b;
+            --light: #f8fafc;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            margin: 0;
+        }
+        
+        /* Стиль карточки с тенью и эффектом при наведении */
+        .card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(2px);
+            border-radius: 1.5rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.25);
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+        }
+        
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 30px 50px -15px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Анимация пульсации для кнопки */
+        @keyframes gentlePulse {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+            }
+            50% {
+                transform: scale(1.06);
+                box-shadow: 0 20px 30px -8px rgba(79, 70, 229, 0.6);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.4);
+            }
+        }
+        
+        .pulse-btn {
+            animation: gentlePulse 1.8s infinite ease-in-out;
+            transition: all 0.2s ease;
+        }
+        
+        .pulse-btn:hover {
+            animation: none;
+            transform: scale(1.03);
+            background-color: var(--primary-dark);
+            box-shadow: 0 20px 30px -8px rgba(79, 70, 229, 0.7);
+        }
+        
+        /* Анимация плавающей иконки */
+        .floating-icon {
+            animation: floating 5s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-12px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        
+        /* Стили для ссылки в тексте */
+        .profile-link {
+            color: var(--primary);
+            font-weight: 700;
+            text-decoration: none;
+            border-bottom: 2px dotted rgba(79, 70, 229, 0.4);
+            transition: all 0.2s;
+        }
+        
+        .profile-link:hover {
+            color: var(--primary-dark);
+            border-bottom-color: var(--primary);
+            text-decoration: none;
+        }
+        
+        /* Плавное появление элементов */
+        .fade-in {
+            animation: fadeInUp 0.7s ease-out forwards;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Кнопка с закругленными углами и градиентом */
+        .btn-gradient {
+            background: linear-gradient(105deg, #4f46e5 0%, #7c3aed 100%);
+            border-radius: 60px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        /* Дополнительная тень для текста */
+        .text-shadow-sm {
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center p-5">
+    <div class="w-full max-w-3xl mx-auto my-8 fade-in">
+        <!-- Основная карточка -->
+        <div class="card p-6 md:p-10">
+            <!-- Иконка / символ -->
+            <div class="flex justify-center mb-6">
+                <div class="floating-icon w-20 h-20 bg-indigo-100 rounded-2xl flex items-center justify-center shadow-md">
+                    <i class="fas fa-file-alt text-indigo-600 text-3xl"></i>
+                </div>
+            </div>
+            
+            <!-- Заголовок -->
+            <h1 class="text-3xl md:text-4xl font-extrabold text-center text-gray-800 mb-4 tracking-tight">
+                ⚠️ Внимание
+            </h1>
+            
+            <!-- Основной текст с информацией -->
+            <div class="text-gray-700 space-y-5 text-base md:text-lg leading-relaxed">
+                <p class="text-center">
+                    Если вы оказались здесь, значит <strong>гайд был взят у 
+                    <a href="https://funpay.com/users/15995448/" target="_blank" rel="noopener noreferrer" class="profile-link">
+                        Kotonaft15 <i class="fa-solid fa-arrow-up-right-from-square text-xs ml-0.5"></i>
+                    </a></strong>.
+                </p>
+                
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-lg my-5">
+                    <div class="flex items-start gap-3">
+                        <i class="fas fa-triangle-exclamation text-amber-600 mt-1"></i>
+                        <p class="text-amber-800 font-medium">
+                            Гайд уже устарел и перестал нести полезную информацию, 
+                            так что вы можете <strong>сделать запрос на возврат средств</strong>.
+                        </p>
+                    </div>
+                </div>
+                
+                <p class="text-center text-gray-800 bg-indigo-50 p-4 rounded-xl">
+                    <i class="fas fa-store text-indigo-500 mr-2"></i>
+                    А также можете перейти ко мне в профиль и найти 
+                    <strong class="text-indigo-700">интересный для вас товар</strong>.
+                </p>
+            </div>
+            
+            <!-- Кнопка с пульсацией -->
+            <div class="flex justify-center mt-10 mb-4">
+                <a href="https://funpay.com/users/15995448/" target="_blank" rel="noopener noreferrer" 
+                   class="pulse-btn btn-gradient px-10 py-4 text-white text-xl font-bold tracking-wide inline-flex items-center gap-3 shadow-lg transition-all duration-300 hover:shadow-indigo-500/30">
+                    <i class="fas fa-arrow-right text-white text-xl"></i>
+                    ПЕРЕЙТИ
+                    <i class="fas fa-user-check text-white text-lg"></i>
+                </a>
+            </div>
+            
+            <!-- Дополнительный подтекст -->
+            <p class="text-center text-gray-500 text-sm mt-6 border-t border-gray-100 pt-5">
+                <i class="fas fa-clock mr-1"></i> Информация актуальна на текущий момент
+            </p>
+        </div>
+        
+        <!-- Небольшой футер -->
+        <div class="text-center text-gray-600 text-sm mt-6 opacity-80">
+            <p>© 2025 | Честное уведомление</p>
+        </div>
+    </div>
+
+    <!-- Небольшой скрипт для динамической подстройки (не обязателен, но добавляет лёгкий эффект) -->
+    <script>
+        (function() {
+            // Просто для красоты: легкий параллакс или лог в консоль не нужен.
+            // Добавим эффект, чтобы кнопка не "залипала" на мобильных устройствах
+            const btn = document.querySelector('.pulse-btn');
+            if(btn) {
+                // Останавливаем анимацию при нажатии на секунду (для тактильности)
+                btn.addEventListener('click', function(e) {
+                    this.style.animation = 'none';
+                    setTimeout(() => {
+                        this.style.animation = 'gentlePulse 1.8s infinite ease-in-out';
+                    }, 300);
+                });
+            }
+        })();
+    </script>
+</body>
+</html>
